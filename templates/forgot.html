@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <p></p>
+    <h1>Forgot Password?</h1>
+    <p></p>
+    <form action="" method="POST">
+        <div class="form-group">
+            <label>New Password</label>
+            <input type="password" name="newpassword" class="form-control" value={{request.form.newpassword}}>
+        </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}
