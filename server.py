@@ -3,8 +3,11 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+from data import Classes
 
 app = Flask(__name__)
+
+classes = Classes()
 
 # Set up MySQL
 app.config['MYSQL_HOST'] = '192.17.90.133'
@@ -75,7 +78,7 @@ def login():
             if sha256_crypt.verify(password_candidate, password): # password works
                 session['logged_in'] = True
                 session['name'] = data['name']
-                flash('You are now logged in.', 'success')
+                flash('You are now logged in. Welcome, ' + session['name'] + '.', 'success')
                 return redirect(url_for('dashboard'))
             else: # password does not work
                 error = 'Invalid login.'
@@ -126,11 +129,17 @@ def forgotDone():
 def updates():
     return render_template('updates.html')
 
-# CHANGE THIS
-@app.route('/dashboard')
+# User's classes page
+@app.route('/myclasses')
 @is_logged_in
-def dashboard():
-    return render_template('dashboard.html')
+def myclasses():
+    return render_template('myclasses.html', classes=classes)
+
+# User clicks on class link
+@app.route('/myclasses/<string:name>/')
+@is_logged_in
+def mySchoolClass(name):
+    return render_template('class.html', name=name)
 
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'

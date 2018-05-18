@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <p></p>
+    <h1>My Classes</h1>
+    <p></p>
+    <a href="/addclass" class="btn btn-primary">Add Class</a>
+    <p></p>
+    <ul class="list-group">
+    {% for schoolClass in classes %}
+        <li class="list-group-item"><a href="myclasses/{{schoolClass.subject}}{{schoolClass.courseNum}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}
