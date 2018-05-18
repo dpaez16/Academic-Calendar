@@ -143,7 +143,7 @@ def mySchoolClass(name):
     return render_template('class.html', name=name)
 
 class addClassForm(Form):
-    courseNum = StringField('Course Number', [validators.Regexp(r'[0-9]+', message='Not a course number.'), validators.Length(min=1, max=3)])
+    courseNum = StringField('Course Number', [validators.Regexp(r'[0-9][0-9][0-9]', message='Not a course number.')])
     courseName = StringField('Course Name', [validators.DataRequired()])
 
 # User tries to add class
