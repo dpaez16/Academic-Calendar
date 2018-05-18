@@ -16,14 +16,17 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 # init MySQL
 mysql = MySQL(app)
 
+# Home page
 @app.route('/')
 def Index():
     return render_template('home.html')
 
+# About page
 @app.route('/about')
 def About():
     return render_template('about.html')
 
+# Class used in register page
 class RegisterForm(Form):
     name = StringField('Initials/Name (If pledge)', [validators.Length(min=1, max=50)])
     netid = StringField('NetID', [validators.Regexp(r'[a-z]+[0-9]+', message='Not NetID.')])
@@ -33,42 +36,52 @@ class RegisterForm(Form):
     ])
     confirm = PasswordField('Confirm Password')
 
+# Register page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST' and form.validate(): # form is correctly inputted
         name = form.name.data
         netid = form.netid.data
         password = sha256_crypt.encrypt(str(form.password.data))
+        # Connect to DB
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO Users(netid, name, password) VALUES(%s, %s, %s)", (netid, name, password))
-        mysql.connection.commit()
-        cur.close()
-        flash('You are now registered and can log in.', 'success')
-        return redirect(url_for('login'))
+        result = cur.execute("SELECT * FROM Users WHERE netid=%s", [netid])
+        if result > 0:
+            error = "User exists with that NetID."
+            return render_template('register.html', form=form, error=error)
+        else:
+            # Add new user to DB
+            cur.execute("INSERT INTO Users(netid, name, password) VALUES(%s, %s, %s)", (netid, name, password))
+            # Commit changes to DB
+            mysql.connection.commit()
+            cur.close()
+            flash('You are now registered and can log in.', 'success')
+            return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+# Login page
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
         netid = request.form['netid']
         password_candidate = request.form['password']
+        # Connect to DB
         cur = mysql.connection.cursor()
         result = cur.execute("SELECT * FROM Users WHERE netid = %s", [netid])
-        if result > 0:
+        if result > 0:  # User is found
             data = cur.fetchone()
             password = data['password']
-            if sha256_crypt.verify(password_candidate, password):
-                # password works
+            if sha256_crypt.verify(password_candidate, password): # password works
                 session['logged_in'] = True
                 session['name'] = data['name']
                 flash('You are now logged in.', 'success')
                 return redirect(url_for('dashboard'))
-            else:
+            else: # password does not work
                 error = 'Invalid login.'
                 return render_template('login.html', error=error)
             cur.close()
-        else:
+        else: # user not found
             error = 'NetID not found.'
             return render_template('login.html', error=error)
     return render_template('login.html')
@@ -83,28 +96,37 @@ def is_logged_in(f):
             return redirect(url_for('login'))
     return wrap
 
+# Logout button
 @app.route('/logout')
 def logout():
     session.clear()
     flash('You have been logged out.', 'success')
     return redirect(url_for('login'))
 
+# Class used for forgot password page
 class NewPasswordForm(Form):
     newpassword = PasswordField('Password', [validators.DataRequired()])
 
+# forgot password page
 @app.route('/forgot', methods=['GET','POST'])
 def forgot():
     form = NewPasswordForm(request.form)
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST' and form.validate(): # form inputted is correct
         newpassword = sha256_crypt.encrypt(str(form.newpassword.data))
         session['newpassword'] = newpassword
         return redirect(url_for('forgotDone'))
     return render_template('forgot.html', form=form)
 
+# page after forgot password
 @app.route('/forgotDone')
 def forgotDone():
     return render_template('forgotDone.html')
 
+@app.route('/updates')
+def updates():
+    return render_template('updates.html')
+
+# CHANGE THIS
 @app.route('/dashboard')
 @is_logged_in
 def dashboard():
