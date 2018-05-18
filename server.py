@@ -78,8 +78,9 @@ def login():
             if sha256_crypt.verify(password_candidate, password): # password works
                 session['logged_in'] = True
                 session['name'] = data['name']
+                session['netid'] = netid
                 flash('You are now logged in. Welcome, ' + session['name'] + '.', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('myclasses'))
             else: # password does not work
                 error = 'Invalid login.'
                 return render_template('login.html', error=error)
@@ -136,10 +137,40 @@ def myclasses():
     return render_template('myclasses.html', classes=classes)
 
 # User clicks on class link
-@app.route('/myclasses/<string:name>/')
+@app.route('/myclasses/<string:name>')
 @is_logged_in
 def mySchoolClass(name):
     return render_template('class.html', name=name)
+
+class addClassForm(Form):
+    courseNum = StringField('Course Number', [validators.Regexp(r'[0-9]+', message='Not a course number.'), validators.Length(min=1, max=3)])
+    courseName = StringField('Course Name', [validators.DataRequired()])
+
+# User tries to add class
+@app.route('/myclasses/addclass', methods=['GET','POST'])
+@is_logged_in
+def addClass():
+    form = addClassForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        courseNum = form.courseNum.data
+        courseName = form.courseName.data
+        subject = request.form.get('subjects')
+        netid = session['netid']
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * FROM Classes WHERE courseNum=%s AND subject=%s AND netID=%s", [courseNum, subject, netid])
+        if result > 0:
+            error = "That class already exists for you."
+            return render_template('addclass.html', error=error)
+        else:
+            # Add new class to DB
+            cur.execute("INSERT INTO Classes(netID, subject, courseNum, courseName) VALUES(%s, %s, %s, %s)", [netid, subject, courseNum, courseName])
+            # Commit changes to DB
+            mysql.connection.commit()
+            cur.close()
+            flash('Class has been added.', 'success')
+            return redirect(url_for('myclasses'))
+    return render_template('addclass.html', form=form)
 
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'
