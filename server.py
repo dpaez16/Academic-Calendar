@@ -80,6 +80,7 @@ def login():
                 session['name'] = data['name']
                 session['netid'] = netid
                 flash('You are now logged in. Welcome, ' + session['name'] + '.', 'success')
+                classes = []
                 return redirect(url_for('myclasses'))
             else: # password does not work
                 error = 'Invalid login.'
@@ -134,6 +135,19 @@ def updates():
 @app.route('/myclasses')
 @is_logged_in
 def myclasses():
+    classes = []
+    # Connect to DB
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT subject, courseNum, courseName FROM Classes WHERE netID=%s", [session['netid']])
+    for row in cur.fetchall():
+        classes.append({
+            'subject': row['subject'],
+            'courseNum': row['courseNum'],
+            'courseName': row['courseName']
+        })
+    # Commit changes to DB
+    mysql.connection.commit()
+    cur.close()
     return render_template('myclasses.html', classes=classes)
 
 # User clicks on class link
