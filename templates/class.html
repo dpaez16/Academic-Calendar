@@ -2,5 +2,113 @@
 
 {% block body %}
     <p></p>
-    <h1>{{name}}</h1>
+    <h1>{{subject}}{{courseNum}}</h1>
+    <strong>Attendance</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddAttendance" class="btn btn-primary">Add Attendance</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
+    <strong>Homework</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddHomework" class="btn btn-primary">Add Homework</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
+    <strong>Prelabs</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddPrelabs" class="btn btn-primary">Add Prelabs</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
+    <strong>Postlabs</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddPostlabs" class="btn btn-primary">Add Postlabs</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
+    <strong>Lab Reports</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddLabReport" class="btn btn-primary">Add Lab Report</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
+    <strong>Group Projects</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddGroupProject" class="btn btn-primary">Add Group Project</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
+    <strong>Projects</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddProject" class="btn btn-primary">Add Project</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
+    <strong>Exams</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddExam" class="btn btn-primary">Add Exam</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
+    <strong>Final</strong>
+        <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddFinal" class="btn btn-primary">Add Final</a>
+        <p></p>
+        <table class="table table-striped">
+            <tr>
+                <th>Score</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th></th>
+            </tr>
+        </table>
 {% endblock %}

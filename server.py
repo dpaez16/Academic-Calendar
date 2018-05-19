@@ -3,11 +3,8 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
-from data import Classes
 
 app = Flask(__name__)
-
-classes = Classes()
 
 # Set up MySQL
 app.config['MYSQL_HOST'] = '192.17.90.133'
@@ -80,7 +77,6 @@ def login():
                 session['name'] = data['name']
                 session['netid'] = netid
                 flash('You are now logged in. Welcome, ' + session['name'] + '.', 'success')
-                classes = []
                 return redirect(url_for('myclasses'))
             else: # password does not work
                 error = 'Invalid login.'
@@ -97,7 +93,7 @@ def is_logged_in(f):
         if 'logged_in' in session:
             return f(*args, **kwargs)
         else:
-            flash('Unauthorized, please login', 'danger')
+            flash('Unauthorized, please login.', 'danger')
             return redirect(url_for('login'))
     return wrap
 
@@ -154,10 +150,20 @@ def myclasses():
 @app.route('/myclasses/<string:name>')
 @is_logged_in
 def mySchoolClass(name):
-    return render_template('class.html', name=name)
+    subject = name[:name.index('-')]
+    courseNum = name[name.index('-')+1:]
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT weighted FROM Classes WHERE netID=%s AND subject=%s AND courseNum=%s", [session['netid'], subject, courseNum])
+    weighted = cur.fetchall()[0]['weighted']
+    if weighted:
+        # CHANGE THIS LATER
+        return render_template('class.html', subject=subject, courseNum=courseNum, weighted=weighted)
+    else:
+        # CHANGE THIS LATER
+        return render_template('class.html', subject=subject, courseNum=courseNum, weighted=weighted)
 
 class addClassForm(Form):
-    courseNum = StringField('Course Number', [validators.Regexp(r'[0-9][0-9][0-9]', message='Not a course number.')])
+    courseNum = StringField('Course Number', [validators.Regexp(r'[0-9][0-9][0-9]', message='Not a course number.'),validators.Length(min=3, max=3, message='Field must be 3 numbers long.')])
     courseName = StringField('Course Name', [validators.DataRequired()])
 
 # User tries to add class
@@ -169,22 +175,42 @@ def addClass():
         courseNum = form.courseNum.data
         courseName = form.courseName.data
         subject = request.form.get('subjects')
+        weighted = True if (request.form.get('weighted') == "1") else False
         netid = session['netid']
         # Connect to DB
         cur = mysql.connection.cursor()
         result = cur.execute("SELECT * FROM Classes WHERE courseNum=%s AND subject=%s AND netID=%s", [courseNum, subject, netid])
         if result > 0:
-            error = "That class already exists for you."
-            return render_template('addclass.html', error=error)
+            error = subject + courseNum + " is already in your list of classes."
+            return render_template('addclass.html', error=error, form=form)
         else:
             # Add new class to DB
-            cur.execute("INSERT INTO Classes(netID, subject, courseNum, courseName) VALUES(%s, %s, %s, %s)", [netid, subject, courseNum, courseName])
+            cur.execute("INSERT INTO Classes(netID, subject, courseNum, courseName, weighted) VALUES(%s, %s, %s, %s, %s)", [netid, subject, courseNum, courseName, weighted])
             # Commit changes to DB
             mysql.connection.commit()
             cur.close()
-            flash('Class has been added.', 'success')
+            flash(subject + courseNum + ' has been added to your list of classes.', 'success')
             return redirect(url_for('myclasses'))
     return render_template('addclass.html', form=form)
+
+# User tries to delete a class
+@app.route('/myclasses/delete/<string:course>', methods=['GET', 'POST'])
+@is_logged_in
+def deleteClass(course):
+    subject = course[:course.index('-')]
+    courseNum = course[course.index('-') + 1:]
+    if request.method == 'POST':
+        subject = course[:course.index('-')]
+        courseNum = course[course.index('-')+1:]
+        # connect to DB
+        cur = mysql.connection.cursor()
+        cur.execute('DELETE FROM Classes WHERE netID=%s AND subject=%s AND courseNum=%s', [session['netid'], subject, courseNum])
+        # delete goes through
+        mysql.connection.commit()
+        cur.close()
+        flash(subject + courseNum + ' has been removed.', 'success')
+        return redirect(url_for('myclasses'))
+    return render_template('maybeDelete.html', subject=subject, courseNum=courseNum)
 
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'

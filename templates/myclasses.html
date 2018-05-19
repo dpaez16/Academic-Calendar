@@ -8,7 +8,12 @@
     <p></p>
     <ul class="list-group">
     {% for schoolClass in classes %}
-        <li class="list-group-item"><a href="myclasses/{{schoolClass.subject}}{{schoolClass.courseNum}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a></li>
+        <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center w-100">
+              <a href="myclasses/{{schoolClass.subject}}-{{schoolClass.courseNum}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a>
+              <a href="myclasses/delete/{{schoolClass.subject}}-{{schoolClass.courseNum}}" class="btn btn-danger">Delete</a>
+            </div>
+        </li>
     {% endfor %}
     </ul>
 {% endblock %}

@@ -218,6 +218,15 @@
         <div class="form-group">
             {{render_field(form.courseName, class_="form-control")}}
         </div>
+        Weighted?
+    <div style="line-height:50%;">
+        <br>
+    </div>
+        <select name="weighted">
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </select>
+        <p></p>
         <p><input type="submit" class="btn btn-primary" value="Submit"></p>
     </form>
 {% endblock %}
