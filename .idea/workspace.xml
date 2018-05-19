@@ -19,7 +19,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526715454440" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526716286401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -66,10 +66,10 @@
       <find>print</find>
       <find>row</find>
       <find>session</find>
-      <find>class has been added</find>
+      <find />
       <find>data</find>
       <find>classes</find>
-      <find>classes =</find>
+      <find />
     </findStrings>
   </component>
   <component name="Git.Settings">
