@@ -7,12 +7,34 @@
         <br>
         <a href="/myclasses/{{subject}}-{{courseNum}}/AddAttendance" class="btn btn-primary">Add Attendance</a>
         <p></p>
-        <table class="table table-striped">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th>Score</th>
+                    <th>Total</th>
+                    <th>Percentage</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            {% for attendance in dataAttendance %}
             <tr>
-                <th>Score</th>
-                <th>Total</th>
-                <th>Percentage</th>
-                <th></th>
+                <td>{{attendance.score}}</td>
+                <td>{{attendance.total}}</td>
+                <td>{{(attendance.score/attendance.total)*100}}</td>
+                <td></td>
+                <td><a href="#" class="btn btn-info" role="button">Edit</a></td>
+                <td><a href="#" class="btn btn-danger">Delete</a></td>
             </tr>
+            {% endfor %}
+                <tr>
+                    <td><strong>Total Earned</strong></td>
+                    <td><strong>Total Available</strong></td>
+                    <td><strong>Total Percentage</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
         </table>
 {% endblock %}

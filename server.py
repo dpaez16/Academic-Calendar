@@ -156,11 +156,13 @@ def mySchoolClass(name):
     cur.execute("SELECT weighted FROM Classes WHERE netID=%s AND subject=%s AND courseNum=%s", [session['netid'], subject, courseNum])
     weighted = cur.fetchall()[0]['weighted']
     if weighted:
-        # CHANGE THIS LATER
-        return render_template('class.html', subject=subject, courseNum=courseNum, weighted=weighted)
+        cur.execute("SELECT score, total FROM Percentage WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s", [session['netid'], subject, courseNum, "Attendance"])
+        dataAttendance = cur.fetchall()
+        return render_template('class.html', subject=subject, courseNum=courseNum, weighted=weighted, dataAttendance=dataAttendance)
     else:
-        # CHANGE THIS LATER
-        return render_template('class.html', subject=subject, courseNum=courseNum, weighted=weighted)
+        cur.execute("SELECT score, total FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s", [session['netid'], subject, courseNum, "Attendance"])
+        dataAttendance = cur.fetchall()
+        return render_template('class.html', subject=subject, courseNum=courseNum, weighted=weighted, dataAttendance=dataAttendance)
 
 class addClassForm(Form):
     courseNum = StringField('Course Number', [validators.Regexp(r'[0-9][0-9][0-9]', message='Not a course number.'),validators.Length(min=3, max=3, message='Field must be 3 numbers long.')])
