@@ -272,6 +272,13 @@ def addAttribute(name, cName, category):
         attributeName = form.attributeName.data
         # Connect to DB
         cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * " +
+                             "FROM Attributes " +
+                             "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attributeName=%s",
+                             [session['netid'], subject, courseNum, cName, category, attributeName])
+        if result > 0: # duplicates exist
+            error = '"' + category + '" attribute "' + attributeName + '" already exists.'
+            return render_template('addAttribute.html', error=error, form=form)
         # Add new attribute to DB
         cur.execute("INSERT INTO Attributes(netID, subject, courseNum, courseName, category, attributeName, score, total) " +
                     "VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
@@ -304,6 +311,13 @@ def editAttribute(name, cName, category, oldAttributeName, oldScore, oldTotal):
         attributeName = form.attributeName.data
         # Connect to DB
         cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * " +
+                             "FROM Attributes " +
+                             "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attributeName=%s",
+                             [session['netid'], subject, courseNum, cName, category, attributeName])
+        if result > 0:  # duplicates exist
+            error = '"' + category + '" attribute "' + attributeName + '" already exists.'
+            return render_template('editAttribute.html', error=error, form=form)
         # Add new attribute to DB
         cur.execute("UPDATE Attributes " +
                     "SET attributeName=%s, score=%s, total=%s " +
@@ -349,6 +363,13 @@ def addCategoryNoWeight(name, cName):
         weight = -1
         # connect to DB
         cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * " +
+                             "FROM Weights " +
+                             "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
+                             [session['netid'], subject, courseNum, cName, category])
+        if result > 0:  # duplicates exist
+            error = '"' + category + '" is already a category.'
+            return render_template('addCategoryNoWeight.html', error=error, form=form)
         cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight) ' +
                     'VALUES(%s, %s, %s, %s, %s, %s)',
                     [session['netid'], subject, courseNum, cName, category, weight])
@@ -375,6 +396,13 @@ def addCategoryWeight(name, cName):
         weight = form.categoryWeight.data
         # connect to DB
         cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * " +
+                             "FROM Weights " +
+                             "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
+                             [session['netid'], subject, courseNum, cName, category])
+        if result > 0:  # duplicates exist
+            error = '"' + category + '" is already a category.'
+            return render_template('addCategoryWeight.html', error=error, form=form)
         cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight) ' +
                     'VALUES(%s, %s, %s, %s, %s, %s)',
                     [session['netid'], subject, courseNum, cName, category, weight])

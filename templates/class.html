@@ -54,6 +54,7 @@
                     <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Delete{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}" class="btn btn-danger">Delete</a></td>
                 </tr>
                 {% endfor %}
+                {% if category.attributes %}
                 <tr>
                     {% if category.totalPossible != 0 %}
                     <td><strong>Total</strong></td>
@@ -71,30 +72,31 @@
                     <td></td>
                     {% endif %}
                 </tr>
-                {% if weighted %}
-                <tr>
-                    {% if category.totalPossible != 0 %}
-                    <td>
-                        <strong>Total Earned (Weighted)</strong>
-                        <br>
-                        {{(category.totalScored/category.totalPossible)*category.weight}}%
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td>
-                        <strong>Total Earned (Weighted)</strong>:
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    {% if weighted %}
+                    <tr>
+                        {% if category.totalPossible != 0 %}
+                        <td>
+                            <strong>Total Earned (Weighted)</strong>
+                            <br>
+                            {{(category.totalScored/category.totalPossible)*category.weight}}%
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        {% else %}
+                        <td>
+                            <strong>Total Earned (Weighted)</strong>:
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        {% endif %}
+                    </tr>
                     {% endif %}
-                </tr>
                 {% endif %}
             </table>
         <br>
