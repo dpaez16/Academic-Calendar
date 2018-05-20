@@ -384,6 +384,25 @@ def addCategoryWeight(name, cName):
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('addCategoryWeight.html', form=form)
 
+# user tries to delete category
+@app.route('/myclasses/<string:name>/<string:cName>/deleteCategory/<string:category>', methods=['GET', 'POST'])
+@is_logged_in
+def deleteCategory(name, cName,category):
+    subject = name[:name.index('-')]
+    courseNum = name[name.index('-') + 1:]
+    if request.method == 'POST':
+        # connect to DB
+        cur = mysql.connection.cursor()
+        cur.execute('DELETE FROM Weights ' +
+                    'WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s',
+                    [session['netid'], subject, courseNum, cName, category])
+        # delete goes through
+        mysql.connection.commit()
+        cur.close()
+        flash('Category '+ category + ' has been removed.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('maybeDeleteCategory.html', category=category)
+
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'
     app.run(debug=True)
