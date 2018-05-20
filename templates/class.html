@@ -2,16 +2,18 @@
 
 {% block body %}
     <p></p>
-    <h1>{{subject}}{{courseNum}}</h1>
+    <h1>{{subject}}{{courseNum}}: {{courseName}}</h1>
     <strong>Attendance</strong>
+        {% if not weighted %}
         <br>
         <a href="/myclasses/{{subject}}-{{courseNum}}/AddAttendance" class="btn btn-primary">Add Attendance</a>
         <p></p>
         <table class="table">
             <thead class="thead-light">
                 <tr>
+                    <th></th>
                     <th>Score</th>
-                    <th>Total</th>
+                    <th>Out Of</th>
                     <th>Percentage</th>
                     <th></th>
                     <th></th>
@@ -20,21 +22,59 @@
             </thead>
             {% for attendance in dataAttendance %}
             <tr>
+                <td></td>
                 <td>{{attendance.score}}</td>
                 <td>{{attendance.total}}</td>
-                <td>{{(attendance.score/attendance.total)*100}}</td>
+                <td>{{(attendance.score/attendance.total)*100}}%</td>
                 <td></td>
                 <td><a href="#" class="btn btn-info" role="button">Edit</a></td>
                 <td><a href="#" class="btn btn-danger">Delete</a></td>
             </tr>
             {% endfor %}
                 <tr>
-                    <td><strong>Total Earned</strong></td>
-                    <td><strong>Total Available</strong></td>
-                    <td><strong>Total Percentage</strong></td>
+                    <td><strong>Total</strong></td>
+                    <td>{{totalAttendanceScore}}</td>
+                    <td>{{totalAttendancePossible}}</td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr>
         </table>
+    {% else %}
+    <br>
+        <a href="/myclasses/{{subject}}-{{courseNum}}/AddAttendance" class="btn btn-primary">Add Attendance</a>
+        <p></p>
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th></th>
+                    <th>Score</th>
+                    <th>Out Of</th>
+                    <th>Percentage</th>
+                    <th>Weight</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            {% for attendance in dataAttendance %}
+            <tr>
+                <td></td>
+                <td>{{attendance.score}}</td>
+                <td>{{attendance.total}}</td>
+                <td>{{(attendance.score/attendance.total)*100}}%</td>
+                <td></td>
+                <td><a href="#" class="btn btn-info" role="button">Edit</a></td>
+                <td><a href="#" class="btn btn-danger">Delete</a></td>
+            </tr>
+            {% endfor %}
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+        </table>
+    {% endif %}
 {% endblock %}

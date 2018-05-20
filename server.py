@@ -147,22 +147,40 @@ def myclasses():
     return render_template('myclasses.html', classes=classes)
 
 # User clicks on class link
-@app.route('/myclasses/<string:name>')
+@app.route('/myclasses/<string:name>/<string:cName>')
 @is_logged_in
-def mySchoolClass(name):
+def mySchoolClass(name,cName):
     subject = name[:name.index('-')]
     courseNum = name[name.index('-')+1:]
     cur = mysql.connection.cursor()
-    cur.execute("SELECT weighted FROM Classes WHERE netID=%s AND subject=%s AND courseNum=%s", [session['netid'], subject, courseNum])
+    cur.execute("SELECT weighted FROM Classes WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s", [session['netid'], subject, courseNum, cName])
     weighted = cur.fetchall()[0]['weighted']
     if weighted:
-        cur.execute("SELECT score, total FROM Percentage WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s", [session['netid'], subject, courseNum, "Attendance"])
+        cur.execute("SELECT score, total, weight FROM Percentage WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Attendance", cName])
         dataAttendance = cur.fetchall()
-        return render_template('class.html', subject=subject, courseNum=courseNum, weighted=weighted, dataAttendance=dataAttendance)
+        return render_template('class.html',
+                               subject=subject,
+                               courseNum=courseNum,
+                               courseName=cName,
+                               weighted=weighted,
+                               dataAttendance=dataAttendance
+                               )
     else:
-        cur.execute("SELECT score, total FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s", [session['netid'], subject, courseNum, "Attendance"])
+        cur.execute("SELECT score, total FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Attendance", cName])
         dataAttendance = cur.fetchall()
-        return render_template('class.html', subject=subject, courseNum=courseNum, weighted=weighted, dataAttendance=dataAttendance)
+        totalAttendanceScore, totalAttendancePossible = 0.0, 0.0
+        for row in dataAttendance:
+            totalAttendanceScore += float(row['score'])
+            totalAttendancePossible += float(row['total'])
+        return render_template('class.html',
+                               subject=subject,
+                               courseNum=courseNum,
+                               courseName=cName,
+                               weighted=weighted,
+                               dataAttendance=dataAttendance,
+                               totalAttendanceScore=totalAttendanceScore,
+                               totalAttendancePossible=totalAttendancePossible
+                               )
 
 class addClassForm(Form):
     courseNum = StringField('Course Number', [validators.Regexp(r'[0-9][0-9][0-9]', message='Not a course number.'),validators.Length(min=3, max=3, message='Field must be 3 numbers long.')])
@@ -181,9 +199,9 @@ def addClass():
         netid = session['netid']
         # Connect to DB
         cur = mysql.connection.cursor()
-        result = cur.execute("SELECT * FROM Classes WHERE courseNum=%s AND subject=%s AND netID=%s", [courseNum, subject, netid])
+        result = cur.execute("SELECT * FROM Classes WHERE courseNum=%s AND subject=%s AND netID=%s AND courseName=%s", [courseNum, subject, netid, courseName])
         if result > 0:
-            error = subject + courseNum + " is already in your list of classes."
+            error = subject + courseNum + ": " + courseName + " is already in your list of classes."
             return render_template('addclass.html', error=error, form=form)
         else:
             # Add new class to DB
@@ -191,28 +209,26 @@ def addClass():
             # Commit changes to DB
             mysql.connection.commit()
             cur.close()
-            flash(subject + courseNum + ' has been added to your list of classes.', 'success')
+            flash(subject + courseNum + ": " + courseName + ' has been added to your list of classes.', 'success')
             return redirect(url_for('myclasses'))
     return render_template('addclass.html', form=form)
 
 # User tries to delete a class
-@app.route('/myclasses/delete/<string:course>', methods=['GET', 'POST'])
+@app.route('/myclasses/delete/<string:course>/<string:cName>', methods=['GET', 'POST'])
 @is_logged_in
-def deleteClass(course):
+def deleteClass(course, cName):
     subject = course[:course.index('-')]
     courseNum = course[course.index('-') + 1:]
     if request.method == 'POST':
-        subject = course[:course.index('-')]
-        courseNum = course[course.index('-')+1:]
         # connect to DB
         cur = mysql.connection.cursor()
-        cur.execute('DELETE FROM Classes WHERE netID=%s AND subject=%s AND courseNum=%s', [session['netid'], subject, courseNum])
+        cur.execute('DELETE FROM Classes WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s', [session['netid'], subject, courseNum, cName])
         # delete goes through
         mysql.connection.commit()
         cur.close()
         flash(subject + courseNum + ' has been removed.', 'success')
         return redirect(url_for('myclasses'))
-    return render_template('maybeDelete.html', subject=subject, courseNum=courseNum)
+    return render_template('maybeDelete.html', subject=subject, courseNum=courseNum, courseName=cName)
 
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'
