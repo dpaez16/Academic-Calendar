@@ -3,9 +3,15 @@
 {% block body %}
     <p></p>
     <h1>{{subject}}{{courseNum}}: {{courseName}}
-    <object align="right">
-        <a href="#" class="btn btn-primary">Add Category</a>
-    </object>
+    {% if weighted %}
+        <object align="right">
+            <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/addCategory/Weight" class="btn btn-primary">Add Category</a>
+        </object>
+    {% else %}
+        <object align="right">
+            <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/addCategory/NoWeight" class="btn btn-primary">Add Category</a>
+        </object>
+    {% endif %}
     </h1>
     {% if not weighted %}
         {% for category in categoryData %}

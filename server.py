@@ -191,6 +191,7 @@ def mySchoolClass(name,cName):
                            subject=subject,
                            courseNum=courseNum,
                            courseName=cName,
+                           weighted=weighted,
                            categoryData=categoryData
                            )
 
@@ -254,7 +255,7 @@ class addAttributeForm(Form):
     score = StringField('Score', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
     total = StringField('Out Of', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
 
-# User tries to add attribute (no weight)
+# User tries to add attribute
 @app.route('/myclasses/<string:name>/<string:cName>/Add<string:category>', methods=['GET','POST'])
 @is_logged_in
 def addAttribute(name, cName, category):
@@ -332,7 +333,56 @@ def deleteAttribute(name, cName, category, attributeName, score, total):
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('maybeDeleteAttribute.html', attributeName=attributeName, category=category)
 
-# User tries to add category
+class addCategoryNoWeightForm(Form):
+    categoryName = StringField('Category Name', [validators.DataRequired()])
+
+# User tries to add category (no weight)
+@app.route('/myclasses/<string:name>/<string:cName>/addCategory/NoWeight', methods=['GET','POST'])
+@is_logged_in
+def addCategoryNoWeight(name, cName):
+    form = addCategoryNoWeightForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        subject = name[:name.index('-')]
+        courseNum = name[name.index('-') + 1:]
+        category = form.categoryName.data
+        weight = -1
+        # connect to DB
+        cur = mysql.connection.cursor()
+        cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight) ' +
+                    'VALUES(%s, %s, %s, %s, %s, %s)',
+                    [session['netid'], subject, courseNum, cName, category, weight])
+        # insertion goes through
+        mysql.connection.commit()
+        cur.close()
+        flash('New category "' + category + '" has been added.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('addCategoryNoWeight.html', form=form)
+
+class addCategoryWeightedForm(Form):
+    categoryName = StringField('Category Name', [validators.DataRequired()])
+    categoryWeight = StringField('Weight (XX.XX)', [validators.Regexp(r'[0-9][0-9].[0-9][0-9]', message='Not formatted properly.')])
+
+# User tries to add category (weighted)
+@app.route('/myclasses/<string:name>/<string:cName>/addCategory/Weight', methods=['GET','POST'])
+@is_logged_in
+def addCategoryWeight(name, cName):
+    form = addCategoryWeightedForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        subject = name[:name.index('-')]
+        courseNum = name[name.index('-') + 1:]
+        category = form.categoryName.data
+        weight = form.categoryWeight.data
+        # connect to DB
+        cur = mysql.connection.cursor()
+        cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight) ' +
+                    'VALUES(%s, %s, %s, %s, %s, %s)',
+                    [session['netid'], subject, courseNum, cName, category, weight])
+        # insertion goes through
+        mysql.connection.commit()
+        cur.close()
+        flash('New category "' + category + '" has been added.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('addCategoryWeight.html', form=form)
 
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'
