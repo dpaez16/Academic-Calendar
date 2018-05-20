@@ -183,6 +183,54 @@ def mySchoolClass(name,cName):
         for row in dataAttendance:
             totalAttendanceScore += float(row['score'])
             totalAttendancePossible += float(row['total'])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Homework", cName])
+        dataHomework = cur.fetchall()
+        totalHomeworkScore, totalHomeworkPossible = 0.0, 0.0
+        for row in dataHomework:
+            totalHomeworkScore += float(row['score'])
+            totalHomeworkPossible += float(row['total'])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Prelab", cName])
+        dataPrelab = cur.fetchall()
+        totalPrelabScore, totalPrelabPossible = 0.0, 0.0
+        for row in dataPrelab:
+            totalPrelabScore += float(row['score'])
+            totalPrelabPossible += float(row['total'])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Postlab", cName])
+        dataPostlab = cur.fetchall()
+        totalPostlabScore, totalPostlabPossible = 0.0, 0.0
+        for row in dataPostlab:
+            totalPostlabScore += float(row['score'])
+            totalPostlabPossible += float(row['total'])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "LabReport", cName])
+        dataLabReport = cur.fetchall()
+        totalLabReportScore, totalLabReportPossible = 0.0, 0.0
+        for row in dataLabReport:
+            totalLabReportScore += float(row['score'])
+            totalLabReportPossible += float(row['total'])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "GroupProject", cName])
+        dataGroupProject = cur.fetchall()
+        totalGroupProjectScore, totalGroupProjectPossible = 0.0, 0.0
+        for row in dataGroupProject:
+            totalGroupProjectScore += float(row['score'])
+            totalGroupProjectPossible += float(row['total'])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Project", cName])
+        dataProject = cur.fetchall()
+        totalProjectScore, totalProjectPossible = 0.0, 0.0
+        for row in dataProject:
+            totalProjectScore += float(row['score'])
+            totalProjectPossible += float(row['total'])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Exam", cName])
+        dataExams = cur.fetchall()
+        totalExamsScore, totalExamsPossible = 0.0, 0.0
+        for row in dataExams:
+            totalExamsScore += float(row['score'])
+            totalExamsPossible += float(row['total'])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Final", cName])
+        dataFinal = cur.fetchall()
+        totalFinalScore, totalFinalPossible = 0.0, 0.0
+        for row in dataFinal:
+            totalFinalScore += float(row['score'])
+            totalFinalPossible += float(row['total'])
         return render_template('class.html',
                                subject=subject,
                                courseNum=courseNum,
@@ -190,7 +238,31 @@ def mySchoolClass(name,cName):
                                weighted=weighted,
                                dataAttendance=dataAttendance,
                                totalAttendanceScore=totalAttendanceScore,
-                               totalAttendancePossible=totalAttendancePossible
+                               totalAttendancePossible=totalAttendancePossible,
+                               dataHomework=dataHomework,
+                               totalHomeworkScore=totalHomeworkScore,
+                               totalHomeworkPossible=totalHomeworkPossible,
+                               dataPrelab=dataPrelab,
+                               totalPrelabScore=totalPrelabScore,
+                               totalPrelabPossible=totalPrelabPossible,
+                               dataPostlab=dataPostlab,
+                               totalPostlabScore=totalPostlabScore,
+                               totalPostlabPossible=totalPostlabPossible,
+                               dataLabReport=dataLabReport,
+                               totalLabReportScore=totalLabReportScore,
+                               totalLabReportPossible=totalLabReportPossible,
+                               dataGroupProject=dataGroupProject,
+                               totalGroupProjectScore=totalGroupProjectScore,
+                               totalGroupProjectPossible=totalGroupProjectPossible,
+                               dataProject=dataProject,
+                               totalProjectScore=totalProjectScore,
+                               totalProjectPossible=totalProjectPossible,
+                               dataExams=dataExams,
+                               totalExamsScore=totalExamsScore,
+                               totalExamsPossible=totalExamsPossible,
+                               dataFinal=dataFinal,
+                               totalFinalScore=totalFinalScore,
+                               totalFinalPossible=totalFinalPossible
                                )
 
 class addClassForm(Form):
@@ -271,6 +343,37 @@ def addAttributeNoWeight(name, cName, attr):
         flash(attr + ' attribute has been added.', 'success')
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('addAttributeNoWeight.html', form=form, attribute=attr)
+
+class editAttributeNoWeightForm(Form):
+    score = StringField('Score', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
+    total = StringField('Out Of', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
+    attrTitle = StringField('Name of Attribute', [validators.DataRequired()])
+
+# User tries to edit attribute (no weight)
+@app.route('/myclasses/<string:name>/<string:cName>/Edit<string:attr>/<string:oldAttrTitle>/<string:oldScore>-<string:oldTotal>', methods=['GET','POST'])
+@is_logged_in
+def editAttributeNoWeight(name, cName, attr, oldAttrTitle, oldScore, oldTotal):
+    form = editAttributeNoWeightForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        subject = name[:name.index('-')]
+        courseNum = name[name.index('-') + 1:]
+        score = form.score.data
+        total = form.total.data
+        if float(form.score.data) > float(form.total.data):
+            flash('Score is greater than total.', 'danger')
+            #return redirect(url_for('mySchoolClass', name=name, cName=cName))
+            return render_template('editAttributeNoWeight.html', form=form, attribute=attr)
+        attrTitle = form.attrTitle.data
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        # Add new attribute to DB
+        cur.execute("UPDATE Points SET attribute=%s, score=%s, total=%s WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attribute=%s AND score=%s AND total=%s", [attrTitle, score, total, session['netid'], subject, courseNum, cName, attr, oldAttrTitle ,oldScore, oldTotal])
+        # Commit changes to DB
+        mysql.connection.commit()
+        cur.close()
+        flash(attr + ' attribute has been modified.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('editAttributeNoWeight.html', form=form, attribute=attr)
 
 class addAttributeWeightForm(Form):
     score = StringField('Score', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])

@@ -2,13 +2,7 @@
 
 {% block body %}
     <p></p>
-    {% if attribute == 'LabReport' %}
-    <h1>Add Lab Report</h1>
-    {% elif attribute == 'GroupProject' %}
-    <h1>Add Group Project</h1>
-    {% else %}
-    <h1>Add {{attribute}}</h1>
-    {% endif %}
+    <h1>Edit {{attribute}}</h1>
     <p></p>
     {% from "includes/_formhelpers.html" import render_field %}
     <form action="" method="POST">

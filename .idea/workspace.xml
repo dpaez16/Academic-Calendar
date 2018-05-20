@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d523747-238d-4adb-9f5f-8cbcd4efed3d" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/addAttributeNoWeight.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/addAttributeWeight.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/maybeDeleteAttribute.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/editAttributeNoWeight.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/addAttributeNoWeight.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/addAttributeNoWeight.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/class.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,18 +16,36 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526795430433" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526805420225" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="server.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="server.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="752">
-              <caret line="246" column="46" selection-start-line="246" selection-start-column="46" selection-end-line="246" selection-end-column="46" />
+            <state relative-caret-position="127">
+              <caret line="203" column="190" selection-start-line="203" selection-start-column="190" selection-end-line="203" selection-end-column="190" />
               <folding>
                 <element signature="e#0#93#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="class.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/class.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="7378">
+              <caret line="434" column="53" selection-start-line="434" selection-start-column="53" selection-end-line="434" selection-end-column="53" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="addAttributeNoWeight.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/addAttributeNoWeight.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -55,16 +72,36 @@
       <find>print</find>
       <find>row</find>
       <find>session</find>
-      <find>class has been added</find>
+      <find />
       <find>classes</find>
-      <find>classes =</find>
+      <find />
       <find>data</find>
       <find>delete</find>
       <find>removed</find>
       <find>validator</find>
-      <find>weighted =</find>
+      <find />
       <find>delet</find>
+      <find>homework</find>
     </findStrings>
+    <replaceStrings>
+      <replace>pre</replace>
+      <replace>Pre</replace>
+      <replace>postlab</replace>
+      <replace>Postlab</replace>
+      <replace />
+      <replace>labreport</replace>
+      <replace>LabReport</replace>
+      <replace />
+      <replace>groupproject</replace>
+      <replace>GroupProject</replace>
+      <replace>project</replace>
+      <replace>Project</replace>
+      <replace>exam</replace>
+      <replace>Exam</replace>
+      <replace>Exams</replace>
+      <replace>final</replace>
+      <replace>Final</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
@@ -98,12 +135,13 @@
         <option value="$PROJECT_DIR$/templates/myclasses.html" />
         <option value="$PROJECT_DIR$/templates/maybeDelete.html" />
         <option value="$PROJECT_DIR$/templates/addAttendance.html" />
-        <option value="$PROJECT_DIR$/templates/addAttributeNoWeight.html" />
         <option value="$PROJECT_DIR$/templates/addAttributeWeight.html" />
         <option value="$PROJECT_DIR$/templates/maybeDeleteAttribute.html" />
         <option value="$PROJECT_DIR$/templates/maybeDeleteAttributeNoWeight.html" />
+        <option value="$PROJECT_DIR$/templates/editAttributeNoWeight.html" />
         <option value="$PROJECT_DIR$/templates/class.html" />
         <option value="$PROJECT_DIR$/server.py" />
+        <option value="$PROJECT_DIR$/templates/addAttributeNoWeight.html" />
       </list>
     </option>
   </component>
@@ -228,7 +266,6 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="R Graphics" order="4" />
       <window_info anchor="right" id="Database" order="5" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3298351" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -239,6 +276,7 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3298351" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -257,13 +295,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/templates/class.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="11" selection-start-line="13" selection-start-column="11" selection-end-line="13" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3230">
@@ -533,13 +564,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/addAttendance.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="16" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/addAttendance.html" />
     <entry file="file://$PROJECT_DIR$/templates/forgot.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -551,13 +576,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-12">
           <caret line="210" column="20" selection-end-line="231" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/addAttributeNoWeight.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="14" lean-forward="true" selection-end-line="20" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -582,20 +600,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/class.html">
+    <entry file="file://$PROJECT_DIR$/templates/editAttributeNoWeight.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="49" column="41" selection-start-line="49" selection-start-column="41" selection-end-line="49" selection-end-column="41" />
+        <state relative-caret-position="68">
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="752">
-          <caret line="246" column="46" selection-start-line="246" selection-start-column="46" selection-end-line="246" selection-end-column="46" />
+        <state relative-caret-position="127">
+          <caret line="203" column="190" selection-start-line="203" selection-start-column="190" selection-end-line="203" selection-end-column="190" />
           <folding>
             <element signature="e#0#93#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/class.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7378">
+          <caret line="434" column="53" selection-start-line="434" selection-start-column="53" selection-end-line="434" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/addAttributeNoWeight.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
         </state>
       </provider>
     </entry>
