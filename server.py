@@ -154,19 +154,30 @@ def mySchoolClass(name,cName):
     courseNum = name[name.index('-')+1:]
     cur = mysql.connection.cursor()
     cur.execute("SELECT weighted FROM Classes WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s", [session['netid'], subject, courseNum, cName])
-    weighted = cur.fetchall()[0]['weighted']
+    weighted = 0
+    for row in cur.fetchall():
+        weighted = row['weighted']
     if weighted:
-        cur.execute("SELECT score, total, weight FROM Percentage WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Attendance", cName])
+        cur.execute("SELECT score, total, weight, attribute FROM Percentage WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Attendance", cName])
         dataAttendance = cur.fetchall()
+        totalAttendanceScore, totalAttendancePossible = 0.0, 0.0
+        weight = 0
+        for row in dataAttendance:
+            totalAttendanceScore += float(row['score'])
+            totalAttendancePossible += float(row['total'])
+            weight = float(row['weight'])
         return render_template('class.html',
                                subject=subject,
                                courseNum=courseNum,
                                courseName=cName,
                                weighted=weighted,
-                               dataAttendance=dataAttendance
+                               weight=weight,
+                               dataAttendance=dataAttendance,
+                               totalAttendanceScore=totalAttendanceScore,
+                               totalAttendancePossible=totalAttendancePossible
                                )
     else:
-        cur.execute("SELECT score, total FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Attendance", cName])
+        cur.execute("SELECT score, total, attribute FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND category=%s AND courseName=%s", [session['netid'], subject, courseNum, "Attendance", cName])
         dataAttendance = cur.fetchall()
         totalAttendanceScore, totalAttendancePossible = 0.0, 0.0
         for row in dataAttendance:
@@ -226,9 +237,110 @@ def deleteClass(course, cName):
         # delete goes through
         mysql.connection.commit()
         cur.close()
-        flash(subject + courseNum + ' has been removed.', 'success')
+        flash(subject + courseNum + ": " + cName + ' has been removed.', 'success')
         return redirect(url_for('myclasses'))
     return render_template('maybeDelete.html', subject=subject, courseNum=courseNum, courseName=cName)
+
+class addAttributeNoWeightForm(Form):
+    score = StringField('Score', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
+    total = StringField('Out Of', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
+    attrTitle = StringField('Name of Attribute', [validators.DataRequired()])
+
+# User tries to add attribute (no weight)
+@app.route('/myclasses/<string:name>/<string:cName>/Add<string:attr>', methods=['GET','POST'])
+@is_logged_in
+def addAttributeNoWeight(name, cName, attr):
+    form = addAttributeNoWeightForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        subject = name[:name.index('-')]
+        courseNum = name[name.index('-') + 1:]
+        score = form.score.data
+        total = form.total.data
+        if float(form.score.data) > float(form.total.data):
+            flash('Score is greater than total.', 'danger')
+            #return redirect(url_for('mySchoolClass', name=name, cName=cName))
+            return render_template('addAttributeNoWeight.html', form=form, attribute=attr)
+        attrTitle = form.attrTitle.data
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        # Add new attribute to DB
+        cur.execute("INSERT INTO Points(netID, subject, courseNum, courseName, category, attribute, score, total) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", [session['netid'], subject, courseNum, cName, attr, attrTitle ,score, total])
+        # Commit changes to DB
+        mysql.connection.commit()
+        cur.close()
+        flash(attr + ' attribute has been added.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('addAttributeNoWeight.html', form=form, attribute=attr)
+
+class addAttributeWeightForm(Form):
+    score = StringField('Score', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
+    total = StringField('Out Of', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
+    attrTitle = StringField('Name of Attribute', [validators.DataRequired()])
+    weight = StringField('Weight (XX.XX, should be the same as others in the category.)', [validators.Regexp(r'[0-9][0-9].[0-9][0-9]', message='Not a number.')])
+
+# User tries to add attribute (weight)
+@app.route('/myclasses/<string:name>/<string:cName>/Add<string:attr>Weight', methods=['GET','POST'])
+@is_logged_in
+def addAttributeWeight(name, cName, attr):
+    form = addAttributeWeightForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        subject = name[:name.index('-')]
+        courseNum = name[name.index('-') + 1:]
+        score = form.score.data
+        total = form.total.data
+        weight = form.weight.data
+        if float(form.score.data) > float(form.total.data):
+            flash('Score is greater than total.', 'danger')
+            return render_template('addAttributeWeight.html', form=form, attribute=attr)
+        attrTitle = form.attrTitle.data
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        result = cur.execute('SELECT * FROM Percentage WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s', [session['netid'], subject, courseNum, cName, attr])
+        if result != 0:
+            result = cur.execute('SELECT * FROM Percentage WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND weight=%s', [session['netid'], subject, courseNum, cName, attr, weight])
+            if result == 0:
+                flash('Weight is not the same as the others.', 'danger')
+                return render_template('addAttributeWeight.html', form=form, attribute=attr)
+        # Add new attribute to DB (nothing has been added to category yet OR weight is the same as the others)
+        cur.execute("INSERT INTO Percentage(netID, subject, courseNum, courseName, category, attribute, score, total, weight) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)", [session['netid'], subject, courseNum, cName, attr, attrTitle ,score, total, weight])
+        # Commit changes to DB
+        mysql.connection.commit()
+        cur.close()
+        flash(attr + ' attribute has been added.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('addAttributeWeight.html', form=form, attribute=attr)
+
+@app.route('/myclasses/<string:name>/<string:cName>/Delete<string:attr>/<string:attrTitle>/<string:score>-<string:total>', methods=['GET','POST'])
+@is_logged_in
+def deleteAttributeNoWeight(name, cName, attr, attrTitle, score, total):
+    subject = name[:name.index('-')]
+    courseNum = name[name.index('-') + 1:]
+    if request.method == 'POST':
+        # connect to DB
+        cur = mysql.connection.cursor()
+        cur.execute('DELETE FROM Points WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attribute=%s AND score=%s AND total=%s', [session['netid'], subject, courseNum, cName, attr, attrTitle, score, total])
+        # delete goes through
+        mysql.connection.commit()
+        cur.close()
+        flash(attr + ' attribute has been removed.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('maybeDeleteAttribute.html', attrTitle=attrTitle, attribute=attr)
+
+@app.route('/myclasses/<string:name>/<string:cName>/Delete<string:attr>Weight/<string:attrTitle>/<string:score>-<string:total>/<string:weight>', methods=['GET','POST'])
+@is_logged_in
+def deleteAttributeWeight(name, cName, attr, attrTitle, score, total, weight):
+    subject = name[:name.index('-')]
+    courseNum = name[name.index('-') + 1:]
+    if request.method == 'POST':
+        # connect to DB
+        cur = mysql.connection.cursor()
+        cur.execute('DELETE FROM Percentage WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attribute=%s AND score=%s AND total=%s AND weight=%s', [session['netid'], subject, courseNum, cName, attr, attrTitle, score, total, weight])
+        # delete goes through
+        mysql.connection.commit()
+        cur.close()
+        flash(attr + ' attribute has been removed.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('maybeDeleteAttribute.html', attrTitle=attrTitle, attribute=attr)
 
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'
