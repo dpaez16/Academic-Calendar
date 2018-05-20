@@ -2,461 +2,69 @@
 
 {% block body %}
     <p></p>
-    <h1>{{subject}}{{courseNum}}: {{courseName}}</h1>
+    <h1>{{subject}}{{courseNum}}: {{courseName}}
+    <object align="right">
+        <a href="#" class="btn btn-primary">Add Category</a>
+    </object>
+    </h1>
     {% if not weighted %}
-    <strong>Attendance</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddAttendance" class="btn btn-primary">Add Attendance</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for attendance in dataAttendance %}
-            <tr>
-                <td>{{attendance.attribute}}</td>
-                <td>{{attendance.score}}</td>
-                <td>{{attendance.total}}</td>
-                {% if attendance.total != 0 %}
-                <td>{{(attendance.score/attendance.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditAttendance/{{attendance.attribute}}/{{attendance.score}}-{{attendance.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeleteAttendance/{{attendance.attribute}}/{{attendance.score}}-{{attendance.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalAttendancePossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalAttendanceScore}}</td>
-                    <td>{{totalAttendancePossible}}</td>
-                    <td>{{(totalAttendanceScore/totalAttendancePossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    <br>
-    <strong>Homework</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddHomework" class="btn btn-primary">Add Homework</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for homework in dataHomework %}
-            <tr>
-                <td>{{homework.attribute}}</td>
-                <td>{{homework.score}}</td>
-                <td>{{homework.total}}</td>
-                {% if homework.total != 0 %}
-                <td>{{(homework.score/homework.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditHomework/{{homework.attribute}}/{{homework.score}}-{{homework.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeleteHomework/{{homework.attribute}}/{{homework.score}}-{{homework.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalHomeworkPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalHomeworkScore}}</td>
-                    <td>{{totalHomeworkPossible}}</td>
-                    <td>{{(totalHomeworkScore/totalHomeworkPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    <br>
-    <strong>Prelab</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddPrelab" class="btn btn-primary">Add Prelab</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for prelab in dataPrelab %}
-            <tr>
-                <td>{{prelab.attribute}}</td>
-                <td>{{prelab.score}}</td>
-                <td>{{prelab.total}}</td>
-                {% if prelab.total != 0 %}
-                <td>{{(prelab.score/prelab.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditPrelab/{{prelab.attribute}}/{{prelab.score}}-{{prelab.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeletePrelab/{{prelab.attribute}}/{{prelab.score}}-{{prelab.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalPrelabPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalPrelabScore}}</td>
-                    <td>{{totalPrelabPossible}}</td>
-                    <td>{{(totalPrelabScore/totalPrelabPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    <br>
-    <strong>Postlab</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddPostlab" class="btn btn-primary">Add Postlab</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for postlab in dataPostlab %}
-            <tr>
-                <td>{{postlab.attribute}}</td>
-                <td>{{postlab.score}}</td>
-                <td>{{postlab.total}}</td>
-                {% if postlab.total != 0 %}
-                <td>{{(postlab.score/postlab.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditPostlab/{{postlab.attribute}}/{{postlab.score}}-{{postlab.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeletePostlab/{{postlab.attribute}}/{{postlab.score}}-{{postlab.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalPostlabPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalPostlabScore}}</td>
-                    <td>{{totalPostlabPossible}}</td>
-                    <td>{{(totalPostlabScore/totalPostlabPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    <br>
-    <strong>Lab Report</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddLabReport" class="btn btn-primary">Add Lab Report</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for labreport in dataLabReport %}
-            <tr>
-                <td>{{labreport.attribute}}</td>
-                <td>{{labreport.score}}</td>
-                <td>{{labreport.total}}</td>
-                {% if labreport.total != 0 %}
-                <td>{{(labreport.score/labreport.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditLabReport/{{labreport.attribute}}/{{labreport.score}}-{{labreport.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeleteLabReport/{{labreport.attribute}}/{{labreport.score}}-{{labreport.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalLabReportPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalLabReportScore}}</td>
-                    <td>{{totalLabReportPossible}}</td>
-                    <td>{{(totalLabReportScore/totalLabReportPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    <br>
-    <strong>Group Project</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddGroupProject" class="btn btn-primary">Add Group Project</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for groupproject in dataGroupProject %}
-            <tr>
-                <td>{{groupproject.attribute}}</td>
-                <td>{{groupproject.score}}</td>
-                <td>{{groupproject.total}}</td>
-                {% if groupproject.total != 0 %}
-                <td>{{(groupproject.score/groupproject.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditGroupProject/{{groupproject.attribute}}/{{groupproject.score}}-{{groupproject.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeleteGroupProject/{{groupproject.attribute}}/{{groupproject.score}}-{{groupproject.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalGroupProjectPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalGroupProjectScore}}</td>
-                    <td>{{totalGroupProjectPossible}}</td>
-                    <td>{{(totalGroupProjectScore/totalGroupProjectPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    <br>
-    <strong>Project</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddProject" class="btn btn-primary">Add Project</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for project in dataProject %}
-            <tr>
-                <td>{{project.attribute}}</td>
-                <td>{{project.score}}</td>
-                <td>{{project.total}}</td>
-                {% if project.total != 0 %}
-                <td>{{(project.score/project.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditProject/{{project.attribute}}/{{project.score}}-{{project.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeleteProject/{{project.attribute}}/{{project.score}}-{{project.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalProjectPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalProjectScore}}</td>
-                    <td>{{totalProjectPossible}}</td>
-                    <td>{{(totalProjectScore/totalProjectPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    <br>
-    <strong>Exams</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddExam" class="btn btn-primary">Add Exam</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for exam in dataExams %}
-            <tr>
-                <td>{{exam.attribute}}</td>
-                <td>{{exam.score}}</td>
-                <td>{{exam.total}}</td>
-                {% if exam.total != 0 %}
-                <td>{{(exam.score/exam.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditExam/{{exam.attribute}}/{{exam.score}}-{{exam.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeleteExam/{{exam.attribute}}/{{exam.score}}-{{exam.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalExamsPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalExamsScore}}</td>
-                    <td>{{totalExamsPossible}}</td>
-                    <td>{{(totalExamsScore/totalExamsPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    <br>
-    <strong>Final</strong>
-        <br>
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddFinal" class="btn btn-primary">Add Final</a>
-        <p></p>
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name of Attribute</th>
-                    <th>Score</th>
-                    <th>Out Of</th>
-                    <th>Percentage</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            {% for final in dataFinal %}
-            <tr>
-                <td>{{final.attribute}}</td>
-                <td>{{final.score}}</td>
-                <td>{{final.total}}</td>
-                {% if final.total != 0 %}
-                <td>{{(final.score/final.total)*100}}%</td>
-                {% else %}
-                <td>0%</td>
-                {% endif %}
-                <td></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditFinal/{{final.attribute}}/{{final.score}}-{{final.total}}" class="btn btn-info" role="button">Edit</a></td>
-                <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/DeleteFinal/{{final.attribute}}/{{final.score}}-{{final.total}}" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endfor %}
-                <tr>
-                    {% if totalFinalPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td>{{totalFinalScore}}</td>
-                    <td>{{totalFinalPossible}}</td>
-                    <td>{{(totalFinalScore/totalFinalPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-        </table>
-    {% else %}
+        {% for category in categoryData %}
+            <strong>{{category.categoryName}}</strong>
+                <br>
+                <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Add{{category.categoryName}}" class="btn btn-primary">Add {{category.categoryName}}</a>
+                <p></p>
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Name of Attribute</th>
+                            <th>Score</th>
+                            <th>Out Of</th>
+                            <th>Percentage</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    {% for attr in category.attributes %}
+                    <tr>
+                        <td>{{attr.attributeName}}</td>
+                        <td>{{attr.score}}</td>
+                        <td>{{attr.total}}</td>
+                        {% if attr.total != 0 %}
+                        <td>{{(attr.score/attr.total)*100}}%</td>
+                        {% else %}
+                        <td>0%</td>
+                        {% endif %}
+                        <td></td>
+                        <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}" class="btn btn-info" role="button">Edit</a></td>
+                        <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Delete{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                    {% endfor %}
+                        <tr>
+                            {% if category.totalPossible != 0 %}
+                            <td><strong>Total</strong></td>
+                            <td>{{category.totalScored}}</td>
+                            <td>{{category.totalPossible}}</td>
+                            <td>{{(category.totalScored/category.totalPossible)*100}}%</td>
+                            <td></td>
+                            <td></td>
+                            {% else %}
+                            <td><strong>Total</strong></td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0%</td>
+                            <td></td>
+                            <td></td>
+                            {% endif %}
+                        </tr>
+                </table>
+            <br>
+        {% endfor %}
+    {% else %} <!-- WEIGHTED -->
     <strong>Attendance</strong>
         <br>
         <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/AddAttendanceWeight" class="btn btn-primary">Add Attendance</a>
+        <object align="right"><strong>Weight: </strong>XX.XX%</object>
         <p></p>
         <table class="table">
             <thead class="thead-light">
@@ -465,7 +73,7 @@
                     <th>Score</th>
                     <th>Out Of</th>
                     <th>Percentage</th>
-                    <th>Weight</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
