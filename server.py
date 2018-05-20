@@ -165,7 +165,7 @@ def mySchoolClass(name,cName):
                 "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                 [session['netid'], subject, courseNum, cName])
     weighted = cur.fetchall()[0]['weighted']
-    cur.execute("SELECT category " +
+    cur.execute("SELECT category, weight " +
                              "FROM Weights " +
                              "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                              [session['netid'], subject, courseNum, cName])
@@ -185,7 +185,8 @@ def mySchoolClass(name,cName):
             'categoryName': category['category'],
             'attributes': attributes,
             'totalScored': totalScored,
-            'totalPossible': totalPossible
+            'totalPossible': totalPossible,
+            'weight': category['weight']
         })
     return render_template('class.html',
                            subject=subject,
