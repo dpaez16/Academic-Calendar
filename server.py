@@ -279,7 +279,7 @@ def addAttribute(name, cName, category):
         # Commit changes to DB
         mysql.connection.commit()
         cur.close()
-        flash(category + ' attribute has been added.', 'success')
+        flash('New "' + category + '" attribute has been added.', 'success')
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('addAttribute.html', form=form, category=category)
 
@@ -330,7 +330,7 @@ def deleteAttribute(name, cName, category, attributeName, score, total):
         # delete goes through
         mysql.connection.commit()
         cur.close()
-        flash(attributeName + ' attribute has been removed.', 'success')
+        flash('"' + attributeName + '"' + ' attribute has been removed.', 'success')
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('maybeDeleteAttribute.html', attributeName=attributeName, category=category)
 
@@ -400,7 +400,7 @@ def deleteCategory(name, cName,category):
         # delete goes through
         mysql.connection.commit()
         cur.close()
-        flash('Category '+ category + ' has been removed.', 'success')
+        flash('"' + category + '"' + ' category has been removed.', 'success')
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('maybeDeleteCategory.html', category=category)
 
