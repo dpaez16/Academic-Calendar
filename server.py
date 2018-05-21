@@ -554,7 +554,9 @@ def calculateGrade(name, cName):
                 [session['netid'], subject, courseNum, cName])
     categories = cur.fetchall()
     categoryData = []
-    attributesVec = []
+    totalScoredVec = []
+    totalPossibleVec = []
+    sum_ = 0
     for category in categories:
         cur.execute("SELECT attributeName, score, total " +
                     "FROM Attributes " +
@@ -573,13 +575,15 @@ def calculateGrade(name, cName):
             'weight': category['weight']
         })
         if weighted:
-            attributesVec.append((1.0*totalScored/totalPossible)*category['weight'])
+            sum_ += (1.0*totalScored/totalPossible)*category['weight']
         else:
-            attributesVec.append((1.0*totalScored/totalPossible)*100)
+            totalScoredVec.append(totalScored)
+            totalPossibleVec.append(totalPossible)
     mysql.connection.commit()
     cur.close()
+    grade = sum_ if weighted else 100.0*sum(totalScoredVec)/sum(totalPossibleVec)
     return render_template('calculateGrade.html',
-                           grade=sum(attributesVec),
+                           grade=grade,
                            weighted=weighted)
 
 if __name__ == "__main__":
