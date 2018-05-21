@@ -481,6 +481,31 @@ def deleteCategory(name, cName,category):
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('maybeDeleteCategory.html', category=category)
 
+class editWeightForm(Form):
+    categoryWeight = StringField('Weight (XX.XX)',
+                                 [validators.Regexp(r'[0-9][0-9].[0-9][0-9]', message='Not formatted properly.')])
+
+# User tries to edit weight
+@app.route('/myclasses/<string:subject>-<string:courseNum>/<string:courseName>/EditWeight/<string:category>', methods=['GET','POST'])
+@is_logged_in
+def editWeight(subject, courseNum, courseName, category):
+    form = editWeightForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        weight = form.categoryWeight.data
+        # connect to DB
+        cur = mysql.connection.cursor()
+        cur.execute('UPDATE Weights ' +
+                    'SET weight=%s ' +
+                    'WHERE netid=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s',
+                    [weight,
+                     session['netid'], subject, courseNum, courseName, category])
+        # insertion goes through
+        mysql.connection.commit()
+        cur.close()
+        flash('Weight for "' + category + '" has been modified.', 'success')
+        return redirect(url_for('mySchoolClass', name=subject+'-'+courseNum, cName=courseName))
+    return render_template('editWeight.html', form=form)
+
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'
     app.run(debug=True)
