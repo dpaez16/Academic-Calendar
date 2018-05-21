@@ -139,14 +139,15 @@ def myclasses():
     classes = []
     # Connect to DB
     cur = mysql.connection.cursor()
-    cur.execute("SELECT subject, courseNum, courseName " +
+    cur.execute("SELECT subject, courseNum, courseName, weighted " +
                 "FROM Classes " +
                 "WHERE netID=%s", [session['netid']])
     for row in cur.fetchall():
         classes.append({
             'subject': row['subject'],
             'courseNum': row['courseNum'],
-            'courseName': row['courseName']
+            'courseName': row['courseName'],
+            'weighted': row['weighted']
         })
     # Commit changes to DB
     mysql.connection.commit()
@@ -217,10 +218,15 @@ def addClass():
         cur = mysql.connection.cursor()
         result = cur.execute("SELECT * " +
                              "FROM Classes " +
-                             "WHERE courseNum=%s AND subject=%s AND netID=%s AND courseName=%s", [courseNum, subject, netid, courseName])
+                             "WHERE courseNum=%s AND subject=%s AND netID=%s AND courseName=%s AND weighted=%s",
+                             [courseNum, subject, netid, courseName, weighted])
         if result > 0:
-            error = subject + courseNum + ": " + courseName + " is already in your list of classes."
-            return render_template('addclass.html', error=error, form=form)
+            if weighted:
+                error = subject + courseNum + ": " + courseName + "(Weighted) is already in your list of classes."
+                return render_template('addclass.html', error=error, form=form)
+            else:
+                error = subject + courseNum + ": " + courseName + "(Not Weighted) is already in your list of classes."
+                return render_template('addclass.html', error=error, form=form)
         else:
             # Add new class to DB
             cur.execute("INSERT INTO Classes(netID, subject, courseNum, courseName, weighted) " +
@@ -232,18 +238,61 @@ def addClass():
             return redirect(url_for('myclasses'))
     return render_template('addclass.html', form=form)
 
-# User tries to delete a class
-@app.route('/myclasses/delete/<string:course>/<string:cName>', methods=['GET', 'POST'])
+class editClassForm(Form):
+    courseNum = StringField('Course Number', [
+        validators.Regexp(r'[0-9][0-9][0-9]', message='Not a course number.'),
+        validators.Length(min=3, max=3, message='Field must be 3 numbers long.')])
+    courseName = StringField('Course Name', [validators.DataRequired()])
+
+# User tries to edit a class
+@app.route('/myclasses/edit/<string:oldCourse>/<string:oldCourseName>/<string:oldWeighted>', methods=['GET', 'POST'])
 @is_logged_in
-def deleteClass(course, cName):
+def editClass(oldCourse, oldCourseName, oldWeighted):
+    form = editClassForm(request.form)
+    if request.method == 'POST':
+        oldSubject = oldCourse[:oldCourse.index('-')]
+        oldCourseNum = oldCourse[oldCourse.index('-') + 1:]
+        courseNum = form.courseNum.data
+        courseName = form.courseName.data
+        subject = request.form.get('subjects')
+        weighted = True if (request.form.get('weighted') == "1") else False
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * " +
+                             "FROM Classes " +
+                             "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND weighted=%s",
+                             [session['netid'], subject, courseNum, courseName, weighted])
+        if result > 0:
+            if weighted:
+                error = subject + courseNum + ": " + courseName + "(Weighted) is already in your list of classes."
+                return render_template('addclass.html', error=error, form=form)
+            else:
+                error = subject + courseNum + ": " + courseName + "(Not Weighted) is already in your list of classes."
+                return render_template('addclass.html', error=error, form=form)
+        cur.execute("UPDATE Classes " +
+                    "SET subject=%s, courseNum=%s, courseName=%s, weighted=%s " +
+                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND weighted=%s",
+                    [subject, courseNum, courseName, weighted,
+                     session['netid'], oldSubject, oldCourseNum, oldCourseName, oldWeighted])
+        # edit goes through
+        mysql.connection.commit()
+        cur.close()
+        flash('Class has been modified.', 'success')
+        return redirect(url_for('myclasses'))
+    return render_template('editClass.html', form=form)
+
+# User tries to delete a class
+@app.route('/myclasses/delete/<string:course>/<string:cName>/<string:weighted>', methods=['GET', 'POST'])
+@is_logged_in
+def deleteClass(course, cName, weighted):
     subject = course[:course.index('-')]
     courseNum = course[course.index('-') + 1:]
     if request.method == 'POST':
         # connect to DB
         cur = mysql.connection.cursor()
         cur.execute('DELETE FROM Classes ' +
-                    'WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s',
-                    [session['netid'], subject, courseNum, cName])
+                    'WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND weighted=%s',
+                    [session['netid'], subject, courseNum, cName, weighted])
         # delete goes through
         mysql.connection.commit()
         cur.close()

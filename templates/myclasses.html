@@ -9,10 +9,13 @@
     <ul class="list-group">
     {% for schoolClass in classes %}
         <li class="list-group-item">
-            <div class="d-flex justify-content-between align-items-center w-100">
-              <a href="myclasses/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a>
-              <a href="myclasses/delete/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}" class="btn btn-danger">Delete</a>
-            </div>
+            <object align="left-center">
+                <a href="myclasses/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a>
+            </object>
+            <object align="right">
+                <a href="myclasses/edit/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}/{{schoolClass.weighted}}" class="btn btn-info">Edit</a>
+                <a href="myclasses/delete/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}/{{schoolClass.weighted}}" class="btn btn-danger">Delete</a>
+            </object>
         </li>
     {% endfor %}
     </ul>

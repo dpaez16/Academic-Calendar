@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d523747-238d-4adb-9f5f-8cbcd4efed3d" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/templates/editClass.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/class.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/myclasses.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/myclasses.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,18 +16,27 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/academic_calendar_app$data.coverage" NAME="data Coverage Results" MODIFIED="1526855387923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526857702012" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526862671277" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="server.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="230" column="12" selection-start-line="230" selection-start-column="12" selection-end-line="230" selection-end-column="12" />
+            <state relative-caret-position="342">
+              <caret line="269" column="80" selection-start-line="269" selection-start-column="80" selection-end-line="269" selection-end-column="80" />
               <folding>
                 <element signature="e#0#93#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="myclasses.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/myclasses.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="16" column="141" selection-start-line="16" selection-start-column="141" selection-end-line="16" selection-end-column="141" />
             </state>
           </provider>
         </entry>
@@ -43,19 +54,11 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>url_for</find>
-      <find>dashboard</find>
-      <find>logged</find>
-      <find>Form</find>
-      <find>validate</find>
-      <find>print</find>
-      <find>row</find>
       <find>session</find>
       <find>class has been added</find>
       <find>classes</find>
       <find>classes =</find>
       <find>data</find>
-      <find>delete</find>
       <find>removed</find>
       <find>validator</find>
       <find>weighted =</find>
@@ -73,6 +76,14 @@
       <find>msg</find>
       <find>class.html</find>
       <find>error</find>
+      <find>edit</find>
+      <find>deleteclass</find>
+      <find>delete a class</find>
+      <find>add a</find>
+      <find>add</find>
+      <find>delete</find>
+      <find>editclass</find>
+      <find>if weighed</find>
     </findStrings>
     <replaceStrings>
       <replace>pre</replace>
@@ -119,7 +130,6 @@
         <option value="$PROJECT_DIR$/static/classes.html" />
         <option value="$PROJECT_DIR$/templates/forgotDone.html" />
         <option value="$PROJECT_DIR$/templates/addclass.html" />
-        <option value="$PROJECT_DIR$/templates/myclasses.html" />
         <option value="$PROJECT_DIR$/templates/maybeDelete.html" />
         <option value="$PROJECT_DIR$/templates/addAttendance.html" />
         <option value="$PROJECT_DIR$/templates/addAttributeWeight.html" />
@@ -138,6 +148,8 @@
         <option value="$PROJECT_DIR$/templates/updates.html" />
         <option value="$PROJECT_DIR$/data.py" />
         <option value="$PROJECT_DIR$/templates/class.html" />
+        <option value="$PROJECT_DIR$/templates/editClass.html" />
+        <option value="$PROJECT_DIR$/templates/myclasses.html" />
         <option value="$PROJECT_DIR$/server.py" />
       </list>
     </option>
@@ -280,9 +292,9 @@
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.3298351" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.09745128" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.23688155" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3298351" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21015625" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21015625" />
       <window_info anchor="right" id="R Packages" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="R Graphics" order="4" />
@@ -316,13 +328,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2329">
-          <caret line="137" column="16" selection-start-line="137" selection-start-column="16" selection-end-line="137" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2329">
@@ -531,13 +536,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/addAttributeWeight.html" />
-    <entry file="file://$PROJECT_DIR$/templates/myclasses.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="109" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="109" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/maybeDelete.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -549,13 +547,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="14" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/addclass.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="42">
-          <caret line="210" column="20" selection-end-line="231" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -631,15 +622,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/class.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
+        <state relative-caret-position="340">
           <caret line="56" column="22" selection-start-line="56" selection-start-column="22" selection-end-line="56" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/addclass.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="217" column="24" selection-end-line="231" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/editClass.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3451">
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/myclasses.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="141" selection-start-line="16" selection-start-column="141" selection-end-line="16" selection-end-column="141" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="230" column="12" selection-start-line="230" selection-start-column="12" selection-end-line="230" selection-end-column="12" />
+        <state relative-caret-position="342">
+          <caret line="269" column="80" selection-start-line="269" selection-start-column="80" selection-end-line="269" selection-end-column="80" />
           <folding>
             <element signature="e#0#93#0" expanded="true" />
           </folding>
