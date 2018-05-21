@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d523747-238d-4adb-9f5f-8cbcd4efed3d" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/templates/editAttributeName.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/editAttributeNumbers.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/calculateGrade.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/calculateGrade.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/class.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,27 +17,18 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/academic_calendar_app$data.coverage" NAME="data Coverage Results" MODIFIED="1526855387923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526884905428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526929638650" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="server.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="271">
-              <caret line="580" column="50" lean-forward="true" selection-start-line="580" selection-start-column="50" selection-end-line="580" selection-end-column="50" />
+            <state relative-caret-position="376">
+              <caret line="427" column="95" selection-start-line="427" selection-start-column="95" selection-end-line="427" selection-end-column="95" />
               <folding>
                 <element signature="e#0#93#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="calculateGrade.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/calculateGrade.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="12" column="43" lean-forward="true" selection-start-line="12" selection-start-column="43" selection-end-line="12" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -54,16 +47,12 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>validator</find>
-      <find>weighted =</find>
+      <find />
       <find>delet</find>
       <find>homework</find>
       <find>weight</find>
       <find>weighted</find>
-      <find>select weight</find>
       <find>Classes()</find>
-      <find>has been remove</find>
-      <find>has been</find>
-      <find>has been added</find>
       <find>exists</find>
       <find>already</find>
       <find>msg</find>
@@ -71,28 +60,25 @@
       <find>error</find>
       <find>edit</find>
       <find>deleteclass</find>
-      <find>delete a class</find>
-      <find>add a</find>
       <find>add</find>
       <find>delete</find>
       <find>editclass</find>
-      <find>if weighed</find>
       <find>session</find>
       <find>mySchool</find>
       <find>school</find>
       <find>myschool</find>
-      <find>connect to DB</find>
       <find>close</find>
+      <find>has been ca</find>
+      <find>attribute has</find>
     </findStrings>
     <replaceStrings>
       <replace>pre</replace>
       <replace>Pre</replace>
       <replace>postlab</replace>
       <replace>Postlab</replace>
-      <replace>Lab Report</replace>
+      <replace />
       <replace>labreport</replace>
       <replace>LabReport</replace>
-      <replace>Group Project</replace>
       <replace>groupproject</replace>
       <replace>GroupProject</replace>
       <replace>project</replace>
@@ -145,13 +131,15 @@
         <option value="$PROJECT_DIR$/templates/home.html" />
         <option value="$PROJECT_DIR$/templates/about.html" />
         <option value="$PROJECT_DIR$/templates/updates.html" />
-        <option value="$PROJECT_DIR$/data.py" />
         <option value="$PROJECT_DIR$/templates/editClass.html" />
         <option value="$PROJECT_DIR$/templates/myclasses.html" />
         <option value="$PROJECT_DIR$/templates/editWeight.html" />
+        <option value="$PROJECT_DIR$/templates/calculateGrade.html" />
+        <option value="$PROJECT_DIR$/data.py" />
+        <option value="$PROJECT_DIR$/templates/editAttributeName.html" />
+        <option value="$PROJECT_DIR$/templates/editAttributeNumbers.html" />
         <option value="$PROJECT_DIR$/templates/class.html" />
         <option value="$PROJECT_DIR$/server.py" />
-        <option value="$PROJECT_DIR$/templates/calculateGrade.html" />
       </list>
     </option>
   </component>
@@ -175,6 +163,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -197,7 +186,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -286,6 +274,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="776" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" weight="0.3298351" />
@@ -328,20 +317,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2465">
-          <caret line="145" column="81" selection-start-line="145" selection-start-column="81" selection-end-line="145" selection-end-column="81" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1717">
-          <caret line="101" column="4" selection-start-line="101" selection-start-column="4" selection-end-line="101" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1717">
@@ -515,13 +490,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/editAttribute.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="14" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/addAttribute.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -554,13 +522,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="8" column="71" lean-forward="true" selection-start-line="8" selection-start-column="71" selection-end-line="8" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-65">
-          <caret line="9" column="34" lean-forward="true" selection-start-line="9" selection-start-column="34" selection-end-line="9" selection-end-column="34" />
         </state>
       </provider>
     </entry>
@@ -634,24 +595,52 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/class.html">
+    <entry file="file://$PROJECT_DIR$/templates/calculateGrade.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="108" column="83" selection-start-line="108" selection-start-column="83" selection-end-line="108" selection-end-column="83" />
+        <state relative-caret-position="272">
+          <caret line="16" column="11" selection-start-line="16" selection-start-column="11" selection-end-line="16" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/calculateGrade.html">
+    <entry file="file://$PROJECT_DIR$/data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="43" lean-forward="true" selection-start-line="12" selection-start-column="43" selection-end-line="12" selection-end-column="43" />
+        <state relative-caret-position="493">
+          <caret line="29" column="58" selection-start-line="29" selection-start-column="58" selection-end-line="29" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/editAttributeName.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/editAttributeNumbers.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="8" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/class.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="112" column="8" selection-start-line="112" selection-start-column="8" selection-end-line="112" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/editAttribute.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="29" lean-forward="true" selection-end-line="20" selection-end-column="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="580" column="50" lean-forward="true" selection-start-line="580" selection-start-column="50" selection-end-line="580" selection-end-column="50" />
+        <state relative-caret-position="376">
+          <caret line="427" column="95" selection-start-line="427" selection-start-column="95" selection-end-line="427" selection-end-column="95" />
           <folding>
             <element signature="e#0#93#0" expanded="true" />
           </folding>

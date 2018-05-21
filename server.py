@@ -236,12 +236,12 @@ def addClass():
                              [courseNum, subject, netid, courseName, weighted])
         if result > 0:
             if weighted:
-                error = subject + courseNum + ": " + courseName + "(Weighted) is already in your list of classes."
+                error = subject + courseNum + ": " + courseName + " (Weighted) is already in your list of classes."
                 mysql.connection.commit()
                 cur.close()
                 return render_template('addclass.html', error=error, form=form)
             else:
-                error = subject + courseNum + ": " + courseName + "(Not Weighted) is already in your list of classes."
+                error = subject + courseNum + ": " + courseName + " (Not Weighted) is already in your list of classes."
                 mysql.connection.commit()
                 cur.close()
                 return render_template('addclass.html', error=error, form=form)
@@ -282,12 +282,12 @@ def editClass(oldCourse, oldCourseName, oldWeighted):
                              [session['netid'], subject, courseNum, courseName, weighted])
         if result > 0:
             if weighted:
-                error = subject + courseNum + ": " + courseName + "(Weighted) is already in your list of classes."
+                error = subject + courseNum + ": " + courseName + " (Weighted) is already in your list of classes."
                 mysql.connection.commit()
                 cur.close()
                 return render_template('addclass.html', error=error, form=form)
             else:
-                error = subject + courseNum + ": " + courseName + "(Not Weighted) is already in your list of classes."
+                error = subject + courseNum + ": " + courseName + " (Not Weighted) is already in your list of classes."
                 mysql.connection.commit()
                 cur.close()
                 return render_template('addclass.html', error=error, form=form)
@@ -363,24 +363,17 @@ def addAttribute(name, cName, category):
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('addAttribute.html', form=form, category=category)
 
-class editAttributeForm(Form):
+class editAttributeNameForm(Form):
     attributeName = StringField('Name of Attribute', [validators.DataRequired()])
-    score = StringField('Score', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
-    total = StringField('Out Of', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
 
-# User tries to edit attribute (no weight)
-@app.route('/myclasses/<string:name>/<string:cName>/Edit<string:category>/<string:oldAttributeName>/<string:oldScore>-<string:oldTotal>', methods=['GET','POST'])
+# User tries to edit attribute Name
+@app.route('/myclasses/<string:name>/<string:cName>/Edit<string:category>/<string:oldAttributeName>/Name', methods=['GET','POST'])
 @is_logged_in
-def editAttribute(name, cName, category, oldAttributeName, oldScore, oldTotal):
-    form = editAttributeForm(request.form)
+def editAttributeName(name, cName, category, oldAttributeName):
+    form = editAttributeNameForm(request.form)
     if request.method == 'POST' and form.validate():  # form is correctly inputted
         subject = name[:name.index('-')]
         courseNum = name[name.index('-') + 1:]
-        score = form.score.data
-        total = form.total.data
-        if float(form.score.data) > float(form.total.data):
-            flash('Score is greater than total.', 'danger')
-            return render_template('editAttribute.html', form=form, category=category)
         attributeName = form.attributeName.data
         # Connect to DB
         cur = mysql.connection.cursor()
@@ -392,18 +385,49 @@ def editAttribute(name, cName, category, oldAttributeName, oldScore, oldTotal):
             error = '"' + category + '" attribute "' + attributeName + '" already exists.'
             mysql.connection.commit()
             cur.close()
-            return render_template('editAttribute.html', error=error, form=form)
-        # Add new attribute to DB
+            return render_template('editAttributeName.html', error=error, form=form)
+        # Change name of attribute to DB
         cur.execute("UPDATE Attributes " +
-                    "SET attributeName=%s, score=%s, total=%s " +
-                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attributeName=%s AND score=%s AND total=%s",
-                    [attributeName, score, total, session['netid'], subject, courseNum, cName, category, oldAttributeName ,oldScore, oldTotal])
+                    "SET attributeName=%s " +
+                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attributeName=%s",
+                    [attributeName, session['netid'], subject, courseNum, cName, category, oldAttributeName])
         # Commit changes to DB
         mysql.connection.commit()
         cur.close()
-        flash(attributeName + ' attribute has been modified.', 'success')
+        flash('"' + category + '" attribute "' + oldAttributeName + '" has been renamed to ' + attributeName + '.', 'success')
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
-    return render_template('editAttribute.html', form=form, category=category)
+    return render_template('editAttributeName.html', form=form, category=category)
+
+class editAttributeNumbersForm(Form):
+    score = StringField('Score', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
+    total = StringField('Out Of', [validators.Regexp(r'[0-9]+(.|)[0-9]*', message='Not a number.')])
+
+# User tries to edit attribute numbers
+@app.route('/myclasses/<string:name>/<string:cName>/Edit<string:category>/<string:attributeName>/<string:oldScore>-<string:oldTotal>/Numbers', methods=['GET','POST'])
+@is_logged_in
+def editAttributeNumbers(name, cName, category, attributeName, oldScore, oldTotal):
+    form = editAttributeNumbersForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        subject = name[:name.index('-')]
+        courseNum = name[name.index('-') + 1:]
+        score = form.score.data
+        total = form.total.data
+        if float(form.score.data) > float(form.total.data):
+            flash('Score is greater than total.', 'danger')
+            return render_template('editAttributeNumbers.html', form=form, category=category)
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        # Change numbers of attribute to DB
+        cur.execute("UPDATE Attributes " +
+                    "SET score=%s, total=%s " +
+                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attributeName=%s AND score=%s AND total=%s",
+                    [score, total, session['netid'], subject, courseNum, cName, category, attributeName ,oldScore, oldTotal])
+        # Commit changes to DB
+        mysql.connection.commit()
+        cur.close()
+        flash('"' + category + '" attribute "' + attributeName + '"' + chr(39) + 's numbers has been modified.', 'success')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
+    return render_template('editAttributeNumbers.html', form=form, category=category)
 
 @app.route('/myclasses/<string:name>/<string:cName>/Delete<string:category>/<string:attributeName>/<string:score>-<string:total>', methods=['GET','POST'])
 @is_logged_in
@@ -557,6 +581,7 @@ def calculateGrade(name, cName):
     totalScoredVec = []
     totalPossibleVec = []
     sum_ = 0
+    sumOfWeights = 0
     for category in categories:
         cur.execute("SELECT attributeName, score, total " +
                     "FROM Attributes " +
@@ -575,6 +600,9 @@ def calculateGrade(name, cName):
             'weight': category['weight']
         })
         if weighted:
+            sumOfWeights += category['weight']
+            if not attributes:
+                continue
             sum_ += (1.0*totalScored/totalPossible)*category['weight']
         else:
             totalScoredVec.append(totalScored)
@@ -582,6 +610,9 @@ def calculateGrade(name, cName):
     mysql.connection.commit()
     cur.close()
     grade = sum_ if weighted else 100.0*sum(totalScoredVec)/sum(totalPossibleVec)
+    if weighted and sumOfWeights != 100:
+        flash('Weights do not add up to 100%.', 'danger')
+        return redirect(url_for('mySchoolClass', name=name, cName=cName))
     return render_template('calculateGrade.html',
                            grade=grade,
                            weighted=weighted)

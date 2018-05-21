@@ -34,6 +34,7 @@
                 <thead class="thead-light">
                     <tr>
                         <th>Name of Attribute</th>
+                        <th></th>
                         <th>Score</th>
                         <th>Out Of</th>
                         <th>Percentage</th>
@@ -45,6 +46,7 @@
                 {% for attr in category.attributes %}
                 <tr>
                     <td>{{attr.attributeName}}</td>
+                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/Name" class="btn btn-info" role="button">Edit Name</a></td>
                     <td>{{attr.score}}</td>
                     <td>{{attr.total}}</td>
                     {% if attr.total != 0 %}
@@ -53,7 +55,7 @@
                     <td>0%</td>
                     {% endif %}
                     <td></td>
-                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}" class="btn btn-info" role="button">Edit</a></td>
+                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}/Numbers" class="btn btn-info" role="button">Edit Numbers</a></td>
                     <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Delete{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}" class="btn btn-danger">Delete</a></td>
                 </tr>
                 {% endfor %}
@@ -61,6 +63,7 @@
                 <tr>
                     {% if category.totalPossible != 0 %}
                     <td><strong>Total</strong></td>
+                    <td></td>
                     <td>{{category.totalScored}}</td>
                     <td>{{category.totalPossible}}</td>
                     <td>{{(category.totalScored/category.totalPossible)*100}}%</td>
@@ -68,6 +71,7 @@
                     <td></td>
                     {% else %}
                     <td><strong>Total</strong></td>
+                    <td></td>
                     <td>0</td>
                     <td>0</td>
                     <td>0%</td>
@@ -78,11 +82,8 @@
                     {% if weighted %}
                     <tr>
                         {% if category.totalPossible != 0 %}
-                        <td>
-                            <strong>Total Earned (Weighted)</strong>
-                            <br>
-                            {{(category.totalScored/category.totalPossible)*category.weight}}%
-                        </td>
+                        <td><strong>Total Earned (Weighted)</strong></td>
+                        <td>{{(category.totalScored/category.totalPossible)*category.weight}}%</td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -92,6 +93,7 @@
                         <td>
                             <strong>Total Earned (Weighted)</strong>:
                         </td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -108,4 +110,5 @@
     {% if categoryData and atLeastOneAttribute %}
         <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/calculateGrade" class="btn btn-primary btn-lg btn-block">Calculate My Grade</a>
     {% endif %}
+    <br>
 {% endblock %}
