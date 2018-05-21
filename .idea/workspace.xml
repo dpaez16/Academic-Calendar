@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d523747-238d-4adb-9f5f-8cbcd4efed3d" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/editWeight.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/calculateGrade.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/class.html" afterDir="false" />
@@ -16,15 +16,15 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/academic_calendar_app$data.coverage" NAME="data Coverage Results" MODIFIED="1526855387923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526864288279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1526867583403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="server.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="506" column="56" lean-forward="true" selection-start-line="506" selection-start-column="56" selection-end-line="506" selection-end-column="56" />
+            <state relative-caret-position="385">
+              <caret line="581" column="27" selection-start-line="581" selection-start-column="27" selection-end-line="581" selection-end-column="27" />
               <folding>
                 <element signature="e#0#93#0" expanded="true" />
               </folding>
@@ -45,12 +45,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>session</find>
-      <find>class has been added</find>
-      <find>classes</find>
-      <find>classes =</find>
-      <find>data</find>
-      <find>removed</find>
       <find>validator</find>
       <find>weighted =</find>
       <find>delet</find>
@@ -75,6 +69,12 @@
       <find>delete</find>
       <find>editclass</find>
       <find>if weighed</find>
+      <find>session</find>
+      <find>mySchool</find>
+      <find>school</find>
+      <find>myschool</find>
+      <find>connect to DB</find>
+      <find>close</find>
     </findStrings>
     <replaceStrings>
       <replace>pre</replace>
@@ -140,9 +140,10 @@
         <option value="$PROJECT_DIR$/data.py" />
         <option value="$PROJECT_DIR$/templates/editClass.html" />
         <option value="$PROJECT_DIR$/templates/myclasses.html" />
-        <option value="$PROJECT_DIR$/templates/class.html" />
         <option value="$PROJECT_DIR$/templates/editWeight.html" />
+        <option value="$PROJECT_DIR$/templates/class.html" />
         <option value="$PROJECT_DIR$/server.py" />
+        <option value="$PROJECT_DIR$/templates/calculateGrade.html" />
       </list>
     </option>
   </component>
@@ -277,13 +278,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="776" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" weight="0.3298351" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.3298351" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.23688155" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.23688155" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3298351" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21015625" />
       <window_info anchor="right" id="R Packages" order="6" />
@@ -319,13 +321,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2465">
@@ -469,13 +464,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/forgot_done.html" />
     <entry file="file://$PROJECT_DIR$/static/classes.html" />
-    <entry file="file://$PROJECT_DIR$/templates/includes/_formhelpers.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="14" selection-start-line="8" selection-start-column="14" selection-end-line="8" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/forgotDone.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -501,13 +489,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="39" selection-start-line="10" selection-start-column="39" selection-end-line="10" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/includes/_navbar.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="18" column="87" selection-start-line="18" selection-start-column="44" selection-end-line="18" selection-end-column="87" />
         </state>
       </provider>
     </entry>
@@ -569,20 +550,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/about.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="69" selection-start-line="14" selection-start-column="69" selection-end-line="14" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/home.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="50" selection-start-line="4" selection-start-column="50" selection-end-line="4" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-65">
@@ -618,13 +585,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/class.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="26" column="109" selection-start-line="26" selection-start-column="21" selection-end-line="26" selection-end-column="109" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/addCategoryWeight.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -639,10 +599,52 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/templates/includes/_navbar.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="87" selection-start-line="18" selection-start-column="44" selection-end-line="18" selection-end-column="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/includes/_formhelpers.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="14" selection-start-line="8" selection-start-column="14" selection-end-line="8" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/home.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="14" lean-forward="true" selection-end-line="7" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/about.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="25" lean-forward="true" selection-end-line="16" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/class.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="108" column="83" selection-start-line="108" selection-start-column="83" selection-end-line="108" selection-end-column="83" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/calculateGrade.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="38" selection-start-line="15" selection-start-column="38" selection-end-line="15" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="506" column="56" lean-forward="true" selection-start-line="506" selection-start-column="56" selection-end-line="506" selection-end-column="56" />
+        <state relative-caret-position="385">
+          <caret line="581" column="27" selection-start-line="581" selection-start-column="27" selection-end-line="581" selection-end-column="27" />
           <folding>
             <element signature="e#0#93#0" expanded="true" />
           </folding>

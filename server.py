@@ -51,6 +51,8 @@ def register():
                              "WHERE netID=%s", [netid])
         if result > 0:
             error = "User exists with that NetID."
+            mysql.connection.commit()
+            cur.close()
             return render_template('register.html', form=form, error=error)
         else:
             # Add new user to DB
@@ -82,13 +84,20 @@ def login():
                 session['name'] = data['name']
                 session['netid'] = netid
                 flash('You are now logged in. Welcome, ' + session['name'] + '.', 'success')
+                mysql.connection.commit()
+                cur.close()
                 return redirect(url_for('myclasses'))
             else: # password does not work
                 error = 'Invalid login.'
+                mysql.connection.commit()
+                cur.close()
                 return render_template('login.html', error=error)
+            mysql.connection.commit()
             cur.close()
         else: # user not found
             error = 'NetID not found.'
+            mysql.connection.commit()
+            cur.close()
             return render_template('login.html', error=error)
     return render_template('login.html')
 
@@ -166,6 +175,7 @@ def mySchoolClass(name,cName):
                 "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                 [session['netid'], subject, courseNum, cName])
     weighted = cur.fetchall()[0]['weighted']
+    atLeastOneAttribute = False
     cur.execute("SELECT category, weight " +
                              "FROM Weights " +
                              "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
@@ -182,6 +192,7 @@ def mySchoolClass(name,cName):
         for attribute in attributes:
             totalScored += attribute['score']
             totalPossible += attribute['total']
+            atLeastOneAttribute = True
         categoryData.append({
             'categoryName': category['category'],
             'attributes': attributes,
@@ -189,12 +200,15 @@ def mySchoolClass(name,cName):
             'totalPossible': totalPossible,
             'weight': category['weight']
         })
+    mysql.connection.commit()
+    cur.close()
     return render_template('class.html',
                            subject=subject,
                            courseNum=courseNum,
                            courseName=cName,
                            weighted=weighted,
-                           categoryData=categoryData
+                           categoryData=categoryData,
+                           atLeastOneAttribute=atLeastOneAttribute
                            )
 
 class addClassForm(Form):
@@ -223,9 +237,13 @@ def addClass():
         if result > 0:
             if weighted:
                 error = subject + courseNum + ": " + courseName + "(Weighted) is already in your list of classes."
+                mysql.connection.commit()
+                cur.close()
                 return render_template('addclass.html', error=error, form=form)
             else:
                 error = subject + courseNum + ": " + courseName + "(Not Weighted) is already in your list of classes."
+                mysql.connection.commit()
+                cur.close()
                 return render_template('addclass.html', error=error, form=form)
         else:
             # Add new class to DB
@@ -265,9 +283,13 @@ def editClass(oldCourse, oldCourseName, oldWeighted):
         if result > 0:
             if weighted:
                 error = subject + courseNum + ": " + courseName + "(Weighted) is already in your list of classes."
+                mysql.connection.commit()
+                cur.close()
                 return render_template('addclass.html', error=error, form=form)
             else:
                 error = subject + courseNum + ": " + courseName + "(Not Weighted) is already in your list of classes."
+                mysql.connection.commit()
+                cur.close()
                 return render_template('addclass.html', error=error, form=form)
         cur.execute("UPDATE Classes " +
                     "SET subject=%s, courseNum=%s, courseName=%s, weighted=%s " +
@@ -327,6 +349,8 @@ def addAttribute(name, cName, category):
                              [session['netid'], subject, courseNum, cName, category, attributeName])
         if result > 0: # duplicates exist
             error = '"' + category + '" attribute "' + attributeName + '" already exists.'
+            mysql.connection.commit()
+            cur.close()
             return render_template('addAttribute.html', error=error, form=form)
         # Add new attribute to DB
         cur.execute("INSERT INTO Attributes(netID, subject, courseNum, courseName, category, attributeName, score, total) " +
@@ -366,6 +390,8 @@ def editAttribute(name, cName, category, oldAttributeName, oldScore, oldTotal):
                              [session['netid'], subject, courseNum, cName, category, attributeName])
         if result > 0:  # duplicates exist
             error = '"' + category + '" attribute "' + attributeName + '" already exists.'
+            mysql.connection.commit()
+            cur.close()
             return render_template('editAttribute.html', error=error, form=form)
         # Add new attribute to DB
         cur.execute("UPDATE Attributes " +
@@ -418,6 +444,8 @@ def addCategoryNoWeight(name, cName):
                              [session['netid'], subject, courseNum, cName, category])
         if result > 0:  # duplicates exist
             error = '"' + category + '" is already a category.'
+            mysql.connection.commit()
+            cur.close()
             return render_template('addCategoryNoWeight.html', error=error, form=form)
         cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight) ' +
                     'VALUES(%s, %s, %s, %s, %s, %s)',
@@ -451,6 +479,8 @@ def addCategoryWeight(name, cName):
                              [session['netid'], subject, courseNum, cName, category])
         if result > 0:  # duplicates exist
             error = '"' + category + '" is already a category.'
+            mysql.connection.commit()
+            cur.close()
             return render_template('addCategoryWeight.html', error=error, form=form)
         cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight) ' +
                     'VALUES(%s, %s, %s, %s, %s, %s)',
@@ -505,6 +535,52 @@ def editWeight(subject, courseNum, courseName, category):
         flash('Weight for "' + category + '" has been modified.', 'success')
         return redirect(url_for('mySchoolClass', name=subject+'-'+courseNum, cName=courseName))
     return render_template('editWeight.html', form=form)
+
+# user tries to see computed grade
+@app.route('/myclasses/<string:name>/<string:cName>/calculateGrade')
+@is_logged_in
+def calculateGrade(name, cName):
+    subject = name[:name.index('-')]
+    courseNum = name[name.index('-') + 1:]
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT weighted " +
+                "FROM Classes " +
+                "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
+                [session['netid'], subject, courseNum, cName])
+    weighted = cur.fetchall()[0]['weighted']
+    cur.execute("SELECT category, weight " +
+                "FROM Weights " +
+                "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
+                [session['netid'], subject, courseNum, cName])
+    categories = cur.fetchall()
+    categoryData = []
+    attributesVec = []
+    for category in categories:
+        cur.execute("SELECT attributeName, score, total " +
+                    "FROM Attributes " +
+                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
+                    [session['netid'], subject, courseNum, cName, category['category']])
+        attributes = cur.fetchall()
+        totalScored, totalPossible = 0.0, 0.0
+        for attribute in attributes:
+            totalScored += attribute['score']
+            totalPossible += attribute['total']
+        categoryData.append({
+            'categoryName': category['category'],
+            'attributes': attributes,
+            'totalScored': totalScored,
+            'totalPossible': totalPossible,
+            'weight': category['weight']
+        })
+        if weighted:
+            attributesVec.append((1.0*totalScored/totalPossible)*category['weight'])
+        else:
+            attributesVec.append((1.0*totalScored/totalPossible)*100)
+    mysql.connection.commit()
+    cur.close()
+    return render_template('calculateGrade.html',
+                           grade=sum(attributesVec),
+                           weighted=weighted)
 
 if __name__ == "__main__":
     app.secret_key='docpmoo10/10'

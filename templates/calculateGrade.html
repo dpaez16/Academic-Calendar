@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1> </h1>
+<h1> Calculated Grade </h1>
+<br>
+{% if not weighted %}
+    <strong> Pre-Curve:</strong> {{grade}}%
+    <br>
+    <br>
+    <strong>Post-Curve:</strong> XX.XX%
+{% else %}
+    <strong> Pre-Curve:</strong> YY.YY%
+    <br>
+    <br>
+    <strong>Post-Curve:</strong> YY.YY%
+{% endif %}
+{% endblock %}

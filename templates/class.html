@@ -104,4 +104,8 @@
             </table>
         <br>
     {% endfor %}
+    <br>
+    {% if categoryData and atLeastOneAttribute %}
+        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/calculateGrade" class="btn btn-primary btn-lg btn-block">Calculate My Grade</a>
+    {% endif %}
 {% endblock %}
