@@ -15,6 +15,8 @@
         <li class="list-group-item">
             <object align="left">
                 <a href="/administration/{{user.netID}}/{{user.name}}/classes">{{user.netID}} - {{user.name}}</a>
+                <br>
+                <strong>Last Edit:</strong> {{user.last_commit}}
             </object>
             {% if user.blocked %}
                 <object align="right">BLOCKED</object>

@@ -34,6 +34,7 @@ def is_not_blocked(f):
             return f(*args, **kwargs)
         else:
             flash('Check-In is going on at the moment, please wait.', 'danger')
+            session.clear()
             return redirect(url_for('Index'))
     return wrap
 
@@ -173,7 +174,7 @@ def is_admin(f):
 @is_admin
 def administration():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT netID, name, blocked " +
+    cur.execute("SELECT netID, name, blocked, last_commit " +
                 "FROM Users ")
     users = cur.fetchall()
     mysql.connection.commit()
@@ -193,7 +194,7 @@ def administrationCheckIn():
         else:
             query += "netID<>'" + ADMIN_NETID[i] + "'"
     cur.execute(query)
-    cur.execute("SELECT netID, name, blocked " +
+    cur.execute("SELECT netID, name, blocked, last_commit " +
                 "FROM Users ")
     users = cur.fetchall()
     mysql.connection.commit()
@@ -209,7 +210,7 @@ def administrationUndoCheckIn():
     cur = mysql.connection.cursor()
     cur.execute("UPDATE Users " +
                 "SET blocked=FALSE")
-    cur.execute("SELECT netID, name " +
+    cur.execute("SELECT netID, name, blocked, last_commit " +
                 "FROM Users ")
     users = cur.fetchall()
     mysql.connection.commit()
