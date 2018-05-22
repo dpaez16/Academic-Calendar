@@ -19,6 +19,40 @@ ADMIN_NAME = ['DDP']
 # init MySQL
 mysql = MySQL(app)
 
+def is_not_blocked(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT blocked " +
+                    "FROM Users " +
+                    "WHERE netID=%s AND name=%s",
+                    [session['netid'], session['name']])
+        blocked = cur.fetchall()[0]['blocked']
+        mysql.connection.commit()
+        cur.close()
+        if not blocked:
+            return f(*args, **kwargs)
+        else:
+            flash('Check-In is going on at the moment, please wait.', 'danger')
+            return redirect(url_for('Index'))
+    return wrap
+
+def is_check_in_not_happening(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT SUM(blocked) AS num " +
+                    "FROM Users")
+        numBlocks = cur.fetchall()[0]['num']
+        mysql.connection.commit()
+        cur.close()
+        if not numBlocks:
+            return f(*args, **kwargs)
+        else:
+            flash('Check-In is going on at the moment, please wait.', 'danger')
+            return redirect(url_for('Index'))
+    return wrap
+
 # Home page
 @app.route('/')
 def Index():
@@ -41,6 +75,7 @@ class RegisterForm(Form):
 
 # Register page
 @app.route('/register', methods=['GET', 'POST'])
+@is_check_in_not_happening
 def register():
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate(): # form is correctly inputted
@@ -82,7 +117,10 @@ def login():
         if result > 0:  # User is found
             data = cur.fetchone()
             password = data['password']
-            if sha256_crypt.verify(password_candidate, password): # password works
+            cur.execute("SELECT SUM(blocked) AS num " +
+                        "FROM Users")
+            numBlocks = cur.fetchall()[0]['num']
+            if (sha256_crypt.verify(password_candidate, password) and not numBlocks) or (sha256_crypt.verify(password_candidate, password) and numBlocks and (data['name'] in ADMIN_NAME) and (netid in ADMIN_NETID)): # password works and check-in is not happening
                 session['logged_in'] = True
                 session['name'] = data['name']
                 session['netid'] = netid
@@ -93,6 +131,9 @@ def login():
                     session['admin'] = True
                 return redirect(url_for('myclasses'))
             else: # password does not work
+                if numBlocks: # check-in is happening
+                    flash('Check-In is going on at the moment, please wait.', 'danger')
+                    return redirect(url_for('Index'))
                 error = 'Invalid login.'
                 mysql.connection.commit()
                 cur.close()
@@ -126,23 +167,13 @@ def is_admin(f):
             return redirect(url_for('login'))
     return wrap
 
-def is_blocked(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'admin' in session: # FIX THIS
-            return f(*args, **kwargs)
-        else:
-            flash('Check-In is going on at the moment, please wait.', 'danger')
-            return redirect(url_for('login'))
-    return wrap
-
 # admin page
 @app.route('/administration')
 @is_logged_in
 @is_admin
 def administration():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT netID, name " +
+    cur.execute("SELECT netID, name, blocked " +
                 "FROM Users ")
     users = cur.fetchall()
     mysql.connection.commit()
@@ -155,7 +186,14 @@ def administration():
 @is_admin
 def administrationCheckIn():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT netID, name " +
+    query = "UPDATE Users SET blocked=TRUE WHERE "
+    for i in range(len(ADMIN_NETID)):
+        if i != (len(ADMIN_NETID) - 1):
+            query += "netID<>'" + ADMIN_NETID[i] + "' OR "
+        else:
+            query += "netID<>'" + ADMIN_NETID[i] + "'"
+    cur.execute(query)
+    cur.execute("SELECT netID, name, blocked " +
                 "FROM Users ")
     users = cur.fetchall()
     mysql.connection.commit()
@@ -169,6 +207,8 @@ def administrationCheckIn():
 @is_admin
 def administrationUndoCheckIn():
     cur = mysql.connection.cursor()
+    cur.execute("UPDATE Users " +
+                "SET blocked=FALSE")
     cur.execute("SELECT netID, name " +
                 "FROM Users ")
     users = cur.fetchall()
@@ -327,6 +367,7 @@ class NewPasswordForm(Form):
 
 # forgot password page
 @app.route('/forgot', methods=['GET','POST'])
+@is_check_in_not_happening
 def forgot():
     form = NewPasswordForm(request.form)
     if request.method == 'POST' and form.validate(): # form inputted is correct
@@ -337,6 +378,7 @@ def forgot():
 
 # page after forgot password
 @app.route('/forgotDone')
+@is_not_blocked
 def forgotDone():
     return render_template('forgotDone.html')
 
@@ -346,6 +388,7 @@ def updates():
 
 # my profile page
 @app.route('/myprofile')
+@is_not_blocked
 @is_logged_in
 def myProfile():
     return render_template('profile.html', name=session['name'], netid=session['netid'])
@@ -356,6 +399,7 @@ class editProfileForm(Form):
 
 # user tries to edit profile
 @app.route('/myprofile/edit', methods=['GET', 'POST'])
+@is_not_blocked
 @is_logged_in
 def editProfile():
     form = editProfileForm(request.form)
@@ -396,6 +440,7 @@ class changePasswordForm(Form):
 
 # user tries to change password
 @app.route('/myprofile/changePW', methods=['GET', 'POST'])
+@is_not_blocked
 @is_logged_in
 def changePassword():
     form = changePasswordForm(request.form)
@@ -417,6 +462,7 @@ def changePassword():
 
 # User's classes page
 @app.route('/myclasses')
+@is_not_blocked
 @is_logged_in
 def myclasses():
     classes = []
@@ -439,6 +485,7 @@ def myclasses():
 
 # User clicks on class link
 @app.route('/myclasses/<string:name>/<string:cName>')
+@is_not_blocked
 @is_logged_in
 def mySchoolClass(name,cName):
     subject = name[:name.index('-')]
@@ -493,6 +540,7 @@ class addClassForm(Form):
 
 # User tries to add class
 @app.route('/myclasses/addclass', methods=['GET','POST'])
+@is_not_blocked
 @is_logged_in
 def addClass():
     form = addClassForm(request.form)
@@ -538,6 +586,7 @@ class editClassForm(Form):
 
 # User tries to edit a class
 @app.route('/myclasses/edit/<string:oldCourse>/<string:oldCourseName>/<string:oldWeighted>', methods=['GET', 'POST'])
+@is_not_blocked
 @is_logged_in
 def editClass(oldCourse, oldCourseName, oldWeighted):
     form = editClassForm(request.form)
@@ -579,6 +628,7 @@ def editClass(oldCourse, oldCourseName, oldWeighted):
 
 # User tries to delete a class
 @app.route('/myclasses/delete/<string:course>/<string:cName>/<string:weighted>', methods=['GET', 'POST'])
+@is_not_blocked
 @is_logged_in
 def deleteClass(course, cName, weighted):
     subject = course[:course.index('-')]
@@ -603,6 +653,7 @@ class addAttributeForm(Form):
 
 # User tries to add attribute
 @app.route('/myclasses/<string:name>/<string:cName>/Add<string:category>', methods=['GET','POST'])
+@is_not_blocked
 @is_logged_in
 def addAttribute(name, cName, category):
     form = addAttributeForm(request.form)
@@ -642,6 +693,7 @@ class editAttributeNameForm(Form):
 
 # User tries to edit attribute Name
 @app.route('/myclasses/<string:name>/<string:cName>/Edit<string:category>/<string:oldAttributeName>/Name', methods=['GET','POST'])
+@is_not_blocked
 @is_logged_in
 def editAttributeName(name, cName, category, oldAttributeName):
     form = editAttributeNameForm(request.form)
@@ -678,6 +730,7 @@ class editAttributeNumbersForm(Form):
 
 # User tries to edit attribute numbers
 @app.route('/myclasses/<string:name>/<string:cName>/Edit<string:category>/<string:attributeName>/<string:oldScore>-<string:oldTotal>/Numbers', methods=['GET','POST'])
+@is_not_blocked
 @is_logged_in
 def editAttributeNumbers(name, cName, category, attributeName, oldScore, oldTotal):
     form = editAttributeNumbersForm(request.form)
@@ -704,6 +757,7 @@ def editAttributeNumbers(name, cName, category, attributeName, oldScore, oldTota
     return render_template('editAttributeNumbers.html', form=form, category=category)
 
 @app.route('/myclasses/<string:name>/<string:cName>/Delete<string:category>/<string:attributeName>/<string:score>-<string:total>', methods=['GET','POST'])
+@is_not_blocked
 @is_logged_in
 def deleteAttribute(name, cName, category, attributeName, score, total):
     subject = name[:name.index('-')]
@@ -726,6 +780,7 @@ class addCategoryNoWeightForm(Form):
 
 # User tries to add category (no weight)
 @app.route('/myclasses/<string:name>/<string:cName>/addCategory/NoWeight', methods=['GET','POST'])
+@is_not_blocked
 @is_logged_in
 def addCategoryNoWeight(name, cName):
     form = addCategoryNoWeightForm(request.form)
@@ -761,6 +816,7 @@ class addCategoryWeightedForm(Form):
 
 # User tries to add category (weighted)
 @app.route('/myclasses/<string:name>/<string:cName>/addCategory/Weight', methods=['GET','POST'])
+@is_not_blocked
 @is_logged_in
 def addCategoryWeight(name, cName):
     form = addCategoryWeightedForm(request.form)
@@ -792,6 +848,7 @@ def addCategoryWeight(name, cName):
 
 # user tries to delete category
 @app.route('/myclasses/<string:name>/<string:cName>/deleteCategory/<string:category>', methods=['GET', 'POST'])
+@is_not_blocked
 @is_logged_in
 def deleteCategory(name, cName,category):
     subject = name[:name.index('-')]
@@ -815,6 +872,7 @@ class editWeightForm(Form):
 
 # User tries to edit weight
 @app.route('/myclasses/<string:subject>-<string:courseNum>/<string:courseName>/EditWeight/<string:category>', methods=['GET','POST'])
+@is_not_blocked
 @is_logged_in
 def editWeight(subject, courseNum, courseName, category):
     form = editWeightForm(request.form)
@@ -836,6 +894,7 @@ def editWeight(subject, courseNum, courseName, category):
 
 # user tries to see computed grade
 @app.route('/myclasses/<string:name>/<string:cName>/calculateGrade')
+@is_not_blocked
 @is_logged_in
 def calculateGrade(name, cName):
     subject = name[:name.index('-')]

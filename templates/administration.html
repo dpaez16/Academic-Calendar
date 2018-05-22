@@ -13,9 +13,12 @@
     <ul class="list-group">
     {% for user in users %}
         <li class="list-group-item">
-            <object align="left-center">
+            <object align="left">
                 <a href="/administration/{{user.netID}}/{{user.name}}/classes">{{user.netID}} - {{user.name}}</a>
             </object>
+            {% if user.blocked %}
+                <object align="right">BLOCKED</object>
+            {% endif %}
         </li>
     {% endfor %}
     </ul>
