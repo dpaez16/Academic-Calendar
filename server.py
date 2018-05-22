@@ -48,9 +48,9 @@ def register():
         cur = mysql.connection.cursor()
         result = cur.execute("SELECT * " +
                              "FROM Users " +
-                             "WHERE netID=%s", [netid])
+                             "WHERE netID=%s AND name=%s", [netid, name])
         if result > 0:
-            error = "User exists with that NetID."
+            error = "User exists with that NetID and name."
             mysql.connection.commit()
             cur.close()
             return render_template('register.html', form=form, error=error)
@@ -146,6 +146,69 @@ def updates():
 @is_logged_in
 def myProfile():
     return render_template('profile.html', name=session['name'], netid=session['netid'])
+
+class editProfileForm(Form):
+    newName = StringField('Initials/Name (If pledge)', [validators.Length(min=1, max=50)])
+    newNetID = StringField('NetID', [validators.Regexp(r'[a-z]+[0-9]+', message='Not NetID.')])
+
+# user tries to edit profile
+@app.route('/myprofile/edit', methods=['GET', 'POST'])
+@is_logged_in
+def editProfile():
+    form = editProfileForm(request.form)
+    if request.method == 'POST' and form.validate(): # form is correctly inputted
+        newName = form.newName.data
+        newNetID = form.newNetID.data
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * " +
+                             "FROM Users " +
+                             "WHERE netID=%s AND name=%s", [newNetID, newName])
+        if result > 0:
+            error = "User exists with that NetID and name."
+            mysql.connection.commit()
+            cur.close()
+            return render_template('editProfile.html', form=form, error=error)
+        else:
+            # Add new user to DB
+            cur.execute("UPDATE Users " +
+                        "SET netID=%, name=%s " +
+                        "WHERE netID=%s AND name=%s",
+                        (newNetID, newName, session['netid'], session['name']))
+            # Commit changes to DB
+            mysql.connection.commit()
+            cur.close()
+            flash('Profile has been modified.', 'success')
+            return redirect(url_for('myProfile'))
+    return render_template('editProfile.html', form=form)
+
+class changePasswordForm(Form):
+    newPassword = PasswordField('New Password', [
+        validators.DataRequired(),
+        validators.EqualTo('confirmPassword', message='Passwords do not match.')
+    ])
+    confirmPassword = PasswordField('Confirm New Password')
+
+# user tries to change password
+@app.route('/myprofile/changePW', methods=['GET', 'POST'])
+@is_logged_in
+def changePassword():
+    form = changePasswordForm(request.form)
+    if request.method == 'POST' and form.validate(): # form is correctly inputted
+        newPassword = sha256_crypt.encrypt(str(form.newPassword.data))
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        # Add new user to DB
+        cur.execute("UPDATE Users " +
+                    "SET password=%s " +
+                    "WHERE netid=%s AND name=%s",
+                    (newPassword, session['netid'], session['name']))
+        # Commit changes to DB
+        mysql.connection.commit()
+        cur.close()
+        flash('Password has been changed.', 'success')
+        return redirect(url_for('myProfile'))
+    return render_template('editPassword.html', form=form)
 
 # User's classes page
 @app.route('/myclasses')

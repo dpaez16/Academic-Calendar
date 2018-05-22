@@ -3,12 +3,13 @@
 {% block body %}
 <h1> </h1>
 <h1> My Profile </h1>
-<p>Name/Initials:</p> {{}}
+<strong>Name/Initials:</strong> {{name}}
 <br>
-<p>NetID:</p> {{}}
+<strong>NetID:</strong> {{netid}}
 <br>
 <br>
-<a href="#" class="btn btn-info">Edit Profile</a>
+<a href="/myprofile/edit" class="btn btn-primary">Edit Profile</a>
 <br>
-<a href="#" class="btn btn-info">Change Password</a>
+<br>
+<a href="/myprofile/changePW" class="btn btn-primary">Change Password</a>
 {% endblock %}
