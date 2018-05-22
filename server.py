@@ -170,14 +170,16 @@ def editProfile():
             cur.close()
             return render_template('editProfile.html', form=form, error=error)
         else:
-            # Add new user to DB
+            # Update profile to DB
             cur.execute("UPDATE Users " +
-                        "SET netID=%, name=%s " +
+                        "SET netID=%s, name=%s " +
                         "WHERE netID=%s AND name=%s",
                         (newNetID, newName, session['netid'], session['name']))
             # Commit changes to DB
             mysql.connection.commit()
             cur.close()
+            session['netid'] = newNetID
+            session['name'] = newName
             flash('Profile has been modified.', 'success')
             return redirect(url_for('myProfile'))
     return render_template('editProfile.html', form=form)
@@ -198,11 +200,11 @@ def changePassword():
         newPassword = sha256_crypt.encrypt(str(form.newPassword.data))
         # Connect to DB
         cur = mysql.connection.cursor()
-        # Add new user to DB
+        # Update new password to DB
         cur.execute("UPDATE Users " +
                     "SET password=%s " +
-                    "WHERE netid=%s AND name=%s",
-                    (newPassword, session['netid'], session['name']))
+                    "WHERE netID=%s AND name=%s",
+                    [newPassword, session['netid'], session['name']])
         # Commit changes to DB
         mysql.connection.commit()
         cur.close()
