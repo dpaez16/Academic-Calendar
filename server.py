@@ -126,6 +126,16 @@ def is_admin(f):
             return redirect(url_for('login'))
     return wrap
 
+def is_blocked(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'admin' in session: # FIX THIS
+            return f(*args, **kwargs)
+        else:
+            flash('Check-In is going on at the moment, please wait.', 'danger')
+            return redirect(url_for('login'))
+    return wrap
+
 # admin page
 @app.route('/administration')
 @is_logged_in
@@ -139,7 +149,35 @@ def administration():
     cur.close()
     return render_template('administration.html', users=users)
 
-# admin page
+# admin executes check-in
+@app.route('/administrationCheckIn')
+@is_logged_in
+@is_admin
+def administrationCheckIn():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT netID, name " +
+                "FROM Users ")
+    users = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    msg = 'Check-In has been executed.'
+    return render_template('administration.html', users=users, msg=msg)
+
+# admin undos check-in
+@app.route('/administrationUndoCheckIn')
+@is_logged_in
+@is_admin
+def administrationUndoCheckIn():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT netID, name " +
+                "FROM Users ")
+    users = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    msg = 'Check-In has been undone.'
+    return render_template('administration.html', users=users, msg=msg)
+
+# admin clicks on user to see user's classes
 @app.route('/administration/<string:userNetID>/<string:userName>/classes')
 @is_logged_in
 @is_admin
