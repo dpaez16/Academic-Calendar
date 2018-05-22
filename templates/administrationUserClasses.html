@@ -9,7 +9,7 @@
     {% for schoolClass in classes %}
         <li class="list-group-item">
             <object align="left-center">
-                <a href="/administration/{{user.netID}}/{{user.name}}/classes/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a>
+                <a href="/administration/{{userNetID}}/{{userName}}/classes/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a>
             </object>
         </li>
     {% endfor %}

@@ -149,8 +149,8 @@ def administrationUserClasses(userNetID, userName):
     cur = mysql.connection.cursor()
     cur.execute("SELECT subject, courseNum, courseName, weighted " +
                 "FROM Classes " +
-                "WHERE netID=%s AND name=%s",
-                [userNetID, userName])
+                "WHERE netID=%s",
+                [userNetID])
     for row in cur.fetchall():
         classes.append({
             'subject': row['subject'],
@@ -210,8 +210,71 @@ def administrationUserClass(userNetID, userName, userClassSubject, userClassCour
                            courseName=userClassCourseName,
                            weighted=weighted,
                            categoryData=categoryData,
-                           atLeastOneAttribute=atLeastOneAttribute
+                           atLeastOneAttribute=atLeastOneAttribute,
+                           userNetID=userNetID,
+                           userName=userName
                            )
+
+# admin tries to see user's computed grade
+@app.route('/administration/<string:userNetID>/<string:userName>/classes/<string:userClassSubject>-<string:userClassCourseNum>/<string:userClassCourseName>/calculateGrade/<string:userWeighted>')
+@is_logged_in
+@is_admin
+def administrationCalculateGrade(userNetID, userName, userClassSubject, userClassCourseNum, userClassCourseName, userWeighted):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT weighted " +
+                "FROM Classes " +
+                "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
+                [userNetID, userClassSubject, userClassCourseNum, userClassCourseName])
+    weighted = cur.fetchall()[0]['weighted']
+    cur.execute("SELECT category, weight " +
+                "FROM Weights " +
+                "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
+                [userNetID, userClassSubject, userClassCourseNum, userClassCourseName])
+    categories = cur.fetchall()
+    categoryData = []
+    totalScoredVec = []
+    totalPossibleVec = []
+    sum_ = 0
+    sumOfWeights = 0
+    for category in categories:
+        cur.execute("SELECT attributeName, score, total " +
+                    "FROM Attributes " +
+                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
+                    [userNetID, userClassSubject, userClassCourseNum, userClassCourseName, category['category']])
+        attributes = cur.fetchall()
+        totalScored, totalPossible = 0.0, 0.0
+        for attribute in attributes:
+            totalScored += attribute['score']
+            totalPossible += attribute['total']
+        categoryData.append({
+            'categoryName': category['category'],
+            'attributes': attributes,
+            'totalScored': totalScored,
+            'totalPossible': totalPossible,
+            'weight': category['weight']
+        })
+        if weighted:
+            sumOfWeights += category['weight']
+            if not attributes:
+                continue
+            sum_ += (1.0*totalScored/totalPossible)*category['weight']
+        else:
+            totalScoredVec.append(totalScored)
+            totalPossibleVec.append(totalPossible)
+    mysql.connection.commit()
+    cur.close()
+    grade = sum_ if weighted else 100.0*sum(totalScoredVec)/sum(totalPossibleVec)
+    if weighted and sumOfWeights != 100:
+        flash('Weights do not add up to 100%.', 'danger')
+        return redirect(url_for('administrationUserClass',
+                                userNetID=userNetID,
+                                userName=userName,
+                                userClassSubject=userClassSubject,
+                                userClassCourseNum=userClassCourseNum,
+                                userClassCourseName=userClassCourseName))
+    return render_template('calculateGrade.html',
+                           grade=grade,
+                           weighted=weighted)
 
 # Logout button
 @app.route('/logout')

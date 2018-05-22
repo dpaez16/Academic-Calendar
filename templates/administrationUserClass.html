@@ -28,7 +28,7 @@
                 {% for attr in category.attributes %}
                 <tr>
                     <td>{{attr.attributeName}}</td>
-                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/Name" class="btn btn-info" role="button">Edit Name</a></td>
+                    <td></td>
                     <td>{{attr.score}}</td>
                     <td>{{attr.total}}</td>
                     {% if attr.total != 0 %}
@@ -37,8 +37,6 @@
                     <td>0%</td>
                     {% endif %}
                     <td></td>
-                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}/Numbers" class="btn btn-info" role="button">Edit Numbers</a></td>
-                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Delete{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}" class="btn btn-danger">Delete</a></td>
                 </tr>
                 {% endfor %}
                 {% if category.attributes %}
@@ -90,7 +88,7 @@
     {% endfor %}
     <br>
     {% if categoryData and atLeastOneAttribute %}
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/calculateGrade" class="btn btn-primary btn-lg btn-block">Calculate My Grade</a>
+        <a href="/administration/{{userNetID}}/{{userName}}/classes/{{subject}}-{{courseNum}}/{{courseName}}/calculateGrade/{{weighted}}" class="btn btn-primary btn-lg btn-block">Calculate Grade</a>
     {% endif %}
     <br>
 {% endblock %}
