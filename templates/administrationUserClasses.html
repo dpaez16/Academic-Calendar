@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <p></p>
+    <h1>{{userName}}'s Classes</h1>
+    <p></p>
+    <p></p>
+    <ul class="list-group">
+    {% for schoolClass in classes %}
+        <li class="list-group-item">
+            <object align="left-center">
+                <a href="/administration/{{user.netID}}/{{user.name}}/classes/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a>
+            </object>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
