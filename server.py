@@ -139,6 +139,80 @@ def administration():
     cur.close()
     return render_template('administration.html', users=users)
 
+# admin page
+@app.route('/administration/<string:userNetID>/<string:userName>/classes')
+@is_logged_in
+@is_admin
+def administrationUserClasses(userNetID, userName):
+    classes = []
+    # Connect to DB
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT subject, courseNum, courseName, weighted " +
+                "FROM Classes " +
+                "WHERE netID=%s AND name=%s",
+                [userNetID, userName])
+    for row in cur.fetchall():
+        classes.append({
+            'subject': row['subject'],
+            'courseNum': row['courseNum'],
+            'courseName': row['courseName'],
+            'weighted': row['weighted']
+        })
+    # Commit changes to DB
+    mysql.connection.commit()
+    cur.close()
+    return render_template('administrationUserClasses.html',
+                           classes=classes,
+                           userNetID=userNetID,
+                           userName=userName)
+
+# admin checks out user's class
+@app.route('/administration/<string:userNetID>/<string:userName>/classes/<string:userClassSubject>-<string:userClassCourseNum>/<string:userClassCourseName>')
+@is_logged_in
+@is_admin
+def administrationUserClass(userNetID, userName, userClassSubject, userClassCourseNum, userClassCourseName):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT weighted " +
+                "FROM Classes " +
+                "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
+                [userNetID, userClassSubject, userClassCourseNum, userClassCourseName])
+    weighted = cur.fetchall()[0]['weighted']
+    atLeastOneAttribute = False
+    cur.execute("SELECT category, weight " +
+                "FROM Weights " +
+                "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
+                [userNetID, userClassSubject, userClassCourseNum, userClassCourseName])
+    categories = cur.fetchall()
+    categoryData = []
+    for category in categories:
+        cur.execute("SELECT attributeName, score, total " +
+                    "FROM Attributes " +
+                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
+                    [userNetID, userClassSubject, userClassCourseNum, userClassCourseName, category['category']])
+        attributes = cur.fetchall()
+        totalScored, totalPossible = 0.0, 0.0
+        for attribute in attributes:
+            totalScored += attribute['score']
+            totalPossible += attribute['total']
+            atLeastOneAttribute = True
+        categoryData.append({
+            'categoryName': category['category'],
+            'attributes': attributes,
+            'totalScored': totalScored,
+            'totalPossible': totalPossible,
+            'weight': category['weight']
+        })
+    mysql.connection.commit()
+    cur.close()
+    return render_template('administrationUserClass.html',
+                           subject=userClassSubject,
+                           courseNum=userClassCourseNum,
+                           courseName=userClassCourseName,
+                           weighted=weighted,
+                           categoryData=categoryData,
+                           atLeastOneAttribute=atLeastOneAttribute
+                           )
+
 # Logout button
 @app.route('/logout')
 def logout():

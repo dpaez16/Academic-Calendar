@@ -8,7 +8,7 @@
     {% for user in users %}
         <li class="list-group-item">
             <object align="left-center">
-                <a href="#">{{user.netID}} - {{user.name}}</a>
+                <a href="/administration/{{user.netID}}/{{user.name}}/classes">{{user.netID}} - {{user.name}}</a>
             </object>
         </li>
     {% endfor %}
