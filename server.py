@@ -13,6 +13,9 @@ app.config['MYSQL_PASSWORD'] = 'Cps41317779!!'
 app.config['MYSQL_DB'] = 'dpaez2_Academic_Calendar'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
+ADMIN_NETID = ['dpaez2']
+ADMIN_NAME = ['DDP']
+
 # init MySQL
 mysql = MySQL(app)
 
@@ -86,6 +89,8 @@ def login():
                 flash('You are now logged in. Welcome, ' + session['name'] + '.', 'success')
                 mysql.connection.commit()
                 cur.close()
+                if (session['netid'] in ADMIN_NETID) and (session['name'] in ADMIN_NAME):
+                    session['admin'] = True
                 return redirect(url_for('myclasses'))
             else: # password does not work
                 error = 'Invalid login.'
@@ -110,6 +115,29 @@ def is_logged_in(f):
             flash('Unauthorized, please login.', 'danger')
             return redirect(url_for('login'))
     return wrap
+
+def is_admin(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'admin' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('You are not an administrator.', 'danger')
+            return redirect(url_for('login'))
+    return wrap
+
+# admin page
+@app.route('/administration')
+@is_logged_in
+@is_admin
+def administration():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT netID, name " +
+                "FROM Users ")
+    users = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return render_template('administration.html', users=users)
 
 # Logout button
 @app.route('/logout')

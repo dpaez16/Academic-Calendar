@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <p></p>
+    <h1>Administration</h1>
+    <p></p>
+    <ul class="list-group">
+    {% for user in users %}
+        <li class="list-group-item">
+            <object align="left-center">
+                <a href="#">{{user.netID}} - {{user.name}}</a>
+            </object>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
