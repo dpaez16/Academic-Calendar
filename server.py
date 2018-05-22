@@ -141,6 +141,12 @@ def forgotDone():
 def updates():
     return render_template('updates.html')
 
+# my profile page
+@app.route('/myprofile')
+@is_logged_in
+def myProfile():
+    return render_template('profile.html', name=session['name'], netid=session['netid'])
+
 # User's classes page
 @app.route('/myclasses')
 @is_logged_in
