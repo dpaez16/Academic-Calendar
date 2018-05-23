@@ -3,6 +3,8 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+from itsdangerous import URLSafeTimedSerializer
+import smtplib
 
 app = Flask(__name__)
 
@@ -12,9 +14,12 @@ app.config['MYSQL_USER'] = 'dpaez2_dpaez2'
 app.config['MYSQL_PASSWORD'] = 'Cps41317779!!'
 app.config['MYSQL_DB'] = 'dpaez2_Academic_Calendar'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['secret_key'] = 'docpmoo10/10'
 
 ADMIN_NETID = ['dpaez2', 'swestma2']
 ADMIN_NAME = ['DDP', 'SJW']
+
+ts = URLSafeTimedSerializer(app.config["secret_key"])
 
 # init MySQL
 mysql = MySQL(app)
@@ -378,12 +383,57 @@ def forgot():
                              "FROM Users " +
                              "WHERE netID = %s", [netID])
         if result > 0:  # User is found
-            # send email
+            gmail_user = 'tri.uiuc.academiccalendar@gmail.com'
+            gmail_password = 'sickle97'
+            email = netID + '@illinois.edu'
+            subject = "Academic Calendar: Password Reset Request"
+            token = ts.dumps(email, salt='recover-key')
+            recover_url = url_for(
+                'reset_with_token',
+                token=token,
+                netID=netID,
+                _external=True)
+            html = render_template(
+                'recoveryEmail.html',
+                recover_url=recover_url)
+            message = 'Subject: {}\n\n{}'.format(subject, html)
+            server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+            server.ehlo()
+            server.login(gmail_user, gmail_password)
+            server.sendmail(gmail_user, email, message)
+            server.close()
             return render_template('forgotEmailSent.html', netID=netID)
         else:
             error = 'User not found.'
             return render_template('forgot.html', form=form, error=error)
     return render_template('forgot.html', form=form)
+
+class changePasswordEmail(Form):
+    newPassword = PasswordField('Password', validators=[validators.DataRequired()])
+
+# user clicks link emailed to them to reset password
+@app.route('/reset/<token>/<string:netID>', methods=["GET", "POST"])
+def reset_with_token(token, netID):
+    try:
+        email = ts.loads(token, salt="recover-key", max_age=86400)
+    except:
+        return render_template('err404.html')
+    form = changePasswordEmail(request.form)
+    if form.validate():
+        newPassword = sha256_crypt.encrypt(str(form.newPassword.data))
+        # Connect to DB
+        cur = mysql.connection.cursor()
+        # Update new password to DB
+        cur.execute("UPDATE Users " +
+                    "SET password=%s " +
+                    "WHERE netID=%s",
+                    [newPassword, netID])
+        # Commit changes to DB
+        mysql.connection.commit()
+        cur.close()
+        flash('Password has been changed.', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_with_token.html', form=form, token=token, netID=netID)
 
 @app.route('/updates')
 def updates():
