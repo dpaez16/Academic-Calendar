@@ -13,8 +13,8 @@ app.config['MYSQL_PASSWORD'] = 'Cps41317779!!'
 app.config['MYSQL_DB'] = 'dpaez2_Academic_Calendar'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-ADMIN_NETID = ['dpaez2']
-ADMIN_NAME = ['DDP']
+ADMIN_NETID = ['dpaez2', 'swestma2']
+ADMIN_NAME = ['DDP', 'SJW']
 
 # init MySQL
 mysql = MySQL(app)
@@ -33,9 +33,9 @@ def is_not_blocked(f):
         if not blocked:
             return f(*args, **kwargs)
         else:
-            flash('Check-In is going on at the moment, please wait.', 'danger')
+            error = 'Check-In is going on at the moment, please wait.'
             session.clear()
-            return redirect(url_for('Index'))
+            return render_template('home.html', error=error)
     return wrap
 
 def is_check_in_not_happening(f):
@@ -50,8 +50,8 @@ def is_check_in_not_happening(f):
         if not numBlocks:
             return f(*args, **kwargs)
         else:
-            flash('Check-In is going on at the moment, please wait.', 'danger')
-            return redirect(url_for('Index'))
+            error = 'Check-In is going on at the moment, please wait.'
+            return render_template('home.html', error=error)
     return wrap
 
 # Home page
@@ -133,8 +133,8 @@ def login():
                 return redirect(url_for('myclasses'))
             else: # password does not work
                 if numBlocks: # check-in is happening
-                    flash('Check-In is going on at the moment, please wait.', 'danger')
-                    return redirect(url_for('Index'))
+                    error = 'Check-In is going on at the moment, please wait.'
+                    return render_template('home.html', error=error)
                 error = 'Invalid login.'
                 mysql.connection.commit()
                 cur.close()
@@ -190,7 +190,7 @@ def administrationCheckIn():
     query = "UPDATE Users SET blocked=TRUE WHERE "
     for i in range(len(ADMIN_NETID)):
         if i != (len(ADMIN_NETID) - 1):
-            query += "netID<>'" + ADMIN_NETID[i] + "' OR "
+            query += "netID<>'" + ADMIN_NETID[i] + "' AND "
         else:
             query += "netID<>'" + ADMIN_NETID[i] + "'"
     cur.execute(query)
@@ -363,25 +363,27 @@ def logout():
     return redirect(url_for('login'))
 
 # Class used for forgot password page
-class NewPasswordForm(Form):
-    newpassword = PasswordField('Password', [validators.DataRequired()])
+class netIDForgotPasswordForm(Form):
+    netID = StringField('NetID', [validators.Regexp(r'[a-z]+[0-9]+', message='Not NetID.')])
 
 # forgot password page
 @app.route('/forgot', methods=['GET','POST'])
 @is_check_in_not_happening
 def forgot():
-    form = NewPasswordForm(request.form)
+    form = netIDForgotPasswordForm(request.form)
     if request.method == 'POST' and form.validate(): # form inputted is correct
-        newpassword = sha256_crypt.encrypt(str(form.newpassword.data))
-        session['newpassword'] = newpassword
-        return redirect(url_for('forgotDone'))
+        netID = form.netID.data
+        cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * " +
+                             "FROM Users " +
+                             "WHERE netID = %s", [netID])
+        if result > 0:  # User is found
+            # send email
+            return render_template('forgotEmailSent.html', netID=netID)
+        else:
+            error = 'User not found.'
+            return render_template('forgot.html', form=form, error=error)
     return render_template('forgot.html', form=form)
-
-# page after forgot password
-@app.route('/forgotDone')
-@is_not_blocked
-def forgotDone():
-    return render_template('forgotDone.html')
 
 @app.route('/updates')
 def updates():
