@@ -382,6 +382,8 @@ def forgot():
         result = cur.execute("SELECT * " +
                              "FROM Users " +
                              "WHERE netID = %s", [netID])
+        mysql.connection.commit()
+        cur.close()
         if result > 0:  # User is found
             gmail_user = 'tri.uiuc.academiccalendar@gmail.com'
             gmail_password = 'sickle97'

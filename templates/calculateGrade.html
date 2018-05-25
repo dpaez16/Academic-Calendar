@@ -1,6 +1,7 @@
 <html>
 <head>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <meta charset="UTF-8">
 </head>
 <style>
     body {
@@ -29,6 +30,12 @@
       fill: none;
       stroke-width: 2.5px;
     }
+
+    #viz.moved_up {
+        position: relative;
+        top: -40px;
+    }
+
 </style>
 {% extends 'layout.html' %}
 {% block body %}
@@ -114,6 +121,7 @@
                                 document.getElementById("pcGradeSep").innerText = "";
                                 document.getElementById("pcGrade2").innerText = "";
                             }
+                            document.getElementById("viz").innerText = "";
                             var f = function(x, m, s) {
                                 return (1 / (Math.sqrt(2 * Math.PI) * s)) * Math.exp(-1 * (Math.pow(x - m, 2) / (2 * Math.pow(s, 2))));
                             };
@@ -140,8 +148,10 @@
                             var myGradeLine = {
                                 x: [z, z],
                                 y: [0, f(z, 0, 1)],
+                                name: 'You',
                                 mode: 'lines',
-                                marker: {color: 'red'}
+                                marker: {color: 'red'},
+                                showlegend: true
                             };
 
                             var pts = xyPoints(-3, -1, 100);
@@ -150,7 +160,8 @@
                                 y: pts[1],
                                 fill: 'tozeroy',
                                 type: 'line',
-                                marker: {color: '#990000'}
+                                marker: {color: '#990000'},
+                                showlegend: false
                             };
 
                             pts = xyPoints(-1, -0.5, 100);
@@ -159,7 +170,8 @@
                                 y: pts[1],
                                 fill: 'tozeroy',
                                 type: 'line',
-                                marker: {color: '#ff00ff'}
+                                marker: {color: '#ff00ff'},
+                                showlegend: false
                             };
 
                             pts = xyPoints(-0.5, 0.5, 100);
@@ -168,7 +180,8 @@
                                 y: pts[1],
                                 fill: 'tozeroy',
                                 type: 'line',
-                                marker: {color: '#f28000'}
+                                marker: {color: '#f28000'},
+                                showlegend: false
                             };
 
                             pts = xyPoints(0.5, 1, 100);
@@ -177,7 +190,8 @@
                                 y: pts[1],
                                 fill: 'tozeroy',
                                 type: 'line',
-                                marker: {color: '#0080ff'}
+                                marker: {color: '#0080ff'},
+                                showlegend: false
                             };
 
                             pts = xyPoints(1, 3, 100);
@@ -186,7 +200,8 @@
                                 y: pts[1],
                                 fill: 'tozeroy',
                                 type: 'line',
-                                marker: {color: '#0dc000'}
+                                marker: {color: '#0dc000'},
+                                showlegend: false
                             };
 
                             var data = [fZone, dZone, cZone, bZone, aZone, myGradeLine];
@@ -215,27 +230,38 @@
                                     fixedrange: true,
                                     showgrid: false
                                   },
-                                showlegend: false,
                                 hovermode: false
                             };
                             Plotly.newPlot('viz', data, layout, {displayModeBar: false});
+                            dragLayer = document.getElementsByClassName('nsewdrag')[0]
+                            dragLayer.style.cursor = 'default';
                         } else {
-                            var errMsg = "";
-                            if (m < 0)
-                                errMsg += "Mean must be positive!\n";
-                            if (m > 100)
-                                errMsg += "Mean is too large!\n";
-                            if (s <= 0)
-                                errMsg += "Standard Deviation must be non-zero!\n";
-                            document.getElementById("pcGrade").innerHTML = errMsg;
+                            errMsg = "";
+                            if (((m < 0) || (m > 100)) && (s <= 0)) {
+                                if (m < 0)
+                                    errMsg += "Mean must be positive and Standard Deviation must be larger than zero!";
+                                else
+                                    errMsg += "Mean is too large and Standard Deviation must be larger than zero!";
+                            } else if (((m < 0) || (m > 100)) && (s > 0)) {
+                                if (m < 0)
+                                    errMsg += "Mean must be positive!";
+                                else
+                                    errMsg += "Mean is too large!";
+                            } else {
+                                errMsg = "Standard Deviation must be larger than zero!";
+                            }
+                            document.getElementById("viz").innerHTML = errMsg;
+                            document.getElementById("pcGrade").innerHTML = "";
+                            document.getElementById("pcGradeSep").innerHTML = "";
+                            document.getElementById("pcGrade2").innerHTML = "";
                             document.getElementById("pcGrade").style.color = "black";
-                            document.getElementById("viz").innerHTML = "";
+                            document.getElementById("pcGrade2").style.color = "black";
                         }
                     }
                 </script>
             </div>
         </div>
-        <div id="viz" class="col-sm-3"></div>
+        <div id="viz" class="col-sm-3 moved_up"></div>
     </div>
     <br>
 {% endblock %}
