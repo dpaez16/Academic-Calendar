@@ -481,6 +481,21 @@ def reset_with_token(token, netID):
 def updates():
     return render_template('updates.html')
 
+# user tries to see their planner
+@app.route('/myplanner')
+@is_not_blocked
+@is_logged_in
+def myPlanner():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT dueDate, week " +
+                "FROM Attributes "+
+                "WHERE netID=%s",
+                [session['netid']])
+    dataEntries = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return render_template('weekChart.html', dataEntries=dataEntries)
+
 # my profile page
 @app.route('/myprofile')
 @is_not_blocked
