@@ -717,6 +717,8 @@ def addAttribute(name, cName, category):
         courseNum = name[name.index('-') + 1:]
         score = form.score.data
         total = form.total.data
+        dueDate = request.form.get('months')+'-'+request.form.get('days')
+        week = request.form.get('weeks')
         if float(form.score.data) > float(form.total.data):
             flash('Score is greater than total.', 'danger')
             return render_template('addAttribute.html', form=form, category=category)
@@ -733,9 +735,9 @@ def addAttribute(name, cName, category):
             cur.close()
             return render_template('addAttribute.html', error=error, form=form)
         # Add new attribute to DB
-        cur.execute("INSERT INTO Attributes(netID, subject, courseNum, courseName, category, attributeName, score, total) " +
-                    "VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
-                    [session['netid'], subject, courseNum, cName, category, attributeName ,score, total])
+        cur.execute("INSERT INTO Attributes(netID, subject, courseNum, courseName, category, attributeName, score, total, dueDate, week) " +
+                    "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    [session['netid'], subject, courseNum, cName, category, attributeName ,score, total, dueDate, week])
         # Commit changes to DB
         mysql.connection.commit()
         cur.close()
@@ -832,6 +834,7 @@ def deleteAttribute(name, cName, category, attributeName, score, total):
 
 class addCategoryNoWeightForm(Form):
     categoryName = StringField('Category Name', [validators.DataRequired()])
+    drops = StringField('Number of Drops', [validators.Regexp(r'[0-9]+', message='Not a number.')])
 
 # User tries to add category (no weight)
 @app.route('/myclasses/<string:name>/<string:cName>/addCategory/NoWeight', methods=['GET','POST'])
@@ -843,6 +846,7 @@ def addCategoryNoWeight(name, cName):
         subject = name[:name.index('-')]
         courseNum = name[name.index('-') + 1:]
         category = form.categoryName.data
+        drops = int(form.drops.data)
         weight = -1
         # connect to DB
         cur = mysql.connection.cursor()
@@ -855,9 +859,9 @@ def addCategoryNoWeight(name, cName):
             mysql.connection.commit()
             cur.close()
             return render_template('addCategoryNoWeight.html', error=error, form=form)
-        cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight) ' +
-                    'VALUES(%s, %s, %s, %s, %s, %s)',
-                    [session['netid'], subject, courseNum, cName, category, weight])
+        cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight, drops) ' +
+                    'VALUES(%s, %s, %s, %s, %s, %s, %s)',
+                    [session['netid'], subject, courseNum, cName, category, weight, drops])
         # insertion goes through
         mysql.connection.commit()
         cur.close()
@@ -868,6 +872,7 @@ def addCategoryNoWeight(name, cName):
 class addCategoryWeightedForm(Form):
     categoryName = StringField('Category Name', [validators.DataRequired()])
     categoryWeight = StringField('Weight (XX.XX)', [validators.Regexp(r'[0-9][0-9].[0-9][0-9]', message='Not formatted properly.')])
+    drops = StringField('Number of Drops', [validators.Regexp(r'[0-9]+', message='Not a number.')])
 
 # User tries to add category (weighted)
 @app.route('/myclasses/<string:name>/<string:cName>/addCategory/Weight', methods=['GET','POST'])
@@ -880,6 +885,7 @@ def addCategoryWeight(name, cName):
         courseNum = name[name.index('-') + 1:]
         category = form.categoryName.data
         weight = form.categoryWeight.data
+        drops = int(form.drops.data)
         # connect to DB
         cur = mysql.connection.cursor()
         result = cur.execute("SELECT * " +
@@ -891,9 +897,9 @@ def addCategoryWeight(name, cName):
             mysql.connection.commit()
             cur.close()
             return render_template('addCategoryWeight.html', error=error, form=form)
-        cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight) ' +
-                    'VALUES(%s, %s, %s, %s, %s, %s)',
-                    [session['netid'], subject, courseNum, cName, category, weight])
+        cur.execute('INSERT INTO Weights(netID, subject, courseNum, courseName, category, weight, drops) ' +
+                    'VALUES(%s, %s, %s, %s, %s, %s, %s)',
+                    [session['netid'], subject, courseNum, cName, category, weight, drops])
         # insertion goes through
         mysql.connection.commit()
         cur.close()

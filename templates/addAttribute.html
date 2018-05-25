@@ -15,6 +15,52 @@
         <div class="form-group">
             {{render_field(form.total, class_="form-control")}}
         </div>
+        Week:
+        <select name="weeks">
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4</option>
+            <option value="5">Week 5</option>
+            <option value="6">Week 6</option>
+            <option value="7">Week 7</option>
+            <option value="8">Week 8</option>
+            <option value="9">Week 9</option>
+            <option value="10">Week 10</option>
+            <option value="11">Week 11</option>
+            <option value="12">Week 12</option>
+            <option value="13">Week 13</option>
+            <option value="14">Week 14</option>
+            <option value="15">Week 15</option>
+            <option value="16">Week 16</option>
+        </select>
+        <br>
+        <br>
+        Month:
+        <object>
+            <select name="months">
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+                <option value="1">January</option>
+                <option value="2">Feburary</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+            </select>
+            <br>
+            <br>
+            Day:
+            <select name="days">
+                {% for i in range(1, 32) %}
+                    <option value="{{i}}">{{i}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <br>
+        </object>
         <p></p>
         <p><input type="submit" class="btn btn-primary" value="Submit"></p>
     </form>

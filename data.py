@@ -12,4 +12,4 @@ def drop(Grades, n):
 if __name__ == '__main__':
     grades = [1,5,3,5,7,4,2,4,6]
     print(sum(grades))
-    print(drop(grades, len(grades)))
+    print(drop(grades, 0))
