@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8d523747-238d-4adb-9f5f-8cbcd4efed3d" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/calculateGrade.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/calculateGrade.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,15 +14,15 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/academic_calendar_app$data.coverage" NAME="data Coverage Results" MODIFIED="1527217507669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1527228282867" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/academic_calendar_app$server.coverage" NAME="server Coverage Results" MODIFIED="1527230119994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf>
       <file leaf-file-name="calculateGrade.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/calculateGrade.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="186" column="62" selection-start-line="186" selection-start-column="62" selection-end-line="186" selection-end-column="62" />
+            <state relative-caret-position="311">
+              <caret line="114" column="83" selection-start-line="114" selection-start-column="83" selection-end-line="114" selection-end-column="83" />
             </state>
           </provider>
         </entry>
@@ -42,16 +40,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>docp</find>
-      <find>datarequired()</find>
-      <find>send_email</find>
-      <find>validate_on</find>
-      <find>newPassowr</find>
-      <find>rege</find>
-      <find>reset/</find>
-      <find>re</find>
-      <find>reset_with</find>
-      <find>token</find>
       <find>gmail</find>
       <find>login()</find>
       <find>'login'</find>
@@ -72,6 +60,16 @@
       <find>body</find>
       <find>name</find>
       <find>xlabel</find>
+      <find>Data Set 1</find>
+      <find>label</find>
+      <find>ticks</find>
+      <find>.call</find>
+      <find>.call(x</find>
+      <find>red</find>
+      <find>x_grid</find>
+      <find>x_axis</find>
+      <find>pts2</find>
+      <find>pcGrade</find>
     </findStrings>
     <replaceStrings>
       <replace>pre</replace>
@@ -299,9 +297,9 @@
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.3298351" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3298351" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3298351" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3298351" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.209375" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.209375" />
       <window_info anchor="right" id="R Packages" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="R Graphics" order="4" />
@@ -657,8 +655,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/calculateGrade.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="186" column="62" selection-start-line="186" selection-start-column="62" selection-end-line="186" selection-end-column="62" />
+        <state relative-caret-position="311">
+          <caret line="114" column="83" selection-start-line="114" selection-start-column="83" selection-end-line="114" selection-end-column="83" />
         </state>
       </provider>
     </entry>

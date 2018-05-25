@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="http://d3js.org/d3.v3.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <style>
     body {
@@ -41,7 +41,7 @@
 <br>
 <br>
 <object>
-    <strong>Post-Curve Grade:</strong> <b id="pcGrade"></b>
+  <strong>Post-Curve Grade:</strong> <b id="pcGrade"></b><b id="pcGradeSep"></b><b id="pcGrade2"></b>
 </object>
 <br>
     <div class="row">
@@ -64,22 +64,161 @@
                         let s = document.getElementById("sd").value;
                         if (s > 0 && m >= 0 && m <= 100) {
                             var z = (grade - m) / s;
-                            if (z <= -1) {
+                            if (z < -1) {
                                 document.getElementById("pcGrade").innerText = "F";
                                 document.getElementById("pcGrade").style.color = "#990000";
-                            } else if (z <= -0.5) {
+                                document.getElementById("pcGradeSep").innerText = "";
+                                document.getElementById("pcGrade2").innerText = "";
+                            } else if (z == -1) {
+                                document.getElementById("pcGrade").innerText = "F";
+                                document.getElementById("pcGrade").style.color = "#990000";
+                                document.getElementById("pcGradeSep").innerText = "/";
+                                document.getElementById("pcGrade2").innerText = "D-";
+                                document.getElementById("pcGrade2").style.color = "#ff00ff";
+                            } else if (z < -0.5) {
                                 document.getElementById("pcGrade").innerText = "D";
                                 document.getElementById("pcGrade").style.color = "#ff00ff";
-                            } else if (z <= 0.5) {
+                                document.getElementById("pcGradeSep").innerText = "";
+                                document.getElementById("pcGrade2").innerText = "";
+                            } else if (z == -0.5) {
+                                document.getElementById("pcGrade").innerText = "D+";
+                                document.getElementById("pcGrade").style.color = "#ff00ff";
+                                document.getElementById("pcGradeSep").innerText = "/";
+                                document.getElementById("pcGrade2").innerText = "C-";
+                                document.getElementById("pcGrade2").style.color = "#f28000";
+                            } else if (z < 0.5) {
                                 document.getElementById("pcGrade").innerText = "C";
                                 document.getElementById("pcGrade").style.color = "#f28000";
-                            } else if (z <= 1) {
+                                document.getElementById("pcGradeSep").innerText = "";
+                                document.getElementById("pcGrade2").innerText = "";
+                            } else if (z == 0.5) {
+                                document.getElementById("pcGrade").innerText = "C-";
+                                document.getElementById("pcGrade").style.color = "#f28000";
+                                document.getElementById("pcGradeSep").innerText = "/";
+                                document.getElementById("pcGrade2").innerText = "B-";
+                                document.getElementById("pcGrade2").style.color = "#0080ff";
+                            } else if (z < 1) {
                                 document.getElementById("pcGrade").innerText = "B";
                                 document.getElementById("pcGrade").style.color = "#0080ff";
+                                document.getElementById("pcGradeSep").innerText = "";
+                                document.getElementById("pcGrade2").innerText = "";
+                            } else if (z == 1) {
+                                document.getElementById("pcGrade").innerText = "B+";
+                                document.getElementById("pcGrade").style.color = "#0080ff";
+                                document.getElementById("pcGradeSep").innerText = "/";
+                                document.getElementById("pcGrade2").innerText = "A-";
+                                document.getElementById("pcGrade2").style.color = "#0dc000";
                             } else {
                                 document.getElementById("pcGrade").innerText = "A";
                                 document.getElementById("pcGrade").style.color = "#0dc000";
+                                document.getElementById("pcGradeSep").innerText = "";
+                                document.getElementById("pcGrade2").innerText = "";
                             }
+                            var f = function(x, m, s) {
+                                return (1 / (Math.sqrt(2 * Math.PI) * s)) * Math.exp(-1 * (Math.pow(x - m, 2) / (2 * Math.pow(s, 2))));
+                            };
+
+                            var linspace = function(start, end, n) {
+                                d = (end - start) / (n - 1);
+                                arr = [];
+                                for (var i = 0; i < n; i++)
+                                    arr.push(start + i * d);
+                                return arr;
+                            };
+
+                            var xyPoints = function(start, end, n) {
+                                x = linspace(start, end, n);
+                                y = [];
+                                arr = [];
+                                for(var i = 0; i < x.length; i++)
+                                    y.push(f(x[i], 0, 1));
+                                arr.push(x);
+                                arr.push(y);
+                                return arr;
+                            };
+
+                            var myGradeLine = {
+                                x: [z, z],
+                                y: [0, f(z, 0, 1)],
+                                mode: 'lines',
+                                marker: {color: 'red'}
+                            };
+
+                            var pts = xyPoints(-3, -1, 100);
+                            var fZone = {
+                                x: pts[0],
+                                y: pts[1],
+                                fill: 'tozeroy',
+                                type: 'line',
+                                marker: {color: '#990000'}
+                            };
+
+                            pts = xyPoints(-1, -0.5, 100);
+                            var dZone = {
+                                x: pts[0],
+                                y: pts[1],
+                                fill: 'tozeroy',
+                                type: 'line',
+                                marker: {color: '#ff00ff'}
+                            };
+
+                            pts = xyPoints(-0.5, 0.5, 100);
+                            var cZone = {
+                                x: pts[0],
+                                y: pts[1],
+                                fill: 'tozeroy',
+                                type: 'line',
+                                marker: {color: '#f28000'}
+                            };
+
+                            pts = xyPoints(0.5, 1, 100);
+                            var bZone = {
+                                x: pts[0],
+                                y: pts[1],
+                                fill: 'tozeroy',
+                                type: 'line',
+                                marker: {color: '#0080ff'}
+                            };
+
+                            pts = xyPoints(1, 3, 100);
+                            var aZone = {
+                                x: pts[0],
+                                y: pts[1],
+                                fill: 'tozeroy',
+                                type: 'line',
+                                marker: {color: '#0dc000'}
+                            };
+
+                            var data = [fZone, dZone, cZone, bZone, aZone, myGradeLine];
+                            var layout = {
+                                title: 'Standard Normal Curve',
+                                autosize: false,
+                                width: 500,
+                                height: 500,
+                                margin: {
+                                  l: 50,
+                                  r: 50,
+                                  b: 100,
+                                  t: 100,
+                                  pad: 4
+                                },
+                                xaxis: {
+                                    range: [-3,3],
+                                    fixedrange: true,
+                                    showgrid: false,
+                                    zeroline: false,
+                                    tickvals: [-3,-1,-0.5, 0, 0.5, 1, 3],
+                                    ticktext: [-3,-1,-0.5, 0, 0.5, 1, 3]
+                                },
+                                yaxis: {
+                                    showticklabels: false,
+                                    fixedrange: true,
+                                    showgrid: false
+                                  },
+                                showlegend: false,
+                                hovermode: false
+                            };
+                            Plotly.newPlot('viz', data, layout, {displayModeBar: false});
                         } else {
                             var errMsg = "";
                             if (m < 0)
@@ -90,169 +229,13 @@
                                 errMsg += "Standard Deviation must be non-zero!\n";
                             document.getElementById("pcGrade").innerHTML = errMsg;
                             document.getElementById("pcGrade").style.color = "black";
+                            document.getElementById("viz").innerHTML = "";
                         }
                     }
                 </script>
             </div>
         </div>
-        <div id="viz" class="col-sm-3">
-            <script>
-                function f(x, m, s) {
-                    return (1 / (Math.sqrt(2*Math.PI)*s))*Math.exp(-1*(Math.pow(x-m,2)/(2*Math.pow(s,2))));
-                }
-
-                function linspace(start, end, n){
-                    d = (end-start)/(n-1);
-                    arr = [];
-                    for (var i = 0; i < n; i++)
-                        arr.push(start + i*d);
-                    return arr;
-                }
-
-                x_pts = linspace(-3, 3, 100);
-                y_pts = [];
-                for (var i = 0; i < x_pts.length; i++)
-                    y_pts.push(f(x_pts[i], 0, 1));
-
-                var data = [ { label: "Data Set 1",
-                               x: x_pts,
-                               y: y_pts } ] ;
-                var xy_chart = d3_xy_chart()
-                    .width(960)
-                    .height(500)
-                    .xlabel("X Axis")
-                    .ylabel("Y Axis") ;
-                var svg = d3.select("#viz").append("svg")
-                    .datum(data)
-                    .call(xy_chart) ;
-
-                function d3_xy_chart() {
-                    var width = 640,
-                        height = 480,
-                        xlabel = "X Axis Label",
-                        ylabel = "Y Axis Label" ;
-
-                    function chart(selection) {
-                        selection.each(function(datasets) {
-                            //
-                            // Create the plot.
-                            //
-                            var margin = {top: 20, right: 80, bottom: 30, left: 50},
-                                innerwidth = width - margin.left - margin.right,
-                                innerheight = height - margin.top - margin.bottom ;
-
-                            var x_scale = d3.scale.linear()
-                                .range([0, innerwidth])
-                                .domain([ d3.min(datasets, function(d) { return d3.min(d.x); }),
-                                          d3.max(datasets, function(d) { return d3.max(d.x); }) ]) ;
-
-                            var y_scale = d3.scale.linear()
-                                .range([innerheight, 0])
-                                .domain([ d3.min(datasets, function(d) { return d3.min(d.y); }),
-                                          d3.max(datasets, function(d) { return d3.max(d.y); }) ]) ;
-
-                            var color_scale = d3.scale.category10()
-                                .domain(d3.range(datasets.length)) ;
-
-                            var x_axis = d3.svg.axis()
-                                .scale(x_scale)
-                                .orient("bottom") ;
-
-                            var y_axis = d3.svg.axis()
-                                .scale(y_scale)
-                                .orient("left") ;
-
-                            var x_grid = d3.svg.axis()
-                                .scale(x_scale)
-                                .orient("bottom")
-                                .tickSize(-innerheight)
-                                .tickFormat("") ;
-
-                            var y_grid = d3.svg.axis()
-                                .scale(y_scale)
-                                .orient("left")
-                                .tickSize(-innerwidth)
-                                .tickFormat("") ;
-
-                            var draw_line = d3.svg.line()
-                                .interpolate("basis")
-                                .x(function(d) { return x_scale(d[0]); })
-                                .y(function(d) { return y_scale(d[1]); }) ;
-
-                            var svg = d3.select(this)
-                                .attr("width", width)
-                                .attr("height", height)
-                                .append("g")
-                                .attr("transform", "translate(" + margin.left + "," + margin.top + ")") ;
-
-                            svg.append("g")
-                                .attr("class", "x grid")
-                                .attr("transform", "translate(0," + innerheight + ")")
-                                .call(x_grid) ;
-
-                            svg.append("g")
-                                .attr("class", "y grid")
-                                .call(y_grid) ;
-
-                            svg.append("g")
-                                .attr("class", "x axis")
-                                .attr("transform", "translate(0," + innerheight + ")")
-                                .call(x_axis)
-                                .append("text")
-                                .attr("dy", "-.71em")
-                                .attr("x", innerwidth)
-                                .style("text-anchor", "end") ;
-
-                            var data_lines = svg.selectAll(".d3_xy_chart_line")
-                                .data(datasets.map(function(d) {return d3.zip(d.x, d.y);}))
-                                .enter().append("g")
-                                .attr("class", "d3_xy_chart_line") ;
-
-                            data_lines.append("path")
-                                .attr("class", "line")
-                                .attr("d", function(d) {return draw_line(d); })
-                                .attr("stroke", function(_, i) {return color_scale(i);}) ;
-
-                            data_lines.append("text")
-                                .attr("transform", function(d) {
-                                    return ( "translate(" + x_scale(d.final[0]) + "," +
-                                             y_scale(d.final[1]) + ")" ) ; })
-                                .attr("x", 3)
-                                .attr("dy", ".35em")
-                                .attr("fill", function(_, i) { return color_scale(i); })
-                                .text(function(d) { return d.name; }) ;
-
-                        }) ;
-                    }
-
-                    chart.width = function(value) {
-                        if (!arguments.length) return width;
-                        width = value;
-                        return chart;
-                    };
-
-                    chart.height = function(value) {
-                        if (!arguments.length) return height;
-                        height = value;
-                        return chart;
-                    };
-
-                    chart.xlabel = function(value) {
-                        if(!arguments.length) return xlabel ;
-                        xlabel = value ;
-                        return chart ;
-                    } ;
-
-                    chart.ylabel = function(value) {
-                        if(!arguments.length) return ylabel ;
-                        ylabel = value ;
-                        return chart ;
-                    } ;
-
-                    return chart;
-                }
-            </script>
-        </div>
+        <div id="viz" class="col-sm-3"></div>
     </div>
     <br>
 {% endblock %}
