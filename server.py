@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Set up MySQL
 app.config['MYSQL_HOST'] = '192.17.90.133'
 app.config['MYSQL_USER'] = 'dpaez2_dpaez2'
-app.config['MYSQL_PASSWORD'] = 'Cps41317779!!'
+app.config['MYSQL_PASSWORD'] = '.kh$ETfN-^7U'
 app.config['MYSQL_DB'] = 'dpaez2_Academic_Calendar'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['secret_key'] = 'docpmoo10/10'
