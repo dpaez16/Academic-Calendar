@@ -522,6 +522,10 @@ def editProfile():
             cur.close()
             session['netid'] = newNetID
             session['name'] = newName
+            if (session['netid'] in ADMIN_NETID) and (session['name'] in ADMIN_NAME):
+                session['admin'] = True
+            else:
+                session['admin'] = False
             flash('Profile has been modified.', 'success')
             return redirect(url_for('myProfile'))
     return render_template('editProfile.html', form=form)
