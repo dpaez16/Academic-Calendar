@@ -552,7 +552,7 @@ def mySchoolClass(name,cName):
                 [session['netid'], subject, courseNum, cName])
     weighted = cur.fetchall()[0]['weighted']
     atLeastOneAttribute = False
-    cur.execute("SELECT category, weight " +
+    cur.execute("SELECT category, weight, drops " +
                              "FROM Weights " +
                              "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                              [session['netid'], subject, courseNum, cName])
@@ -574,7 +574,8 @@ def mySchoolClass(name,cName):
             'attributes': attributes,
             'totalScored': totalScored,
             'totalPossible': totalPossible,
-            'weight': category['weight']
+            'weight': category['weight'],
+            'drops': category['drops']
         })
     mysql.connection.commit()
     cur.close()
@@ -952,6 +953,31 @@ def editWeight(subject, courseNum, courseName, category):
         flash('Weight for "' + category + '" has been modified.', 'success')
         return redirect(url_for('mySchoolClass', name=subject+'-'+courseNum, cName=courseName))
     return render_template('editWeight.html', form=form)
+
+class editDropForm(Form):
+    drops = StringField('Number of Drops', [validators.Regexp(r'[0-9]+', message='Not a number.')])
+
+# User tries to edit drops
+@app.route('/myclasses/<string:subject>-<string:courseNum>/<string:courseName>/editDrops/<string:category>', methods=['GET','POST'])
+@is_not_blocked
+@is_logged_in
+def editDrop(subject, courseNum, courseName, category):
+    form = editDropForm(request.form)
+    if request.method == 'POST' and form.validate():  # form is correctly inputted
+        drops = form.drops.data
+        # connect to DB
+        cur = mysql.connection.cursor()
+        cur.execute('UPDATE Weights ' +
+                    'SET drops=%s ' +
+                    'WHERE netid=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s',
+                    [drops,
+                     session['netid'], subject, courseNum, courseName, category])
+        # insertion goes through
+        mysql.connection.commit()
+        cur.close()
+        flash('Drops for "' + category + '" has been modified.', 'success')
+        return redirect(url_for('mySchoolClass', name=subject+'-'+courseNum, cName=courseName))
+    return render_template('editDrops.html', form=form, category=category)
 
 # user tries to see computed grade
 @app.route('/myclasses/<string:name>/<string:cName>/calculateGrade')

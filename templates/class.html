@@ -29,7 +29,7 @@
             <object align="right">
                 <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/deleteCategory/{{category.categoryName}}" class="btn btn-danger">Delete {{category.categoryName}}</a>
             </object>
-            <a href="#" class="btn btn-info">Edit Drops</a>
+            <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/editDrops/{{category.categoryName}}" class="btn btn-info">Edit Drops</a>
             <br>
             <p></p>
             <table class="table">
@@ -42,7 +42,7 @@
                         <th>Percentage</th>
                         <th></th>
                         <th></th>
-                        <th>Drops: X</th>
+                        <th>Drops: {{category.drops}}</th>
                     </tr>
                 </thead>
                 {% for attr in category.attributes %}
