@@ -274,7 +274,7 @@ def administrationUserClass(userNetID, userName, userClassSubject, userClassCour
                 [userNetID, userClassSubject, userClassCourseNum, userClassCourseName])
     weighted = cur.fetchall()[0]['weighted']
     atLeastOneAttribute = False
-    cur.execute("SELECT category, weight " +
+    cur.execute("SELECT category, weight, drops " +
                 "FROM Weights " +
                 "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                 [userNetID, userClassSubject, userClassCourseNum, userClassCourseName])
@@ -286,18 +286,30 @@ def administrationUserClass(userNetID, userName, userClassSubject, userClassCour
                     "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
                     [userNetID, userClassSubject, userClassCourseNum, userClassCourseName, category['category']])
         attributes = cur.fetchall()
-        totalScored, totalPossible = 0.0, 0.0
-        for attribute in attributes:
-            totalScored += attribute['score']
-            totalPossible += attribute['total']
-            atLeastOneAttribute = True
-        categoryData.append({
-            'categoryName': category['category'],
-            'attributes': attributes,
-            'totalScored': totalScored,
-            'totalPossible': totalPossible,
-            'weight': category['weight']
-        })
+        if attributes:
+            v = []
+            for attribute in attributes:
+                atLeastOneAttribute = True
+                v.append([attribute['score'], attribute['total']])
+            v = np.array(v)
+            totalScored, totalPossible = drop(v, category['drops'])
+            categoryData.append({
+                'categoryName': category['category'],
+                'attributes': attributes,
+                'totalScored': totalScored,
+                'totalPossible': totalPossible,
+                'weight': category['weight'],
+                'drops': category['drops']
+            })
+        else:
+            categoryData.append({
+                'categoryName': category['category'],
+                'attributes': attributes,
+                'totalScored': 0,
+                'totalPossible': 0,
+                'weight': category['weight'],
+                'drops': category['drops']
+            })
     mysql.connection.commit()
     cur.close()
     return render_template('administrationUserClass.html',
@@ -322,7 +334,7 @@ def administrationCalculateGrade(userNetID, userName, userClassSubject, userClas
                 "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                 [userNetID, userClassSubject, userClassCourseNum, userClassCourseName])
     weighted = cur.fetchall()[0]['weighted']
-    cur.execute("SELECT category, weight " +
+    cur.execute("SELECT category, weight, drops " +
                 "FROM Weights " +
                 "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                 [userNetID, userClassSubject, userClassCourseNum, userClassCourseName])
@@ -336,22 +348,32 @@ def administrationCalculateGrade(userNetID, userName, userClassSubject, userClas
         cur.execute("SELECT attributeName, score, total " +
                     "FROM Attributes " +
                     "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
-                    [userNetID, userClassSubject, userClassCourseNum, userClassCourseName, category['category']])
+                    [session['netid'], userClassSubject, userClassCourseNum, userClassCourseName, category['category']])
         attributes = cur.fetchall()
-        totalScored, totalPossible = 0.0, 0.0
-        for attribute in attributes:
-            totalScored += attribute['score']
-            totalPossible += attribute['total']
-        categoryData.append({
-            'categoryName': category['category'],
-            'attributes': attributes,
-            'totalScored': totalScored,
-            'totalPossible': totalPossible,
-            'weight': category['weight']
-        })
+        if attributes:
+            v = []
+            for attribute in attributes:
+                v.append([attribute['score'], attribute['total']])
+            v = np.array(v)
+            totalScored, totalPossible = drop(v, category['drops'])
+            categoryData.append({
+                'categoryName': category['category'],
+                'attributes': attributes,
+                'totalScored': totalScored,
+                'totalPossible': totalPossible,
+                'weight': category['weight']
+            })
+        else:
+            categoryData.append({
+                'categoryName': category['category'],
+                'attributes': attributes,
+                'totalScored': 0,
+                'totalPossible': 0,
+                'weight': category['weight']
+            })
         if weighted:
             sumOfWeights += category['weight']
-            if not attributes:
+            if not attributes or totalPossible == 0:
                 continue
             sum_ += (1.0*totalScored/totalPossible)*category['weight']
         else:
@@ -359,7 +381,13 @@ def administrationCalculateGrade(userNetID, userName, userClassSubject, userClas
             totalPossibleVec.append(totalPossible)
     mysql.connection.commit()
     cur.close()
-    grade = sum_ if weighted else 100.0*sum(totalScoredVec)/sum(totalPossibleVec)
+    grade = 0
+    if weighted:
+        grade = sum_
+    elif sum(totalPossibleVec):
+        grade = 100.0*sum(totalScoredVec)/sum(totalPossibleVec)
+    else:
+        grade = 0
     if weighted and sumOfWeights != 100:
         flash('Weights do not add up to 100%.', 'danger')
         return redirect(url_for('administrationUserClass',
