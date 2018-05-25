@@ -1,15 +1,19 @@
 import numpy as np
 
 def drop(Grades, n):
-    if n > len(Grades):
+    if n >= len(Grades):
         return 0
     else:
-        score = sum(Grades)
+        score = sum(Grades[:,0])
+        possible = sum(Grades[:,1])
         for i in range(1, n+1, 1):
-            score -= np.partition(Grades, i-1)[i-1]
-        return score
+            score -= np.partition(Grades, i - 1, axis=0)[i - 1][0]
+            possible -= np.partition(Grades, i - 1, axis=0)[i - 1][1]
+        return score, possible
 
 if __name__ == '__main__':
-    grades = [1,5,3,5,7,4,2,4,6]
-    print(sum(grades))
-    print(drop(grades, 0))
+    v = [[1,10], [4,10], [9,10], [0,10], [2,10]]
+    v = np.array(v)
+    print(v)
+    print(len(v))
+    print(drop(v, 2))

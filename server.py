@@ -5,6 +5,7 @@ from passlib.hash import sha256_crypt
 from functools import wraps
 from itsdangerous import URLSafeTimedSerializer
 import smtplib
+import numpy as np
 
 app = Flask(__name__)
 
@@ -23,6 +24,17 @@ ts = URLSafeTimedSerializer(app.config["secret_key"])
 
 # init MySQL
 mysql = MySQL(app)
+
+def drop(Grades, n):
+    if n >= len(Grades[:,0]):
+        return 0, 0
+    else:
+        score = sum(Grades[:,0])
+        possible = sum(Grades[:,1])
+        for i in range(1, n+1, 1):
+            score -= np.partition(Grades, i - 1, axis=0)[i - 1][0]
+            possible -= np.partition(Grades, i - 1, axis=0)[i - 1][1]
+        return score, possible
 
 def is_not_blocked(f):
     @wraps(f)
@@ -564,19 +576,30 @@ def mySchoolClass(name,cName):
                     "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
                     [session['netid'], subject, courseNum, cName, category['category']])
         attributes = cur.fetchall()
-        totalScored, totalPossible = 0.0, 0.0
-        for attribute in attributes:
-            totalScored += attribute['score']
-            totalPossible += attribute['total']
-            atLeastOneAttribute = True
-        categoryData.append({
-            'categoryName': category['category'],
-            'attributes': attributes,
-            'totalScored': totalScored,
-            'totalPossible': totalPossible,
-            'weight': category['weight'],
-            'drops': category['drops']
-        })
+        if attributes:
+            v = []
+            for attribute in attributes:
+                atLeastOneAttribute = True
+                v.append([attribute['score'], attribute['total']])
+            v = np.array(v)
+            totalScored, totalPossible = drop(v, category['drops'])
+            categoryData.append({
+                'categoryName': category['category'],
+                'attributes': attributes,
+                'totalScored': totalScored,
+                'totalPossible': totalPossible,
+                'weight': category['weight'],
+                'drops': category['drops']
+            })
+        else:
+            categoryData.append({
+                'categoryName': category['category'],
+                'attributes': attributes,
+                'totalScored': 0,
+                'totalPossible': 0,
+                'weight': category['weight'],
+                'drops': category['drops']
+            })
     mysql.connection.commit()
     cur.close()
     return render_template('class.html',
@@ -992,7 +1015,7 @@ def calculateGrade(name, cName):
                 "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                 [session['netid'], subject, courseNum, cName])
     weighted = cur.fetchall()[0]['weighted']
-    cur.execute("SELECT category, weight " +
+    cur.execute("SELECT category, weight, drops " +
                 "FROM Weights " +
                 "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s",
                 [session['netid'], subject, courseNum, cName])
@@ -1008,20 +1031,30 @@ def calculateGrade(name, cName):
                     "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s",
                     [session['netid'], subject, courseNum, cName, category['category']])
         attributes = cur.fetchall()
-        totalScored, totalPossible = 0.0, 0.0
-        for attribute in attributes:
-            totalScored += attribute['score']
-            totalPossible += attribute['total']
-        categoryData.append({
-            'categoryName': category['category'],
-            'attributes': attributes,
-            'totalScored': totalScored,
-            'totalPossible': totalPossible,
-            'weight': category['weight']
-        })
+        if attributes:
+            v = []
+            for attribute in attributes:
+                v.append([attribute['score'], attribute['total']])
+            v = np.array(v)
+            totalScored, totalPossible = drop(v, category['drops'])
+            categoryData.append({
+                'categoryName': category['category'],
+                'attributes': attributes,
+                'totalScored': totalScored,
+                'totalPossible': totalPossible,
+                'weight': category['weight']
+            })
+        else:
+            categoryData.append({
+                'categoryName': category['category'],
+                'attributes': attributes,
+                'totalScored': 0,
+                'totalPossible': 0,
+                'weight': category['weight']
+            })
         if weighted:
             sumOfWeights += category['weight']
-            if not attributes:
+            if not attributes or totalPossible == 0:
                 continue
             sum_ += (1.0*totalScored/totalPossible)*category['weight']
         else:
@@ -1029,7 +1062,13 @@ def calculateGrade(name, cName):
             totalPossibleVec.append(totalPossible)
     mysql.connection.commit()
     cur.close()
-    grade = sum_ if weighted else 100.0*sum(totalScoredVec)/sum(totalPossibleVec)
+    grade = 0
+    if weighted:
+        grade = sum_
+    elif sum(totalPossibleVec):
+        grade = 100.0*sum(totalScoredVec)/sum(totalPossibleVec)
+    else:
+        grade = 0
     if weighted and sumOfWeights != 100:
         flash('Weights do not add up to 100%.', 'danger')
         return redirect(url_for('mySchoolClass', name=name, cName=cName))
