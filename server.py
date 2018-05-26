@@ -198,6 +198,38 @@ def administration():
     cur.close()
     return render_template('administration.html', users=users)
 
+# admin is viewing a week for a user's planner
+@app.route('/administration/<string:userNetID>/<string:userName>/planner/week<string:week>')
+@is_logged_in
+@is_admin
+def administrationUserPlannerWeekX(userNetID, userName, week):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT subject, courseNum, courseName, category, attributeName, dueDate " +
+                "FROM Attributes " +
+                "WHERE netID=%s AND week=%s",
+                [userNetID, week])
+    Items = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return render_template('administrationUserPlannerWeekX.html', Items=Items, week=week, userName=userName)
+
+# admin select week to view for user's planner
+@app.route('/administration/<string:userNetID>/<string:userName>/planner', methods=["GET", "POST"])
+@is_logged_in
+@is_admin
+def administrationUserPlanner(userNetID, userName):
+    if request.method == "POST":
+        week = request.form.get('weeks')
+        return redirect(url_for('administrationUserPlannerWeekX', week=week, userNetID=userNetID, userName=userName))
+    return render_template('administrationWeekChart.html', userName=userName)
+
+# admin chooses between user's classes or planner
+@app.route('/administration/<string:userNetID>/<string:userName>/portfolio')
+@is_logged_in
+@is_admin
+def administrationChoose(userNetID, userName):
+    return render_template('administrationChoose.html', userNetID=userNetID, userName=userName)
+
 # admin executes check-in
 @app.route('/administrationCheckIn')
 @is_logged_in
@@ -481,20 +513,63 @@ def reset_with_token(token, netID):
 def updates():
     return render_template('updates.html')
 
+# user tries to delete an item
+@app.route('/myplanner/week<string:week>/Delete/<string:subject>-<string:courseNum>/<string:courseName>/<string:category>/<string:attributeName>', methods=["GET", "POST"])
+@is_not_blocked
+@is_logged_in
+def maybeDeleteItem(week, subject, courseNum, courseName, category, attributeName):
+    if request.method == "POST":
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM Attributes " +
+                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attributeName=%s AND week=%s",
+                    [session['netid'], subject, courseNum, courseName, category, attributeName, week])
+        mysql.connection.commit()
+        cur.close()
+        flash('"' + attributeName + '"' + ' item has been removed.', 'success')
+        return redirect(url_for('myPlannerWeekX', week=week))
+    return render_template('maybeDeleteItem.html')
+
+# user tries to edit date of item
+@app.route('/myplanner/week<string:week>/EditDueDate/<string:subject>-<string:courseNum>/<string:courseName>/<string:category>/<string:attributeName>', methods=["GET", "POST"])
+@is_not_blocked
+@is_logged_in
+def editDueDate(week, subject, courseNum, courseName, category, attributeName):
+    if request.method == "POST":
+        newDueDate = request.form.get('months')+'-'+request.form.get('days')
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE Attributes " +
+                    "SET dueDate=%s " +
+                    "WHERE netID=%s AND subject=%s AND courseNum=%s AND courseName=%s AND category=%s AND attributeName=%s AND week=%s",
+                    [session['netid'], subject, courseNum, courseName, category, attributeName, week])
+        mysql.connection.commit()
+        cur.close()
+        flash('Due date has been modified.', 'success')
+        return redirect(url_for('myPlannerWeekX', week=week))
+
+# user goes to specific week in planner
+@app.route('/myplanner/week<string:week>')
+@is_not_blocked
+@is_logged_in
+def myPlannerWeekX(week):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT subject, courseNum, courseName, category, attributeName, dueDate " +
+                "FROM Attributes " +
+                "WHERE netID=%s AND week=%s",
+                [session['netid'], week])
+    Items = cur.fetchall()
+    mysql.connection.commit()
+    cur.close()
+    return render_template('myPlannerWeekX.html', Items=Items, week=week)
+
 # user tries to see their planner
-@app.route('/myplanner')
+@app.route('/myplanner', methods=["POST", "GET"])
 @is_not_blocked
 @is_logged_in
 def myPlanner():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT dueDate, week " +
-                "FROM Attributes "+
-                "WHERE netID=%s",
-                [session['netid']])
-    dataEntries = cur.fetchall()
-    mysql.connection.commit()
-    cur.close()
-    return render_template('weekChart.html', dataEntries=dataEntries)
+    if request.method == "POST":
+        week = request.form.get('weeks')
+        return redirect(url_for('myPlannerWeekX', week=week))
+    return render_template('weekChart.html')
 
 # my profile page
 @app.route('/myprofile')

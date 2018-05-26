@@ -2,19 +2,10 @@
 
 {% block body %}
     <p></p>
-    <h1>Add {{category}} Attribute</h1>
+    <h1>Edit Due Date</h1>
     <p></p>
     {% from "includes/_formhelpers.html" import render_field %}
     <form action="" method="POST">
-        <div class="form-group">
-            {{render_field(form.attributeName, class_="form-control")}}
-        </div>
-        <div class="form-group">
-            {{render_field(form.score, class_="form-control")}}
-        </div>
-        <div class="form-group">
-            {{render_field(form.total, class_="form-control")}}
-        </div>
         Week:
         <select name="weeks">
             {% for i in range(1, 17) %}
