@@ -15,12 +15,13 @@ app.config['MYSQL_USER'] = 'dpaez2_dpaez2'
 app.config['MYSQL_PASSWORD'] = '.kh$ETfN-^7U'
 app.config['MYSQL_DB'] = 'dpaez2_Academic_Calendar'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-app.config['secret_key'] = 'docpmoo10/10'
+app.config['SESSION_TYPE'] = 'memcached'
+app.config['SECRET_KEY'] = 'docpmoo10/10'
 
 ADMIN_NETID = ['dpaez2', 'swestma2']
 ADMIN_NAME = ['DDP', 'SJW']
 
-ts = URLSafeTimedSerializer(app.config["secret_key"])
+ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 # init MySQL
 mysql = MySQL(app)
@@ -1199,5 +1200,4 @@ def calculateGrade(name, cName):
                            weighted=weighted)
 
 if __name__ == "__main__":
-    app.secret_key='docpmoo10/10'
     app.run(debug=True)
