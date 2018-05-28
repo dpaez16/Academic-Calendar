@@ -736,7 +736,7 @@ def mySchoolClass(name,cName):
 
 class addClassForm(Form):
     courseNum = StringField('Course Number', [
-        validators.Regexp(r'[0-9][0-9][0-9]', message='Not a course number.'),
+        validators.Regexp(r'[1-9][0-9][0-9]', message='Not a course number.'),
         validators.Length(min=3, max=3, message='Field must be 3 numbers long.')])
     courseName = StringField('Course Name', [validators.DataRequired()])
 
@@ -782,7 +782,7 @@ def addClass():
 
 class editClassForm(Form):
     courseNum = StringField('Course Number', [
-        validators.Regexp(r'[0-9][0-9][0-9]', message='Not a course number.'),
+        validators.Regexp(r'[1-9][0-9][0-9]', message='Not a course number.'),
         validators.Length(min=3, max=3, message='Field must be 3 numbers long.')])
     courseName = StringField('Course Name', [validators.DataRequired()])
 
