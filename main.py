@@ -26,6 +26,16 @@ ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 # init MySQL
 mysql = MySQL(app)
 
+def lastCommitParse(s):
+    tmp = s.split('-')
+    tmp2 = tmp[2].split(' ')
+    tmp3 = tmp2[1].split(':')
+    hour = int(tmp3[0])
+    m = 'AM' if hour < 12 else 'PM'
+    if hour > 12:
+        hour -= 12
+    return "{:s}/{:s}/{:s} {:d}:{:s} {:s}".format(tmp[1], tmp2[0], tmp[0], hour, tmp3[1], m)
+
 def drop(Grades, n):
     if n >= len(Grades[:,0]):
         return 0, 0
@@ -197,7 +207,7 @@ def administration():
     users = cur.fetchall()
     mysql.connection.commit()
     cur.close()
-    return render_template('administration.html', users=users)
+    return render_template('administration.html', users=users, lastCommitParse=lastCommitParse)
 
 # admin is viewing a week for a user's planner
 @app.route('/administration/<string:userNetID>/<string:userName>/planner/week<string:week>')
@@ -250,7 +260,7 @@ def administrationCheckIn():
     mysql.connection.commit()
     cur.close()
     msg = 'Check-In has been executed.'
-    return render_template('administration.html', users=users, msg=msg)
+    return render_template('administration.html', users=users, msg=msg, lastCommitParse=lastCommitParse)
 
 # admin undos check-in
 @app.route('/administrationUndoCheckIn')
@@ -266,7 +276,7 @@ def administrationUndoCheckIn():
     mysql.connection.commit()
     cur.close()
     msg = 'Check-In has been undone.'
-    return render_template('administration.html', users=users, msg=msg)
+    return render_template('administration.html', users=users, msg=msg, lastCommitParse=lastCommitParse)
 
 # admin clicks on user to see user's classes
 @app.route('/administration/<string:userNetID>/<string:userName>/classes')

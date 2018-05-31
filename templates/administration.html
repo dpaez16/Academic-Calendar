@@ -16,7 +16,7 @@
             <object align="left">
                 <a href="/administration/{{user.netID}}/{{user.name}}/portfolio">{{user.netID}} - {{user.name}}</a>
                 <br>
-                <strong>Last Edit:</strong> {{user.last_commit}}
+                <strong>Last Edit:</strong> {{lastCommitParse(user.last_commit|string())}}
             </object>
             {% if user.blocked %}
                 <object align="right">BLOCKED</object>
