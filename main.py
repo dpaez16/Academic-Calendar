@@ -26,13 +26,17 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name('tri-uiuc-ac-e08f
 gc = gspread.authorize(credentials)
 
 wks = gc.open('tri-uiuc-ac-admins').sheet1
-num_admins = len(wks.col_values(1)) - 1
-# set up garbage values in case spreadsheet is empty
-ADMIN_NETID = ['bork123']
-ADMIN_NAME = ['XYZ']
-if num_admins > 0:
-	ADMIN_NETID = wks.col_values(1)[1:]
-	ADMIN_NAME = wks.col_values(2)[1:]
+def get_admins():
+	num_admins = len(wks.col_values(1)) - 1
+	# set up garbage values in case spreadsheet is empty
+	ADMIN_NETID = ['bork123']
+	ADMIN_NAME = ['XYZ']
+	if num_admins > 0:
+		ADMIN_NETID = wks.col_values(1)[1:]
+		ADMIN_NAME = wks.col_values(2)[1:]
+	return ADMIN_NETID, ADMIN_NAME
+
+ADMIN_NETID, ADMIN_NAME = get_admins()
 
 ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
@@ -148,6 +152,7 @@ def register():
 # Login page
 @app.route('/login', methods=['GET','POST'])
 def login():
+	ADMIN_NETID, ADMIN_NAME = get_admins()
 	if request.method == 'POST':
 		netid = request.form['netid']
 		password_candidate = request.form['password']
@@ -259,6 +264,7 @@ def administrationChoose(userNetID, userName):
 @is_logged_in
 @is_admin
 def administrationCheckIn():
+	ADMIN_NETID, ADMIN_NAME = get_admins()
 	cur = mysql.connection.cursor()
 	query = "UPDATE Users SET blocked=TRUE WHERE "
 	for i in range(len(ADMIN_NETID)):
@@ -611,6 +617,7 @@ class editProfileForm(Form):
 @is_not_blocked
 @is_logged_in
 def editProfile():
+	ADMIN_NETID, ADMIN_NAME = get_admins()
 	form = editProfileForm(request.form)
 	if request.method == 'POST' and form.validate(): # form is correctly inputted
 		newName = form.newName.data
