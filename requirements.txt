@@ -27,3 +27,5 @@ setuptools==39.2.0
 six==1.11.0
 virtualenv==16.0.0
 virtualenv-clone==0.3.0
+gspread==3.0.0
+oauth2client==4.1.2

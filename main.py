@@ -6,6 +6,8 @@ from functools import wraps
 from itsdangerous import URLSafeTimedSerializer
 import smtplib
 import numpy as np
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 app = Flask(__name__)
 
@@ -18,8 +20,19 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['SECRET_KEY'] = 'docpmoo10/10'
 
-ADMIN_NETID = ['dpaez2', 'swestma2']
-ADMIN_NAME = ['DDP', 'SJW']
+# open admin spreadsheet
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+credentials = ServiceAccountCredentials.from_json_keyfile_name('tri-uiuc-ac-e08f32932b2b.json', scope)
+gc = gspread.authorize(credentials)
+
+wks = gc.open('tri-uiuc-ac-admins').sheet1
+num_admins = len(wks.col_values(1)) - 1
+# set up garbage values in case spreadsheet is empty
+ADMIN_NETID = ['bork123']
+ADMIN_NAME = ['XYZ']
+if num_admins > 0:
+	ADMIN_NETID = wks.col_values(1)[1:]
+	ADMIN_NAME = wks.col_values(2)[1:]
 
 ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
