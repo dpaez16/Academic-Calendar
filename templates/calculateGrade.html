@@ -239,7 +239,7 @@
 								.y0(height)
 								.y1(yMap);
 							myViz.append("path")
-								.data([[{x: z - 0.01, y: f(z - 0.01, mu, sd)}, {x: z + 0.01, y: f(z + 0.01, mu, sd)}]])
+								.data([[{x: z - 0.01, y: f(z - 0.01, mu, sd)}, {x: z + 0.02, y: f(z + 0.02, mu, sd)}]])
 								.attr("class", "area")
 								.attr("d", area)
 								.attr('fill', colors[5]);
