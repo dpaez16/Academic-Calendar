@@ -1,6 +1,28 @@
 <html>
 <head>
-	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script>
+		// arbitrary function to plot
+		var f = function(x, mu = 0, sd = 1) {
+			return (1.0/(Math.sqrt(2*Math.PI)*sd))*Math.exp(-0.5*Math.pow((x - mu)/(1.0*sd), 2));
+		}
+
+		// function that creates the data
+		var makeData = function(a, b, n, mu = 0, sd = 1) {
+			data = [];
+			dx = 1.0*(b - a)/n;
+			yMax = -Math.pow(10, 5);
+			for (i = 0; i <= n; i++) {
+				x = a + i*dx;
+				y = f(x, mu, sd);
+				data.push({ x: x, y: y });
+				if (y > yMax) {
+					yMax = y;
+				}
+			}
+			return { data: data, yMax: Math.round(yMax*100) / 100 };
+		}
+	</script>
 	<meta charset="UTF-8">
 </head>
 <style>
@@ -122,119 +144,132 @@
 								document.getElementById("pcGrade2").innerText = "";
 							}
 							document.getElementById("viz").innerText = "";
-							var f = function(x, m, s) {
-								return (1 / (Math.sqrt(2 * Math.PI) * s)) * Math.exp(-1 * (Math.pow(x - m, 2) / (2 * Math.pow(s, 2))));
-							};
+							// prepare data
+							mu = 0;
+							sd = 1;
 
-							var linspace = function(start, end, n) {
-								d = (end - start) / (n - 1);
-								arr = [];
-								for (var i = 0; i < n; i++)
-									arr.push(start + i * d);
-								return arr;
-							};
+							var v = [mu-3*sd, mu-1*sd, mu-0.5*sd, mu, mu+0.5*sd, mu+1*sd, mu+3*sd];
+							var idxs = [[0, 1], [1, 2], [2, 4], [4, 5], [5, 6]];
 
-							var xyPoints = function(start, end, n) {
-								x = linspace(start, end, n);
-								y = [];
-								arr = [];
-								for(var i = 0; i < x.length; i++)
-									y.push(f(x[i], 0, 1));
-								arr.push(x);
-								arr.push(y);
-								return arr;
-							};
+							a = v[0];
+							b = v[6];
+							n = 100;
+							var myData = makeData(a, b, n, mu, sd);
+							var colors = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"]
+							var labels = ["F", "D", "C", "B", "A", "You"];
 
-							var myGradeLine = {
-								x: [z, z],
-								y: [0, f(z, 0, 1)],
-								name: 'You',
-								mode: 'lines',
-								marker: {color: 'red'},
-								showlegend: true
+							// configure svg display margins
+							const fullWidth = 600;
+							const fullHeight = 250;
+							const margin = {
+								top: 25,
+								right: 20, // 15 by default
+								left: 20, // 50 with y-axis
+								bottom: 25
 							};
+							const width = fullWidth - margin.left - margin.right;
+							const height = fullHeight - margin.top - margin.bottom;
 
-							var pts = xyPoints(-3, -1, 100);
-							var fZone = {
-								x: pts[0],
-								y: pts[1],
-								fill: 'tozeroy',
-								type: 'line',
-								marker: {color: '#990000'},
-								showlegend: false
-							};
+							// create svg canvas 
+							var myViz = d3.select("#viz").append('svg')
+								.attr('width', fullWidth)
+								.attr('height', fullHeight)
+								.style('border', 'solid')
+								.append('g')
+									.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-							pts = xyPoints(-1, -0.5, 100);
-							var dZone = {
-								x: pts[0],
-								y: pts[1],
-								fill: 'tozeroy',
-								type: 'line',
-								marker: {color: '#ff00ff'},
-								showlegend: false
-							};
+							// create x-axis
+							xScale = d3.scaleLinear()
+								.domain([a, b])
+								.range([0, width]);
+							xMap = function(d) { return xScale(d.x); }
+							xAxis = d3.axisBottom(xScale)
+								.tickSize(5)
+								.tickValues(v)
+								.tickFormat(d3.format(".3f"));
+							myViz.append('g')
+								.attr('transform', 'translate(0,' + height + ')')
+								.classed('x axis', true)
+								.call(xAxis);
 
-							pts = xyPoints(-0.5, 0.5, 100);
-							var cZone = {
-								x: pts[0],
-								y: pts[1],
-								fill: 'tozeroy',
-								type: 'line',
-								marker: {color: '#f28000'},
-								showlegend: false
-							};
+							// create y-axis
+							yScale = d3.scaleLinear()
+								.domain([0, myData.yMax])
+								.range([height, 0]);
+							yMap = function(d) { return yScale(d.y); }
+							yAxis = d3.axisLeft(yScale)
+								.tickSizeInner(5)
+								.tickSizeOuter(10); /*
+							myViz.append('g')
+								.classed('y axis', true)
+								.call(yAxis); 
+							*/
 
-							pts = xyPoints(0.5, 1, 100);
-							var bZone = {
-								x: pts[0],
-								y: pts[1],
-								fill: 'tozeroy',
-								type: 'line',
-								marker: {color: '#0080ff'},
-								showlegend: false
-							};
+							// add black continuous line
+							var line = d3.line()
+								.x(xMap)
+								.y(yMap);
+							myViz.append("path")
+								.datum(myData.data)
+								.attr("fill", "none")
+								.attr("stroke", "black")
+								.attr("stroke-linejoin", "round")
+								.attr("stroke-linecap", "round")
+								.attr("stroke-width", 1.5)
+								.attr("d", line);
 
-							pts = xyPoints(1, 3, 100);
-							var aZone = {
-								x: pts[0],
-								y: pts[1],
-								fill: 'tozeroy',
-								type: 'line',
-								marker: {color: '#0dc000'},
-								showlegend: false
-							};
+							// add F, D, C, B, A grade zones
+							for (k = 0; k < 5; k++) {
+								// add area under line
+								area = d3.area()
+									.x(xMap)
+									.y0(height)
+									.y1(yMap);
+								myViz.append("path")
+									.data([makeData(v[idxs[k][0]], v[idxs[k][1]], n, mu, sd).data])
+									.attr("class", "area")
+									.attr("d", area)
+									.attr('fill', colors[k]);
+							}
 
-							var data = [fZone, dZone, cZone, bZone, aZone, myGradeLine];
-							var layout = {
-								title: 'Standard Normal Curve',
-								autosize: false,
-								width: 500,
-								height: 500,
-								margin: {
-								  l: 50,
-								  r: 50,
-								  b: 100,
-								  t: 100,
-								  pad: 4
-								},
-								xaxis: {
-									range: [-3,3],
-									fixedrange: true,
-									showgrid: false,
-									zeroline: false,
-									tickvals: [-3,-1,-0.5, 0, 0.5, 1, 3],
-									ticktext: [-3,-1,-0.5, 0, 0.5, 1, 3]
-								},
-								yaxis: {
-									showticklabels: false,
-									fixedrange: true,
-									showgrid: false
-								  },
-								hovermode: false
-							};
-							Plotly.newPlot('viz', data, layout, {displayModeBar: false});
-							dragLayer = document.getElementsByClassName('nsewdrag')[0]
-							dragLayer.style.cursor = 'default';
+							// add grade line
+							area = d3.area()
+								.x(xMap)
+								.y0(height)
+								.y1(yMap);
+							myViz.append("path")
+								.data([[{x: grade - 0.01, y: f(grade - 0.01, mu, sd)}, {x: grade + 0.01, y: f(grade + 0.01, mu, sd)}]])
+								.attr("class", "area")
+								.attr("d", area)
+								.attr('fill', colors[5]);
+
+							// add title to plot
+							myViz.append("text")
+								.attr("x", (width / 2))
+								.attr("y", 0 - 0.35*margin.top)
+								.attr("text-anchor", "middle")
+								.style("font-size", "16px")
+								.style("text-decoration", "underline")
+								.text("Standard Normal Curve");
+
+							// add legend
+							var legend = myViz.append("g")
+
+							legend.selectAll('rect')
+					      		.data(labels)
+					      		.enter().append("rect")
+									.attr("x", margin.left)
+									.attr("y", function(d, i){ return i*20;})
+									.attr("width", 10)
+									.attr("height", 10)
+									.style("fill", function(d, i) { return colors[i]; });
+
+							legend.selectAll('text')
+								.data(labels)
+								.enter().append('text')
+									.attr("x", margin.left + 15)
+									.attr("y", function(d, i){ return i*20 + 10;})
+									.text(function(d, i) { return ": " + d; })
 						} else {
 							errMsg = "";
 							if (((m < 0) || (m > 100)) && (s <= 0)) {
