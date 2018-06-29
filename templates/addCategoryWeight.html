@@ -1,21 +1,21 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <p></p>
-    <h1>Add Weighted Category</h1>
-    <p></p>
-    {% from "includes/_formhelpers.html" import render_field %}
-    <form action="" method="POST">
-        <div class="form-group">
-            {{render_field(form.categoryName, class_="form-control")}}
-        </div>
-        <div class="form-group">
-            {{render_field(form.categoryWeight, class_="form-control")}}
-        </div>
-        <div class="form-group">
-            {{render_field(form.drops, class_="form-control")}}
-        </div>
-        <p></p>
-        <p><input type="submit" class="btn btn-primary" value="Submit"></p>
-    </form>
+	<p></p>
+	<h1>Add Weighted Category</h1>
+	<p></p>
+	{% from "includes/_formhelpers.html" import render_field %}
+	<form action="" method="POST">
+		<div class="form-group">
+			{{render_field(form.categoryName, class_="form-control")}}
+		</div>
+		<div class="form-group">
+			{{render_field(form.categoryWeight, class_="form-control")}}
+		</div>
+		<div class="form-group">
+			{{render_field(form.drops, class_="form-control")}}
+		</div>
+		<p></p>
+		<p><input type="submit" class="btn btn-primary" value="Submit"></p>
+	</form>
 {% endblock %}

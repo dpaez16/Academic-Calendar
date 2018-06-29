@@ -1,27 +1,27 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <p></p>
-    <h1>Administration</h1>
-    <p></p>
-    <a href="/administrationCheckIn" class="btn btn-primary">Execute Check-In!</a>
-    <object align="right">
-        <a href="/administrationUndoCheckIn" class="btn btn-primary">Undo Check-In!</a>
-    </object>
-    <br>
-    <br>
-    <ul class="list-group">
-    {% for user in users %}
-        <li class="list-group-item">
-            <object align="left">
-                <a href="/administration/{{user.netID}}/{{user.name}}/portfolio">{{user.netID}} - {{user.name}}</a>
-                <br>
-                <strong>Last Edit:</strong> {{lastCommitParse(user.last_commit|string())}}
-            </object>
-            {% if user.blocked %}
-                <object align="right">BLOCKED</object>
-            {% endif %}
-        </li>
-    {% endfor %}
-    </ul>
+	<p></p>
+	<h1>Administration</h1>
+	<p></p>
+	<a href="/administrationCheckIn" class="btn btn-primary">Execute Check-In!</a>
+	<object align="right">
+		<a href="/administrationUndoCheckIn" class="btn btn-primary">Undo Check-In!</a>
+	</object>
+	<br>
+	<br>
+	<ul class="list-group">
+	{% for user in users %}
+		<li class="list-group-item">
+			<object align="left">
+				<a href="/administration/{{user.netID}}/{{user.name}}/portfolio">{{user.netID}} - {{user.name}}</a>
+				<br>
+				<strong>Last Edit:</strong> {{lastCommitParse(user.last_commit|string())}}
+			</object>
+			{% if user.blocked %}
+				<object align="right">BLOCKED</object>
+			{% endif %}
+		</li>
+	{% endfor %}
+	</ul>
 {% endblock %}

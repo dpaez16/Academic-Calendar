@@ -1,116 +1,116 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <p></p>
-    <h1>{{subject}}{{courseNum}}: {{courseName}}
-    {% if weighted %}
-        <object align="right">
-            <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/addCategory/Weight" class="btn btn-primary">Add Category</a>
-        </object>
-    {% else %}
-        <object align="right">
-            <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/addCategory/NoWeight" class="btn btn-primary">Add Category</a>
-        </object>
-    {% endif %}
-    </h1>
-    {% for category in categoryData %}
-        <strong>
-            {% if weighted %}
-                {{category.categoryName}}: {{category.weight}}%
-            {% else %}
-                {{category.categoryName}}
-            {% endif %}
-        </strong>
-            <br>
-            <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Add{{category.categoryName}}" class="btn btn-primary">Add {{category.categoryName}}</a>
-            {% if weighted %}
-            <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditWeight/{{category.categoryName}}" class="btn btn-info">Edit Weight</a>
-            {% endif %}
-            <object align="right">
-                <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/deleteCategory/{{category.categoryName}}" class="btn btn-danger">Delete {{category.categoryName}}</a>
-            </object>
-            <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/editDrops/{{category.categoryName}}" class="btn btn-info">Edit Drops</a>
-            <br>
-            <p></p>
-            <table class="table">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Name of Attribute</th>
-                        <th></th>
-                        <th>Score</th>
-                        <th>Out Of</th>
-                        <th>Percentage</th>
-                        <th></th>
-                        <th></th>
-                        <th>Drops: {{category.drops}}</th>
-                    </tr>
-                </thead>
-                {% for attr in category.attributes %}
-                <tr>
-                    <td>{{attr.attributeName}}</td>
-                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/Name" class="btn btn-info" role="button">Edit Name</a></td>
-                    <td>{{attr.score}}</td>
-                    <td>{{attr.total}}</td>
-                    {% if attr.total != 0 %}
-                    <td>{{(attr.score/attr.total)*100}}%</td>
-                    {% else %}
-                    <td>0%</td>
-                    {% endif %}
-                    <td></td>
-                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}/Numbers" class="btn btn-info" role="button">Edit Numbers</a></td>
-                    <td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Delete{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}" class="btn btn-danger">Delete</a></td>
-                </tr>
-                {% endfor %}
-                {% if category.attributes %}
-                <tr>
-                    {% if category.totalPossible != 0 %}
-                    <td><strong>Total</strong></td>
-                    <td></td>
-                    <td>{{category.totalScored}}</td>
-                    <td>{{category.totalPossible}}</td>
-                    <td>{{(category.totalScored/category.totalPossible)*100}}%</td>
-                    <td></td>
-                    <td></td>
-                    {% else %}
-                    <td><strong>Total</strong></td>
-                    <td></td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0%</td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}
-                </tr>
-                    {% if weighted %}
-                    <tr>
-                        {% if category.totalPossible != 0 %}
-                        <td><strong>Total Earned (Weighted)</strong></td>
-                        <td>{{(category.totalScored/category.totalPossible)*category.weight}}%</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        {% else %}
-                        <td>
-                            <strong>Total Earned (Weighted)</strong>:
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        {% endif %}
-                    </tr>
-                    {% endif %}
-                {% endif %}
-            </table>
-        <br>
-    {% endfor %}
-    <br>
-    {% if categoryData and atLeastOneAttribute %}
-        <a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/calculateGrade" class="btn btn-primary btn-lg btn-block">Calculate My Grade</a>
-    {% endif %}
-    <br>
+	<p></p>
+	<h1>{{subject}}{{courseNum}}: {{courseName}}
+	{% if weighted %}
+		<object align="right">
+			<a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/addCategory/Weight" class="btn btn-primary">Add Category</a>
+		</object>
+	{% else %}
+		<object align="right">
+			<a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/addCategory/NoWeight" class="btn btn-primary">Add Category</a>
+		</object>
+	{% endif %}
+	</h1>
+	{% for category in categoryData %}
+		<strong>
+			{% if weighted %}
+				{{category.categoryName}}: {{category.weight}}%
+			{% else %}
+				{{category.categoryName}}
+			{% endif %}
+		</strong>
+			<br>
+			<a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Add{{category.categoryName}}" class="btn btn-primary">Add {{category.categoryName}}</a>
+			{% if weighted %}
+			<a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/EditWeight/{{category.categoryName}}" class="btn btn-info">Edit Weight</a>
+			{% endif %}
+			<object align="right">
+				<a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/deleteCategory/{{category.categoryName}}" class="btn btn-danger">Delete {{category.categoryName}}</a>
+			</object>
+			<a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/editDrops/{{category.categoryName}}" class="btn btn-info">Edit Drops</a>
+			<br>
+			<p></p>
+			<table class="table">
+				<thead class="thead-light">
+					<tr>
+						<th>Name of Attribute</th>
+						<th></th>
+						<th>Score</th>
+						<th>Out Of</th>
+						<th>Percentage</th>
+						<th></th>
+						<th></th>
+						<th>Drops: {{category.drops}}</th>
+					</tr>
+				</thead>
+				{% for attr in category.attributes %}
+				<tr>
+					<td>{{attr.attributeName}}</td>
+					<td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/Name" class="btn btn-info" role="button">Edit Name</a></td>
+					<td>{{attr.score}}</td>
+					<td>{{attr.total}}</td>
+					{% if attr.total != 0 %}
+					<td>{{(attr.score/attr.total)*100}}%</td>
+					{% else %}
+					<td>0%</td>
+					{% endif %}
+					<td></td>
+					<td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Edit{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}/Numbers" class="btn btn-info" role="button">Edit Numbers</a></td>
+					<td><a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/Delete{{category.categoryName}}/{{attr.attributeName}}/{{attr.score}}-{{attr.total}}" class="btn btn-danger">Delete</a></td>
+				</tr>
+				{% endfor %}
+				{% if category.attributes %}
+				<tr>
+					{% if category.totalPossible != 0 %}
+					<td><strong>Total</strong></td>
+					<td></td>
+					<td>{{category.totalScored}}</td>
+					<td>{{category.totalPossible}}</td>
+					<td>{{(category.totalScored/category.totalPossible)*100}}%</td>
+					<td></td>
+					<td></td>
+					{% else %}
+					<td><strong>Total</strong></td>
+					<td></td>
+					<td>0</td>
+					<td>0</td>
+					<td>0%</td>
+					<td></td>
+					<td></td>
+					{% endif %}
+				</tr>
+					{% if weighted %}
+					<tr>
+						{% if category.totalPossible != 0 %}
+						<td><strong>Total Earned (Weighted)</strong></td>
+						<td>{{(category.totalScored/category.totalPossible)*category.weight}}%</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						{% else %}
+						<td>
+							<strong>Total Earned (Weighted)</strong>:
+						</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						{% endif %}
+					</tr>
+					{% endif %}
+				{% endif %}
+			</table>
+		<br>
+	{% endfor %}
+	<br>
+	{% if categoryData and atLeastOneAttribute %}
+		<a href="/myclasses/{{subject}}-{{courseNum}}/{{courseName}}/calculateGrade" class="btn btn-primary btn-lg btn-block">Calculate My Grade</a>
+	{% endif %}
+	<br>
 {% endblock %}

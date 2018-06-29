@@ -1,22 +1,22 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <p></p>
-    <h1>My Classes</h1>
-    <p></p>
-    <a href="/myclasses/addclass" class="btn btn-primary">Add Class</a>
-    <p></p>
-    <ul class="list-group">
-    {% for schoolClass in classes %}
-        <li class="list-group-item">
-            <object align="left-center">
-                <a href="myclasses/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a>
-            </object>
-            <object align="right">
-                <a href="myclasses/edit/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}/{{schoolClass.weighted}}" class="btn btn-info">Edit</a>
-                <a href="myclasses/delete/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}/{{schoolClass.weighted}}" class="btn btn-danger">Delete</a>
-            </object>
-        </li>
-    {% endfor %}
-    </ul>
+	<p></p>
+	<h1>My Classes</h1>
+	<p></p>
+	<a href="/myclasses/addclass" class="btn btn-primary">Add Class</a>
+	<p></p>
+	<ul class="list-group">
+	{% for schoolClass in classes %}
+		<li class="list-group-item">
+			<object align="left-center">
+				<a href="myclasses/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}">{{schoolClass.subject}}{{schoolClass.courseNum}}: {{schoolClass.courseName}}</a>
+			</object>
+			<object align="right">
+				<a href="myclasses/edit/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}/{{schoolClass.weighted}}" class="btn btn-info">Edit</a>
+				<a href="myclasses/delete/{{schoolClass.subject}}-{{schoolClass.courseNum}}/{{schoolClass.courseName}}/{{schoolClass.weighted}}" class="btn btn-danger">Delete</a>
+			</object>
+		</li>
+	{% endfor %}
+	</ul>
 {% endblock %}
