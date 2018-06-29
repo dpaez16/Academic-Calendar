@@ -67,7 +67,6 @@ def drop(Grades, n):
 def is_not_blocked(f):
 	@wraps(f)
 	def wrap(*args, **kwargs):
-		ADMIN_NETID, ADMIN_NAME = get_admins()
 		cur = mysql.connection.cursor()
 		cur.execute("SELECT blocked " +
 					"FROM Users " +
@@ -87,7 +86,6 @@ def is_not_blocked(f):
 def is_check_in_not_happening(f):
 	@wraps(f)
 	def wrap(*args, **kwargs):
-		ADMIN_NETID, ADMIN_NAME = get_admins()
 		cur = mysql.connection.cursor()
 		cur.execute("SELECT SUM(blocked) AS num " +
 					"FROM Users")
@@ -104,13 +102,11 @@ def is_check_in_not_happening(f):
 # Home page
 @app.route('/')
 def Index():
-	ADMIN_NETID, ADMIN_NAME = get_admins()
 	return render_template('home.html')
 
 # About page
 @app.route('/about')
 def About():
-	ADMIN_NETID, ADMIN_NAME = get_admins()
 	return render_template('about.html')
 
 # Class used in register page
@@ -201,7 +197,6 @@ def login():
 def is_logged_in(f):
 	@wraps(f)
 	def wrap(*args, **kwargs):
-		ADMIN_NETID, ADMIN_NAME = get_admins()
 		if 'logged_in' in session:
 			return f(*args, **kwargs)
 		else:
@@ -212,7 +207,6 @@ def is_logged_in(f):
 def is_admin(f):
 	@wraps(f)
 	def wrap(*args, **kwargs):
-		ADMIN_NETID, ADMIN_NAME = get_admins()
 		if 'admin' in session:
 			return f(*args, **kwargs)
 		else:
