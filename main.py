@@ -235,7 +235,7 @@ def fileSuccess():
 	return send_from_directory(os.getcwd(), 'output_files.zip', as_attachment=True)
 
 # admin process survey responses page
-@app.route('/administrationProcessSurveyResponses')
+@app.route('/administrationProcessSurveyResponses', methods = ['GET', 'POST'])
 @is_logged_in
 @is_admin
 def administrationProcessResponses():
