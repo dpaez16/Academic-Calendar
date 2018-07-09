@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, redirect, url_for, session, logging, request
+from flask import Flask, render_template, flash, redirect, url_for, session, logging, request, send_from_directory
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
@@ -8,6 +8,12 @@ import smtplib
 import numpy as np
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import os
+import zipfile
+import processFiles
+
+UPLOAD_FOLDER = os.getcwd()
+ALLOWED_EXTENSIONS = set(['csv'])
 
 app = Flask(__name__)
 
@@ -19,6 +25,10 @@ app.config['MYSQL_DB'] = 'dpaez2_Academic_Calendar'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['SECRET_KEY'] = 'docpmoo10/10'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(file):
+	return '.' in file and file.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 # open admin spreadsheet
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
@@ -213,6 +223,38 @@ def is_admin(f):
 			flash('You are not an administrator.', 'danger')
 			return redirect(url_for('login'))
 	return wrap
+
+@app.route('/administrationProcessSurveyResponses/administrationFileSuccess')
+@is_logged_in
+@is_admin
+def fileSuccess():
+	zipf = zipfile.ZipFile('output_files.zip','w', zipfile.ZIP_DEFLATED)
+	zipf.write('matches_processed.txt')
+	zipf.write('singles_processed.txt')
+	zipf.close()
+	return send_from_directory(os.getcwd(), 'output_files.zip', as_attachment=True)
+
+# admin process survey responses page
+@app.route('/administrationProcessSurveyResponses')
+@is_logged_in
+@is_admin
+def administrationProcessResponses():
+	if request.method == 'POST':
+		if request.files:
+			f = request.files['file']
+			if f and allowed_file(f.filename):
+				f.save(f.filename)
+				processFiles.processCSV(f.filename)
+				flash('Responses have been successfully processed!', 'success')
+				return redirect(url_for('fileSuccess'))
+			else:
+				flash('Your file is not a csv.', 'danger')
+				return redirect(url_for('administrationProcessResponses'))
+		else:
+			flash('You did not upload a file at all.', 'danger')
+			return redirect(url_for('administrationProcessResponses'))
+	else:
+		return render_template('administrationProcessSurveyResponses.html')
 
 # admin page
 @app.route('/administration')
