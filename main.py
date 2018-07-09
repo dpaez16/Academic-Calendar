@@ -245,14 +245,13 @@ def administrationProcessResponses():
 			if f and allowed_file(f.filename):
 				f.save(f.filename)
 				processFiles.processCSV(f.filename)
-				flash('Responses have been successfully processed!', 'success')
 				return redirect(url_for('fileSuccess'))
 			else:
-				flash('Your file is not a csv.', 'danger')
-				return redirect(url_for('administrationProcessResponses'))
+				err = 'Your file is not a csv.'
+				return render_template('administrationProcessSurveyResponses.html', err=err)
 		else:
-			flash('You did not upload a file at all.', 'danger')
-			return redirect(url_for('administrationProcessResponses'))
+			err = 'You did not upload a file at all.'
+			return render_template('administrationProcessSurveyResponses.html', err=err)
 	else:
 		return render_template('administrationProcessSurveyResponses.html')
 
