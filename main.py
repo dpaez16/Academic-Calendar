@@ -226,6 +226,12 @@ def is_admin(f):
 			return redirect(url_for('login'))
 	return wrap
 
+@app.route('/administration/classSurveyResults/Export')
+@is_logged_in
+@is_admin
+def export_class_survey_results():
+	return send_from_directory(os.getcwd() + '/static', 'class_survey_responses.csv', as_attachment=True)
+
 @app.route('/administration/classSurveyResults')
 @is_logged_in
 @is_admin
