@@ -226,7 +226,7 @@ def is_admin(f):
 
 @app.route('/classSurveyResults')
 def survey_results():
-	survey = processFiles.getSurveyResponses()
+	survey = []
 	entries = True if len(survey) != 0 else False
 	time_setting = processFiles.semesterParse()
 	return render_template('surveyResults.html', 
