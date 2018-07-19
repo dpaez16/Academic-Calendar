@@ -12,6 +12,12 @@ def semesterParse():
 	else:
 		return ""
 
+def clearSurveyResults():
+	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
+	cols = df.columns.tolist()
+	df = df[df[cols[0]] == "clearSurvey"]
+	df.to_csv(os.getcwd() + "/static/class_survey_responses.csv", index=False)
+
 def getSurveyResponses():
 	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
 	cols = df.columns.tolist()
