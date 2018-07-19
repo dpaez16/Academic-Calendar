@@ -1,6 +1,7 @@
 import pandas as pd
 import sys, re, os
 import datetime
+import pytz
 
 def semesterParse():
 	d = datetime.datetime.utcnow()
