@@ -17,7 +17,7 @@ def getSurveyResponses():
 	responses = []
 	for i in range(len(df)):
 		responses.append([
-			df[cols[0]][i],
+			str(df[cols[0]][i]),
 			df[cols[1]][i],
 			df[cols[2]][i]
 			])
