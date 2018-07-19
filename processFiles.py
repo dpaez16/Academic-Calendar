@@ -13,12 +13,13 @@ def semesterParse():
 
 def getSurveyResponses():
 	df = pd.read_csv(os.getcwd() + "/class_survey_responses.csv")
+	cols = df.columns.tolist()
 	responses = []
-	for row in df.iterrows():
+	for i in len(df):
 		responses.append([
-			row[1][0],
-			row[1][1],
-			row[1][2]
+			df[i][cols[0]],
+			df[i][cols[1]],
+			df[i][cols[2]]
 			])
 	return responses
 
