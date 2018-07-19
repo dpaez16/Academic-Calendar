@@ -1,5 +1,28 @@
 import pandas as pd
 import sys, re, os
+import datetime
+
+def semesterParse(d):
+	if (8 <= d.month) and (d.month <= 12):
+		return "Fall {}".format(d.year)
+	elif (1 <= d.month) and (d.month <= 5):
+		return "Spring {}".format(d.year)
+	else:
+		return ""
+
+def writeResponse(personName, classes):
+	df = pd.read_csv(os.getcwd() + "/class_survey_responses.csv")
+	cols = df.columns.tolist()
+
+	# remove duplicate entries and append latest entry
+	df = df[df[cols[1]] != personName]
+
+	df = df.append( {	cols[0]: datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 
+						cols[1]: personName, 
+						cols[2]: classes
+					}, 
+					ignore_index=True)
+	df.to_csv(os.getcwd() + "/class_survey_responses.csv", index=False)
 
 def processCSV(SURVEY_RESPONSES_CSV):
 	# read survey responses from csv file
