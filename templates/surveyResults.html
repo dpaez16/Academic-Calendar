@@ -15,6 +15,9 @@
 	{% if not entries %}
 		<p>No responses!</p>
 	{% else %}
+		<br>
+		<button type="button" class="btn btn-primary" onclick="{{ send_from_directory(os.getcwd() + '/static', 'class_survey_responses.csv', as_attachment=True) }}">Export Results</button>
+		<!--button type="button" class="btn btn-danger">Clear Results</button-->
 		<table class="table">
 			<thead class="table-active">
 				<tr>

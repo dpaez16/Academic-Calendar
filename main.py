@@ -226,7 +226,9 @@ def is_admin(f):
 			return redirect(url_for('login'))
 	return wrap
 
-@app.route('/classSurveyResults')
+@app.route('/administration/classSurveyResults')
+@is_logged_in
+@is_admin
 def survey_results():
 	survey = processFiles.getSurveyResponses()
 	entries = True if len(survey) != 0 else False
@@ -259,7 +261,7 @@ def class_survey():
 	else:
 		return render_template('survey.html')
 
-@app.route('/administrationProcessSurveyResponses/administrationFileSuccess')
+@app.route('/administration/ProcessSurveyResponses/administrationFileSuccess')
 @is_logged_in
 @is_admin
 def fileSuccess():
@@ -270,7 +272,7 @@ def fileSuccess():
 	return send_from_directory(os.getcwd(), 'output_files.zip', as_attachment=True)
 
 # admin process survey responses page
-@app.route('/administrationProcessSurveyResponses', methods = ['GET', 'POST'])
+@app.route('/administration/ProcessSurveyResponses', methods = ['GET', 'POST'])
 @is_logged_in
 @is_admin
 def administrationProcessResponses():
