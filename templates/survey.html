@@ -1,159 +1,151 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Class Survey Form</title>
-		{% extends 'layout.html' %}
-		<script>
-			var numClasses = 0;
-			var alreadyAdded = false;
+{% extends 'layout.html' %}
+<script>
+	var numClasses = 0;
+	var alreadyAdded = false;
 
-			var deleteEntry = function() {
-				if (numClasses > 0) {
-					var parent = document.getElementById("classForm");
-					var child = document.getElementById("class" + numClasses);
-					parent.removeChild(child);
-					numClasses -= 1;
-					document.getElementById("numClasses").value = numClasses;
-					if (numClasses == 0) {
-						parent = document.getElementById("buttonDiv");
-						parent.removeChild(document.getElementById("deleteButton"));
+	var deleteEntry = function() {
+		if (numClasses > 0) {
+			var parent = document.getElementById("classForm");
+			var child = document.getElementById("class" + numClasses);
+			parent.removeChild(child);
+			numClasses -= 1;
+			document.getElementById("numClasses").value = numClasses;
+			if (numClasses == 0) {
+				parent = document.getElementById("buttonDiv");
+				parent.removeChild(document.getElementById("deleteButton"));
 
-						parent = document.getElementById("classSurveyForm");
-						parent.removeChild(document.getElementById("submitButton"));
+				parent = document.getElementById("classSurveyForm");
+				parent.removeChild(document.getElementById("submitButton"));
 
-						alreadyAdded = false;
+				alreadyAdded = false;
+			}
+		}
+	};
+	
+	var addEntry = function() {
+		numClasses += 1;
+		document.getElementById("numClasses").value = numClasses;
+		var row = document.createElement("tr");
+		row.id = "class" + numClasses;
+
+		var rowEntry1 = document.createElement("td");
+		var node1 = document.createElement("input");
+		node1.type = "text";
+		node1.id = "classSubject" + numClasses;
+		node1.name = "classSubject" + numClasses;
+		node1.pattern = "[A-Z]{2,}";
+		node1.title = "(All Caps, no spaces)";
+		node1.required = true;
+		rowEntry1.appendChild(node1);
+
+		var rowEntry2 = document.createElement("td");
+		var node2 = document.createElement("input");
+		node2.type = "text";
+		node2.id = "classNum" + numClasses;
+		node2.name = "classNum" + numClasses;
+		node2.pattern = "[1-9][0-9][0-9]";
+		node2.title = "(Numbers only: [1-9][0-9][0-9], no spaces)";
+		node2.required = true;
+		rowEntry2.appendChild(node2);
+
+		var rowEntry3 = document.createElement("td");
+		var node3 = document.createElement("input");
+		node3.type = "text";
+		node3.id = "classLabel" + numClasses;
+		node3.name = "classLabel" + numClasses;
+		node3.pattern = "[A-Z, 0-9]*";
+		node3.title = "(All caps & numbers are allowed)";
+		rowEntry3.appendChild(node3);
+
+		row.appendChild(rowEntry1);
+		row.appendChild(rowEntry2);
+		row.appendChild(rowEntry3);
+		document.getElementById("classForm").appendChild(row);
+
+		if ((numClasses > 0) && !alreadyAdded) {
+			parent = document.getElementById("buttonDiv");
+			button = document.createElement("button");
+			button.id = "deleteButton";
+			button.type = "button";
+			button.onclick = function() { deleteEntry(); };
+			button.style = "margin-left: 10px";
+			button.innerHTML = "Delete Class";
+			parent.appendChild(button);
+
+			document.getElementById("deleteButton")
+				.addEventListener("keyup", function(event) {
+					// Cancel the default action, if needed
+					event.preventDefault();
+					// Number 13 is the "Enter" key on the keyboard
+					if (event.keyCode === 13) {
+						// Trigger the button element with a click
+						document.getElementById("deleteButton").click();
 					}
-				}
-			};
-			
-			var addEntry = function() {
-				numClasses += 1;
-				document.getElementById("numClasses").value = numClasses;
-				var row = document.createElement("tr");
-				row.id = "class" + numClasses;
+				});
 
-				var rowEntry1 = document.createElement("td");
-				var node1 = document.createElement("input");
-				node1.type = "text";
-				node1.id = "classSubject" + numClasses;
-				node1.name = "classSubject" + numClasses;
-				node1.pattern = "[A-Z]{2,}";
-				node1.title = "(All Caps, no spaces)";
-				node1.required = true;
-				rowEntry1.appendChild(node1);
+			parent = document.getElementById("classSurveyForm");
+			button = document.createElement("input");
+			button.type = "submit";
+			button.id = "submitButton";
+			button.name = "submit";
+			parent.appendChild(button);
 
-				var rowEntry2 = document.createElement("td");
-				var node2 = document.createElement("input");
-				node2.type = "text";
-				node2.id = "classNum" + numClasses;
-				node2.name = "classNum" + numClasses;
-				node2.pattern = "[1-9][0-9][0-9]";
-				node2.title = "(Numbers only: [1-9][0-9][0-9], no spaces)";
-				node2.required = true;
-				rowEntry2.appendChild(node2);
+			document.getElementById("submitButton")
+				.addEventListener("keyup", function(event) {
+					// Cancel the default action, if needed
+					event.preventDefault();
+					// Number 13 is the "Enter" key on the keyboard
+					if (event.keyCode === 13) {
+						// Trigger the button element with a click
+						document.getElementById("submitButton").click();
+					}
+				});
 
-				var rowEntry3 = document.createElement("td");
-				var node3 = document.createElement("input");
-				node3.type = "text";
-				node3.id = "classLabel" + numClasses;
-				node3.name = "classLabel" + numClasses;
-				node3.pattern = "[A-Z, 0-9]*";
-				node3.title = "(All caps & numbers are allowed)";
-				rowEntry3.appendChild(node3);
-
-				row.appendChild(rowEntry1);
-				row.appendChild(rowEntry2);
-				row.appendChild(rowEntry3);
-				document.getElementById("classForm").appendChild(row);
-
-				if ((numClasses > 0) && !alreadyAdded) {
-					parent = document.getElementById("buttonDiv");
-					button = document.createElement("button");
-					button.id = "deleteButton";
-					button.type = "button";
-					button.onclick = function() { deleteEntry(); };
-					button.style = "margin-left: 10px";
-					button.innerHTML = "Delete Class";
-					parent.appendChild(button);
-
-					document.getElementById("deleteButton")
-						.addEventListener("keyup", function(event) {
-							// Cancel the default action, if needed
-							event.preventDefault();
-							// Number 13 is the "Enter" key on the keyboard
-							if (event.keyCode === 13) {
-								// Trigger the button element with a click
-								document.getElementById("deleteButton").click();
-							}
-						});
-
-					parent = document.getElementById("classSurveyForm");
-					button = document.createElement("input");
-					button.type = "submit";
-					button.id = "submitButton";
-					button.name = "submit";
-					parent.appendChild(button);
-
-					document.getElementById("submitButton")
-						.addEventListener("keyup", function(event) {
-							// Cancel the default action, if needed
-							event.preventDefault();
-							// Number 13 is the "Enter" key on the keyboard
-							if (event.keyCode === 13) {
-								// Trigger the button element with a click
-								document.getElementById("submitButton").click();
-							}
-						});
-
-					alreadyAdded = true;
-				}
-			};
-		</script>
-	</head>
-	<style>
-		table, th, td {
-			border: 1px solid black;
+			alreadyAdded = true;
 		}
-		th {
-			text-align: center;
-		}
-	</style>
-	<body>
-		<br>
-		<div id="classSurveyDiv" class="container">
-			<h1>Class Survey Form</h1>
-			<p>If a class is cross-listed, e.g. CS 440 and ECE 448, just list them both.</p>
-			<form method="POST" id="classSurveyForm" onkeypress="return event.keyCode != 13;">
-				<p>Initials/Full Name (if pledge):</p>
-				<input type="text" name="personName" minlength="1" pattern="[A-Za-z\s]*" title="(Letters only)" required></input>
-				<p></p>
-				<div id="buttonDiv">
-					<button type="button" id="addClassButton" onClick="addEntry()" onkeypress="return event.keyCode == 13;">Add Class</button>
-				</div>
-				<p></p>
-				<table id="classForm" class="table-striped">
-					<tr>
-						<th>Class Subject</th>
-						<th>Class Number</th>
-						<th>Class Label<sup>*</sup></th>
-					</tr>
-				</table>
-				<p>* Examples: CS 498 <font color="red">AML</font>, CS 498 <font color="red">DV</font>, etc. <br>
-				If this doesn't apply to your class, leave this blank. </p>
-				<input type="hidden" name="numClasses" id="numClasses" value="0">
-			</form>
+	};
+</script>
+<style>
+	table, th, td {
+		border: 1px solid black;
+	}
+	th {
+		text-align: center;
+	}
+</style>
+{% block body %}
+	<br>
+	<h1>Class Survey Form</h1>
+	<p>If a class is cross-listed, e.g. CS 440 and ECE 448, just list them both.</p>
+	<form method="POST" id="classSurveyForm" onkeypress="return event.keyCode != 13;">
+		<p>Initials/Full Name (if pledge):</p>
+		<input type="text" name="personName" minlength="1" pattern="[A-Za-z\s]*" title="(Letters only)" required></input>
+		<p></p>
+		<div id="buttonDiv">
+			<button type="button" id="addClassButton" onClick="addEntry()" onkeypress="return event.keyCode == 13;">Add Class</button>
 		</div>
-	</body>
-	<script>
-		document.getElementById("addClassButton")
-			.addEventListener("keyup", function(event) {
-				// Cancel the default action, if needed
-				event.preventDefault();
-				// Number 13 is the "Enter" key on the keyboard
-				if (event.keyCode === 13) {
-					// Trigger the button element with a click
-					document.getElementById("addClassButton").click();
-				}
-			});
-	</script>
-</html>
+		<p></p>
+		<table id="classForm" class="table-striped">
+			<tr>
+				<th>Class Subject</th>
+				<th>Class Number</th>
+				<th>Class Label<sup>*</sup></th>
+			</tr>
+		</table>
+		<p>* Examples: CS 498 <font color="red">AML</font>, CS 498 <font color="red">DV</font>, etc. <br>
+		If this doesn't apply to your class, leave this blank. </p>
+		<input type="hidden" name="numClasses" id="numClasses" value="0">
+	</form>
+<script>
+	document.getElementById("addClassButton")
+		.addEventListener("keyup", function(event) {
+			// Cancel the default action, if needed
+			event.preventDefault();
+			// Number 13 is the "Enter" key on the keyboard
+			if (event.keyCode === 13) {
+				// Trigger the button element with a click
+				document.getElementById("addClassButton").click();
+			}
+		});
+</script>
+{% endblock %}
