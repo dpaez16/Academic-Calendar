@@ -26,7 +26,7 @@ def writeResponse(personName, classes):
 	# remove duplicate entries and append latest entry
 	df = df[df[cols[1]] != personName]
 
-	df = df.append( {	cols[0]: datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), 
+	df = df.append( {	cols[0]: datetime.datetime.now(pytz.timezone('America/Chicago')).strftime('%Y-%m-%d %H:%M:%S'), 
 						cols[1]: personName, 
 						cols[2]: classes
 					}, 
