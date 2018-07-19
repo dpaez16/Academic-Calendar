@@ -3,7 +3,7 @@ import sys, re, os
 import datetime
 
 def semesterParse():
-	d = datetime.datetime.now()
+	d = datetime.datetime.utcnow()
 	if (8 <= d.month) and (d.month <= 12):
 		return "Fall {}".format(d.year)
 	elif (1 <= d.month) and (d.month <= 5):
@@ -26,7 +26,7 @@ def writeResponse(personName, classes):
 	# remove duplicate entries and append latest entry
 	df = df[df[cols[1]] != personName]
 
-	df = df.append( {	cols[0]: datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 
+	df = df.append( {	cols[0]: datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), 
 						cols[1]: personName, 
 						cols[2]: classes
 					}, 
