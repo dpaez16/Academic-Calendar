@@ -228,7 +228,7 @@ def is_admin(f):
 
 @app.route('/classSurveyResults')
 def survey_results():
-	survey = [["2018-07-18 13:56:25","NLP","MATH 286, ECE 498 DS"]]
+	survey = processFiles.getSurveyResponses()
 	entries = True if len(survey) != 0 else False
 	time_setting = processFiles.semesterParse()
 	return render_template('surveyResults.html', 
