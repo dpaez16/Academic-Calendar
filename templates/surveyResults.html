@@ -23,18 +23,18 @@
 					<th style="border: 1px solid black;">Classes</th>
 				</tr>
 			</thead>
-			<tbody>
+			<!--tbody>
 				{% for row in survey %}
 				<tr>
 					<td>{{ submissionTimestampParse(row[0]) }}</td>
 					<td>{{ row[1] }}</td>
 					<td>{{ row[2] }}</td>
-					<!--td style="border: 1px solid white;">
+					<td style="border: 1px solid white;">
 						<button type="button" class="btn btn-danger" onclick="window.location.href='{{ url_for('deleteSurveyEntryPrompt') }}';">Delete</button>
-					</td-->
+					</td>
 				</tr>
 				{% endfor %}
-			</tbody>
+			</tbody-->
 		</table>
 	{% endif %}
 {% endblock %}
