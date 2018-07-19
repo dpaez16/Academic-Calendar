@@ -12,6 +12,7 @@ import os
 import zipfile
 import processFiles
 import datetime
+import pandas
 
 UPLOAD_FOLDER = os.getcwd()
 ALLOWED_EXTENSIONS = set(['csv'])
