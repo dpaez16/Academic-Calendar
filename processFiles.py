@@ -12,6 +12,12 @@ def semesterParse():
 	else:
 		return ""
 
+def deleteSurveyResponseEntry(timestamp, personName, classes):
+	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
+	cols = df.columns.tolist()
+	df = df[(df[cols[0]] != timestamp) & (df[cols[1]] != personName) & (df[cols[2]] != classes)]
+	df.to_csv(os.getcwd() + "/static/class_survey_responses.csv", index=False)
+
 def clearSurveyResults():
 	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
 	cols = df.columns.tolist()
