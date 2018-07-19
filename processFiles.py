@@ -15,7 +15,7 @@ def getSurveyResponses():
 	df = pd.read_csv(os.getcwd() + "/class_survey_responses.csv")
 	cols = df.columns.tolist()
 	responses = []
-	for i in len(df):
+	for i in range(len(df)):
 		responses.append([
 			df[i][cols[0]],
 			df[i][cols[1]],
