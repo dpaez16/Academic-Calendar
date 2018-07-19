@@ -245,6 +245,17 @@ def survey_results():
 			submissionTimestampParse=lastCommitParse, 
 			time_setting=time_setting)
 
+@app.route('/administration/classSurveyResults/deleteSurveyResponse/<string:timestamp>/<string:personName>/<string:classes>', methods = ['GET', 'POST'])
+@is_logged_in
+@is_admin
+def delete_survey_response_entry(timestamp, personName, classes):
+	if request.method == "POST":
+		processFiles.deleteSurveyResponseEntry(timestamp, personName, classes)
+		flash('Survey response entry has been deleted.', 'danger')
+		return redirect(url_for('survey_results'))
+	else:
+		return render_template('maybeDeleteSurveyEntry.html')
+
 @app.route('/administration/classSurveyResults/clearResults', methods = ['GET', 'POST'])
 @is_logged_in
 @is_admin
