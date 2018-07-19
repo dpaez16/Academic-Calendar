@@ -11,6 +11,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import zipfile
 import processFiles
+import datetime
 
 UPLOAD_FOLDER = os.getcwd()
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -26,6 +27,14 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['SECRET_KEY'] = 'docpmoo10/10'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def semesterParse(d):
+	if (8 <= d.month) and (d.month <= 12):
+		return "Fall {}".format(d.year)
+	elif (1 <= d.month) and (d.month <= 5):
+		return "Spring {}".format(d.year)
+	else:
+		return ""
 
 def allowed_file(file):
 	return '.' in file and file.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -223,6 +232,38 @@ def is_admin(f):
 			flash('You are not an administrator.', 'danger')
 			return redirect(url_for('login'))
 	return wrap
+
+@app.route('/classSurvey', methods = ['GET', 'POST'])
+def class_survey():
+	if request.method == "POST":
+		data = request.form
+		personName = data["personName"].strip().upper() if (len(data["personName"]) == 3) else data["personName"].strip()
+
+		df = pd.read_csv(os.getcwd() + "/class_survey_responses.csv")
+		cols = df.columns.tolist()
+		
+		classes = ""
+		for i in range(1, int(data['numClasses']) + 1):
+			if len(data['classLabel' + str(i)].strip()) == 0:
+				classes += (data['classSubject' + str(i)].strip() + " " + data['classNum' + str(i)].strip())
+			else:
+				classes += (data['classSubject' + str(i)].strip() + " " + data['classNum' + str(i)].strip() + " " + data['classLabel' + str(i)].strip())
+			if i != int(data['numClasses']):
+				classes += ", "
+
+		# remove duplicate entries and append latest entry
+		df = df[df[cols[1]] != personName]
+
+		df = df.append( {	cols[0]: datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 
+							cols[1]: personName, 
+							cols[2]: classes
+						}, 
+						ignore_index=True)
+		df.to_csv(os.getcwd() + "/class_survey_responses.csv", index=False)
+		msg = "Response successfully recorded!"
+		return render_template('survey.html', msg=msg)
+	else:
+		return render_template('survey.html')
 
 @app.route('/administrationProcessSurveyResponses/administrationFileSuccess')
 @is_logged_in
