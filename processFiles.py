@@ -12,7 +12,7 @@ def semesterParse():
 		return ""
 
 def getSurveyResponses():
-	df = pd.read_csv(os.getcwd() + "/class_survey_responses.csv")
+	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
 	cols = df.columns.tolist()
 	responses = []
 	for i in range(len(df)):
@@ -20,7 +20,7 @@ def getSurveyResponses():
 	return responses
 
 def writeResponse(personName, classes):
-	df = pd.read_csv(os.getcwd() + "/class_survey_responses.csv")
+	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
 	cols = df.columns.tolist()
 
 	# remove duplicate entries and append latest entry
@@ -31,7 +31,7 @@ def writeResponse(personName, classes):
 						cols[2]: classes
 					}, 
 					ignore_index=True)
-	df.to_csv(os.getcwd() + "/class_survey_responses.csv", index=False)
+	df.to_csv(os.getcwd() + "/static/class_survey_responses.csv", index=False)
 
 def processCSV(SURVEY_RESPONSES_CSV):
 	# read survey responses from csv file
