@@ -26,9 +26,9 @@
 			<tbody>
 				{% for row in survey %}
 					<tr>
-						<td>0</td>
-						<td>1</td>
-						<td>2</td>
+						<td>{{ submissionTimestampParse(row[0]) }}</td>
+						<td>{{ row[1] }}</td>
+						<td>{{ row[2] }}</td>
 					</tr>
 				{% endfor %}
 			</tbody>

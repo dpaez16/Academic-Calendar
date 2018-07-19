@@ -234,7 +234,7 @@ def survey_results():
 	return render_template('surveyResults.html', 
 			survey=survey, 
 			entries=entries, 
-			lastCommitParse=lastCommitParse, 
+			submissionTimestampParse=lastCommitParse, 
 			time_setting=time_setting)
 
 @app.route('/classSurvey', methods = ['GET', 'POST'])
