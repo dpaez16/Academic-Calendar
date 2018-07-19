@@ -11,6 +11,17 @@ def semesterParse():
 	else:
 		return ""
 
+def getSurveyResponses():
+	df = pd.read_csv(os.getcwd() + "/class_survey_responses.csv")
+	responses = []
+	for row in df.iterrows():
+		responses.append([
+			row[1][0],
+			row[1][1],
+			row[1][2]
+			])
+	return responses
+
 def writeResponse(personName, classes):
 	df = pd.read_csv(os.getcwd() + "/class_survey_responses.csv")
 	cols = df.columns.tolist()

@@ -24,11 +24,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for response in survey.iterrows() %}
+				{% for response in survey %}
 				<tr>
-					<td>{{ submissionTimestampParse(response[1][0]) }}</td>
-					<td>{{ response[1][1] }}</td>
-					<td>{{ response[1][2] }}</td>
+					<td>{{ submissionResponseParse(response[0]) }}</td>
+					<td>{{ response[1] }}</td>
+					<td>{{ response[2] }}</td>
 					<!--td style="border: 1px solid white;">
 						<button type="button" class="btn btn-danger" onclick="window.location.href='{{ url_for('deleteSurveyEntryPrompt') }}';">Delete</button>
 					</td-->

@@ -9,7 +9,6 @@ import numpy as np
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
-import pandas as pd
 import zipfile
 import processFiles
 
@@ -227,13 +226,13 @@ def is_admin(f):
 
 @app.route('/classSurveyResults')
 def survey_results():
-	df = pd.read_csv(os.getcwd() + '/class_survey_responses.csv')
-	entries = True if len(df) != 0 else False
+	survey = processFiles.getSurveyResponses()
+	entries = True if len(survey) != 0 else False
 	time_setting = processFiles.semesterParse()
 	return render_template('surveyResults.html', 
-			survey=df, 
+			survey=survey, 
 			entries=entries, 
-			submissionTimestampParse=submissionTimestampParse, 
+			submissionTimestampParse=lastCommitParse, 
 			time_setting=time_setting)
 
 @app.route('/classSurvey', methods = ['GET', 'POST'])
