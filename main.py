@@ -61,6 +61,8 @@ def lastCommitParse(s):
 	m = 'AM' if hour < 12 else 'PM'
 	if hour > 12:
 		hour -= 12
+	if hour == 0:
+		hour = 12
 	return "{:s}/{:s}/{:s} {:d}:{:s} {:s}".format(tmp[1], tmp2[0], tmp[0], hour, tmp3[1], m)
 
 def drop(Grades, n):

@@ -16,11 +16,7 @@ def getSurveyResponses():
 	cols = df.columns.tolist()
 	responses = []
 	for i in range(len(df)):
-		responses.append([
-			str(df[cols[0]][i]),
-			df[cols[1]][i],
-			df[cols[2]][i]
-			])
+		responses.append([df[cols[0]][i], df[cols[1]][i], df[cols[2]][i]])
 	return responses
 
 def writeResponse(personName, classes):
