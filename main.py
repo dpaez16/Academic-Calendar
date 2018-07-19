@@ -226,17 +226,6 @@ def is_admin(f):
 			return redirect(url_for('login'))
 	return wrap
 
-@app.route('/administration/classSurveyResults/clearResults', methods = ['GET', 'POST'])
-@is_logged_in
-@is_admin
-def clear_survey_results():
-	if request.method == "POST":
-		processFiles.clearSurveyResults()
-		flash('Survey entries have been cleared.', 'danger')
-		return redirect(url_for('survey_results'))
-	else:
-		return render_template('maybeClearSurveyResults.html')
-
 @app.route('/administration/classSurveyResults/Export')
 @is_logged_in
 @is_admin
@@ -255,6 +244,17 @@ def survey_results():
 			entries=entries, 
 			submissionTimestampParse=lastCommitParse, 
 			time_setting=time_setting)
+
+@app.route('/administration/classSurveyResults/clearResults', methods = ['GET', 'POST'])
+@is_logged_in
+@is_admin
+def clear_survey_results():
+	if request.method == "POST":
+		processFiles.clearSurveyResults()
+		flash('Survey entries have been cleared.', 'danger')
+		return redirect(url_for('survey_results'))
+	else:
+		return render_template('maybeClearSurveyResults.html')
 
 @app.route('/classSurvey', methods = ['GET', 'POST'])
 def class_survey():
