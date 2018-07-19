@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% block body %}
+	<style>
+		table, th, td {
+			border: 1px solid black;
+		}
+		th {
+			text-align: center;
+		}
+	</style>
+	<h1></h1>
+	<h1>Class Survey Results</h1>
+	<br>
+	<h4>{{ time_setting }}</h4>
+	{% if not entries %}
+		<p>No responses!</p>
+	{% else %}
+		<table class="table">
+			<thead class="table-active">
+				<tr>
+					<th style="border: 1px solid black;">Timestamp</th>
+					<th style="border: 1px solid black;">Name/Initials</th>
+					<th style="border: 1px solid black;">Classes</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for response in survey.iterrows() %}
+				<tr>
+					<td>{{ submissionTimestampParse(response[1][0]) }}</td>
+					<td>{{ response[1][1] }}</td>
+					<td>{{ response[1][2] }}</td>
+					<!--td style="border: 1px solid white;">
+						<button type="button" class="btn btn-danger" onclick="window.location.href='{{ url_for('deleteSurveyEntryPrompt') }}';">Delete</button>
+					</td-->
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock %}

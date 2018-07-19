@@ -2,7 +2,8 @@ import pandas as pd
 import sys, re, os
 import datetime
 
-def semesterParse(d):
+def semesterParse():
+	d = datetime.datetime.now()
 	if (8 <= d.month) and (d.month <= 12):
 		return "Fall {}".format(d.year)
 	elif (1 <= d.month) and (d.month <= 5):
