@@ -235,11 +235,19 @@ def export_class_survey_results():
 @app.route('/administration/classSurveyResults')
 @is_logged_in
 @is_admin
-def survey_results():
+def survey_results(msg=""):
 	survey = processFiles.getSurveyResponses()
 	entries = True if len(survey) != 0 else False
 	time_setting = processFiles.semesterParse()
-	return render_template('surveyResults.html', 
+	if msg:
+		return render_template('surveyResults.html', 
+			survey=survey, 
+			entries=entries, 
+			submissionTimestampParse=lastCommitParse, 
+			time_setting=time_setting,
+			msg=msg)
+	else:
+		return render_template('surveyResults.html', 
 			survey=survey, 
 			entries=entries, 
 			submissionTimestampParse=lastCommitParse, 
@@ -251,8 +259,8 @@ def survey_results():
 def delete_survey_response_entry(timestamp, personName, classes):
 	if request.method == "POST":
 		processFiles.deleteSurveyResponseEntry(timestamp, personName, classes)
-		flash('Survey response entry has been deleted.', 'danger')
-		return redirect(url_for('survey_results'))
+		msg = 'Survey response entry has been deleted.'
+		return redirect(url_for('survey_results', message=msg))
 	else:
 		return render_template('maybeDeleteSurveyEntry.html')
 
