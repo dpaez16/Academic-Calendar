@@ -260,7 +260,7 @@ def delete_survey_response_entry(timestamp, personName, classes):
 	if request.method == "POST":
 		processFiles.deleteSurveyResponseEntry(timestamp, personName, classes)
 		#flash('Survey response entry has been deleted.', 'success')
-		return redirect(url_for('survey_results', True))
+		return redirect(url_for('survey_results', flag=True))
 	else:
 		return render_template('maybeDeleteSurveyEntry.html')
 
