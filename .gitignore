@@ -1,4 +1,4 @@
 .idea/
 env
 .DS_Store
-/static/class_survey_responses.csv
+**/*.csv
