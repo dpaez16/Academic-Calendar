@@ -239,13 +239,13 @@ def survey_results(message=""):
 	survey = processFiles.getSurveyResponses()
 	entries = True if len(survey) != 0 else False
 	time_setting = processFiles.semesterParse()
-	if msg:
+	if message:
 		return render_template('surveyResults.html', 
 			survey=survey, 
 			entries=entries, 
 			submissionTimestampParse=lastCommitParse, 
 			time_setting=time_setting,
-			msg=msg)
+			msg=message)
 	else:
 		return render_template('surveyResults.html', 
 			survey=survey, 
