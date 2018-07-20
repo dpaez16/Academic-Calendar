@@ -235,7 +235,7 @@ def export_class_survey_results():
 @app.route('/administration/classSurveyResults')
 @is_logged_in
 @is_admin
-def survey_results(msg=""):
+def survey_results(message=""):
 	survey = processFiles.getSurveyResponses()
 	entries = True if len(survey) != 0 else False
 	time_setting = processFiles.semesterParse()
