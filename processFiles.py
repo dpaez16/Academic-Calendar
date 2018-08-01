@@ -12,40 +12,6 @@ def semesterParse():
 	else:
 		return ""
 
-def deleteSurveyResponseEntry(timestamp, personName, classes):
-	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
-	cols = df.columns.tolist()
-	df = df[(df[cols[0]] != timestamp) & (df[cols[1]] != personName) & (df[cols[2]] != classes)]
-	df.to_csv(os.getcwd() + "/static/class_survey_responses.csv", index=False)
-
-def clearSurveyResults():
-	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
-	cols = df.columns.tolist()
-	df = df[df[cols[0]] == "clearSurvey"]
-	df.to_csv(os.getcwd() + "/static/class_survey_responses.csv", index=False)
-
-def getSurveyResponses():
-	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
-	cols = df.columns.tolist()
-	responses = []
-	for i in range(len(df)):
-		responses.append([df[cols[0]][i], df[cols[1]][i], df[cols[2]][i]])
-	return responses
-
-def writeResponse(personName, classes):
-	df = pd.read_csv(os.getcwd() + "/static/class_survey_responses.csv")
-	cols = df.columns.tolist()
-
-	# remove duplicate entries and append latest entry
-	df = df[df[cols[1]] != personName]
-
-	df = df.append( {	cols[0]: datetime.datetime.now(pytz.timezone('America/Chicago')).strftime('%Y-%m-%d %H:%M:%S'), 
-						cols[1]: personName, 
-						cols[2]: classes
-					}, 
-					ignore_index=True)
-	df.to_csv(os.getcwd() + "/static/class_survey_responses.csv", index=False)
-
 def processCSV(SURVEY_RESPONSES_CSV):
 	# read survey responses from csv file
 	df = pd.read_csv(os.getcwd() + '/' + SURVEY_RESPONSES_CSV)

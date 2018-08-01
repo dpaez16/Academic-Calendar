@@ -11,6 +11,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import zipfile
 import processFiles
+import pandas as pd
 
 UPLOAD_FOLDER = os.getcwd()
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -230,18 +231,33 @@ def is_admin(f):
 @is_logged_in
 @is_admin
 def export_class_survey_results():
+	cur = mysql.connection.cursor()
+	cur.execute("SELECT * FROM SurveyResponses")
+	survey = cur.fetchall()
+	cur.close()
+	timestamps = []
+	initials = []
+	classes = []
+	for row in survey:
+		timestamps.append(str(row["timestamp"]))
+		initials.append(row["initials"])
+		classes.append(row["classes"])
+	D = {'Timestamp': timestamps, 'Initials (Full Name if pledge)': initials, 'What classes are you taking this semester?': classes}
+	df = pd.DataFrame(data=D)
+	df.to_csv(os.getcwd() + '/static/class_survey_responses.csv', index=False)
 	return send_from_directory(os.getcwd() + '/static', 'class_survey_responses.csv', as_attachment=True)
 
 @app.route('/administration/classSurveyResults')
 @is_logged_in
 @is_admin
 def survey_results():
-	survey = processFiles.getSurveyResponses()
-	entries = True if len(survey) != 0 else False
+	cur = mysql.connection.cursor()
+	cur.execute("SELECT * FROM SurveyResponses")
+	survey = cur.fetchall()
+	cur.close()
 	time_setting = processFiles.semesterParse()
 	return render_template('surveyResults.html', 
 		survey=survey, 
-		entries=entries, 
 		submissionTimestampParse=lastCommitParse, 
 		time_setting=time_setting)
 
@@ -250,7 +266,11 @@ def survey_results():
 @is_admin
 def delete_survey_response_entry(timestamp, personName, classes):
 	if request.method == "POST":
-		processFiles.deleteSurveyResponseEntry(timestamp, personName, classes)
+		cur = mysql.connection.cursor()
+		cur.execute("DELETE FROM SurveyResponses " +
+					"WHERE timestamp=%s AND initials=%s AND classes=%s", [timestamp, personName, classes])
+		mysql.connection.commit()
+		cur.close()
 		flash('Survey response entry has been deleted.', 'success')
 		return redirect(url_for('survey_results'))
 	else:
@@ -261,7 +281,10 @@ def delete_survey_response_entry(timestamp, personName, classes):
 @is_admin
 def clear_survey_results():
 	if request.method == "POST":
-		processFiles.clearSurveyResults()
+		cur = mysql.connection.cursor()
+		cur.execute("DELETE FROM SurveyResponses")
+		mysql.connection.commit()
+		cur.close()
 		flash('Survey entries have been cleared.', 'danger')
 		return redirect(url_for('survey_results'))
 	else:
@@ -282,7 +305,14 @@ def class_survey():
 			if i != int(data['numClasses']):
 				classes += ", "
 
-		processFiles.writeResponse(personName, classes)
+		# remove duplicate entries and append latest entry
+		cur = mysql.connection.cursor()
+		cur.execute("DELETE FROM SurveyResponses " + 
+					"WHERE initials=%s", [personName])
+		cur.execute("INSERT INTO SurveyResponses(initials, classes) " +
+						"VALUES(%s, %s)", (personName, classes))
+		mysql.connection.commit()
+		cur.close()
 
 		msg = "Response successfully recorded!"
 		return render_template('survey.html', msg=msg)

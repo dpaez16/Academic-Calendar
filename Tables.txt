@@ -37,3 +37,9 @@ CREATE TABLE Classes(
   courseName  TEXT,
   weighted BOOLEAN
 );
+
+CREATE TABLE SurveyResponses(
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  initials VARCHAR(100),
+  classes VARCHAR(100)
+);

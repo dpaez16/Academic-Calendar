@@ -15,7 +15,7 @@
 		<h4>{{ time_setting }}</h4>
 		<br>
 	{% endif %}
-	{% if not entries %}
+	{% if not survey %}
 		<p>No responses!</p>
 	{% else %}
 		<a href="/administration/classSurveyResults/Export" class="btn btn-primary">Export Results</a>    
@@ -33,11 +33,11 @@
 			<tbody>
 				{% for row in survey %}
 					<tr>
-						<td>{{ submissionTimestampParse(row[0]) }}</td>
-						<td>{{ row[1] }}</td>
-						<td>{{ row[2] }}</td>
+						<td>{{ submissionTimestampParse(row.timestamp|string()) }}</td>
+						<td>{{ row.initials }}</td>
+						<td>{{ row.classes }}</td>
 						<td style="border: 1px solid white;">
-							<button type="btn" class="btn btn-danger" onclick="window.location.href='/administration/classSurveyResults/deleteSurveyResponse/{{row[0]}}/{{row[1]}}/{{row[2]}}';">Delete</a>
+							<button type="btn" class="btn btn-danger" onclick="window.location.href='/administration/classSurveyResults/deleteSurveyResponse/{{row.timestamp|string()}}/{{row.initials}}/{{row.classes}}';">Delete</a>
 						</td>
 					</tr>
 				{% endfor %}
