@@ -25,19 +25,19 @@
 		<table class="table">
 			<thead class="table-active">
 				<tr>
-					<th style="border: 1px solid black;">Timestamp</th>
-					<th style="border: 1px solid black;">Name/Initials</th>
-					<th style="border: 1px solid black;">Classes</th>
+					<th style="border: 1px solid black; height:0px">Timestamp</th>
+					<th style="border: 1px solid black; height:0px">Name/Initials</th>
+					<th style="border: 1px solid black; height:0px">Classes</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for row in survey %}
 					<tr>
-						<td>{{ submissionTimestampParse(row.timestamp|string()) }}</td>
-						<td>{{ row.initials }}</td>
-						<td>{{ row.classes }}</td>
-						<td style="border: 1px solid white;">
-							<button type="btn" class="btn btn-danger" onclick="window.location.href='/administration/classSurveyResults/deleteSurveyResponse/{{row.timestamp|string()}}/{{row.initials}}/{{row.classes}}';">Delete</a>
+						<td style="height:0px">{{ submissionTimestampParse(row.timestamp|string()) }}</td>
+						<td style="height:0px">{{ row.initials }}</td>
+						<td style="height:0px">{{ row.classes }}</td>
+						<td style="border: 1px solid white; height:0px">
+							<button type="btn" class="btn btn-danger" onclick="window.location.href='/administration/classSurveyResults/deleteSurveyResponse/{{row.timestamp|string()}}/{{row.initials}}/{{row.classes}}';">Delete</button>
 						</td>
 					</tr>
 				{% endfor %}
