@@ -2,10 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphQLHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
+
+const User = require('./models/user');
 
 const app = express();
-
-const users = [];
 
 app.use(bodyParser.json());
 
@@ -29,7 +30,7 @@ app.use('/ac', graphQLHttp({
         }
 
         type RootMutation {
-            createUser(userInput: UserInput!): Int
+            createUser(userInput: UserInput!): User
         }
 
         schema {
@@ -38,23 +39,49 @@ app.use('/ac', graphQLHttp({
         }
     `),
     rootValue: {
-        users: () => {
-            return users;
+        users: async () => {
+            try {
+                const users = await User.find();
+                return users.map(user => {
+                    return { ...user._doc };
+                });
+            }
+            catch (err) {
+                throw err;
+            }
         },
-        createUser: rawArgs => {
+        createUser: async rawArgs => {
             const args = rawArgs.userInput;
-            const user = {
-                _id: Math.random.toString(),
+            const user = new User({
                 name: args.name,
                 email: args.email,
                 password: args.password
-            };
-
-            users.push(user);
-            return 0;
+            });
+            
+            try {
+                const result = await user.save();
+                return { ...result._doc };
+            }
+            catch (err) {
+                throw err;
+            }
         }
     },
     graphiql: true
 }));
 
-app.listen(3000);
+mongoose.connect(`
+    mongodb+srv://${process.env.MONGO_USER}:${
+        process.env.MONGO_PASSWORD
+    }@academic-calendar-fzvdf.mongodb.net/${
+        process.env.MONGO_DB
+    }?retryWrites=true&w=majority
+`, { 
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    app.listen(3000);
+}).catch(err => {
+    console.log(err);
+});
+
