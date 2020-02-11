@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const User = require('./models/user');
+const Course = require('./models/course');
 
 const app = express();
 
@@ -133,6 +134,16 @@ app.use('/ac', graphQLHttp({
             }).catch(err => {
                 throw err;
             });
+        },
+        courses: async () => {
+            try {
+                const courses = await Course.find();
+                return courses.map(course => {
+                    return { ...course._doc };
+                });
+            } catch(err) {
+                throw err;
+            }
         }
     },
     graphiql: true
