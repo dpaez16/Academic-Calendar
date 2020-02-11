@@ -119,7 +119,8 @@ app.use('/ac', graphQLHttp({
                 const newUser = new User({
                     name: args.name,
                     email: args.email,
-                    password: hashedPassword
+                    password: hashedPassword,
+                    courses: []
                 });
                 
                 try {
