@@ -99,7 +99,7 @@ app.use('/ac', graphQLHttp({
     rootValue: {
         users: async () => {
             try {
-                const users = await User.find();
+                const users = await User.find().populate('courses');
                 return users.map(user => {
                     return { ...user._doc };
                 });
@@ -144,6 +144,40 @@ app.use('/ac', graphQLHttp({
             } catch(err) {
                 throw err;
             }
+        },
+        createCourse: async rawArgs => {
+            let args = rawArgs.courseInput;
+            let newCourse = new Course({
+                subject: args.subject,
+                courseNum: args.courseNum,
+                courseName: args.courseName,
+                weighted: args.weighted,
+                categories: [],
+                creator: args.creator
+            });
+
+            return Course.findOne({
+                subject: args.subject,
+                courseNum: args.courseNum,
+                courseName: args.courseName,
+                weighted: args.weighted,
+                creator: args.creator
+            }).then(course => {
+                if (course) {
+                    throw new Error('Course exists already.');
+                }
+
+                return newCourse.save();
+            }).then(async result => {
+                return User.findById(args.creator);
+            }).then(user => {
+                user.courses.push(newCourse);
+                return user.save();
+            }).then(result => {
+                return newCourse;
+            }).catch(err => {
+                throw err;
+            });
         }
     },
     graphiql: true
