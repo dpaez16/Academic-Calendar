@@ -100,7 +100,7 @@ app.use('/ac', graphQLHttp({
     rootValue: {
         users: async () => {
             try {
-                const users = await User.find().populate('courses');
+                const users = await User.find();
                 return users.map(user => {
                     return { ...user._doc };
                 });
@@ -189,6 +189,42 @@ app.use('/ac', graphQLHttp({
             } catch(err) {
                 throw err;
             }
+        },
+        createCategory: async rawArgs => {
+            let args = rawArgs.categoryInput;
+            let newCategory = new Category({
+                name: args.name,
+                weight: args.weight,
+                elements: [],
+                courseID: args.courseID
+            });
+
+            return Course.findById(args.courseID).populate('categories')
+            .then(course => {
+                if (!course) {
+                    throw new Error('Course does not exist.');
+                }
+                
+                const filteredCategories = course.categories.filter(category => (
+                    category.name === args.name &&
+                    category.weight === args.weight
+                ));
+
+                if (filteredCategories.length > 0) {
+                    throw new Error('Category already exists.');
+                }
+
+                return newCategory.save();
+            }).then(async result => {
+                return Course.findById(args.courseID);
+            }).then(course => {
+                course.categories.push(newCategory);
+                return course.save();
+            }).then(result => {
+                return newCategory;
+            }).catch(err => {
+                throw err;
+            });
         }
     },
     graphiql: true
