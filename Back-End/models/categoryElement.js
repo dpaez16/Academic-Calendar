@@ -21,7 +21,8 @@ const categoryElementSchema = new Schema({
     },
     categoryID: {
         type: Schema.Types.ObjectId,
-        ref: 'Category'
+        ref: 'Category',
+        required: true
     }
 });
 

@@ -236,6 +236,42 @@ app.use('/ac', graphQLHttp({
             } catch(err) {
                 throw err;
             }
+        },
+        createCategoryElement: async rawArgs => {
+            let args = rawArgs.categoryElementInput;
+            let newCategoryElement = new CategoryElement({
+                name: args.name,
+                score: args.score,
+                total: args.total,
+                dueDate: args.dueDate,
+                categoryID: args.categoryID
+            });
+
+            return Category.findById(args.categoryID).populate('elements')
+            .then(category => {
+                if (!category) {
+                    throw new Error('Category does not exist.');
+                }
+                
+                const filteredCategoryElements = category.elements.filter(categoryElement => (
+                    categoryElement.name === args.name
+                ));
+
+                if (filteredCategoryElements.length > 0) {
+                    throw new Error('Category Element already exists.');
+                }
+
+                return newCategoryElement.save();
+            }).then(async result => {
+                return Category.findById(args.categoryID);
+            }).then(category => {
+                category.elements.push(newCategoryElement);
+                return category.save();
+            }).then(result => {
+                return newCategoryElement;
+            }).catch(err => {
+                throw err;
+            });
         }
     },
     graphiql: true
