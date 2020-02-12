@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 const User = require('./models/user');
 const Course = require('./models/course');
 const Category = require('./models/category');
+const CategoryElement = require('./models/categoryElement');
 
 const app = express();
 
@@ -225,6 +226,16 @@ app.use('/ac', graphQLHttp({
             }).catch(err => {
                 throw err;
             });
+        },
+        categoryElements: async () => {
+            try {
+                const categoryElements = await CategoryElement.find();
+                return categoryElements.map(categoryElement => {
+                    return { ...categoryElement._doc };
+                });
+            } catch(err) {
+                throw err;
+            }
         }
     },
     graphiql: true
