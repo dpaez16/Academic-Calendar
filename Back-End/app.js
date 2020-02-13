@@ -141,20 +141,32 @@ app.use('/ac', graphQLHttp({
         },
         editUser: async rawArgs => {
             let args = rawArgs.userInput;
-            return User.findById(rawArgs.userID).then(async user => {
-                if (!user) {
-                    throw new Error('Cannot find user.');
-                }
+            return bcrypt.hash(args.password, 12).then(async hashedPassword => {
+                return User.findById(rawArgs.userID)
+                .then(async user => {
+                    if (!user) {
+                        throw new Error("Cannot find user.");
+                    }
 
-                return bcrypt.hash(args.password, 12).then(async hashedPassword => {
+                    const oldEmail = user.email;
                     user.name = args.name;
                     user.email = args.email;
                     user.password = hashedPassword;
+
+                    if (oldEmail !== args.email) {
+                        return User.findOne({ email: args.email })
+                        .then(foundUser => {
+                            if (foundUser) {
+                                throw new Error("User with that email exists.");
+                            }
+                            return user.save();
+                        })
+                    }
                     return user.save();
                 })
                 .then(result => {
                     return { ...result._doc, password: null };
-                });
+                })
             })
             .catch(err => {
                 throw err;
