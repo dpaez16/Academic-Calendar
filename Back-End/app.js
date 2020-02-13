@@ -91,6 +91,8 @@ app.use('/ac', graphQLHttp({
             createCourse(courseInput: CourseInput!): Course
             createCategory(categoryInput: CategoryInput!): Category
             createCategoryElement(categoryElementInput: CategoryElementInput!): CategoryElement
+
+            editUser(userInput: UserInput!, userID: ID!): User
         }
 
         schema {
@@ -134,6 +136,27 @@ app.use('/ac', graphQLHttp({
                     throw err;
                 }
             }).catch(err => {
+                throw err;
+            });
+        },
+        editUser: async rawArgs => {
+            let args = rawArgs.userInput;
+            return User.findById(rawArgs.userID).then(async user => {
+                if (!user) {
+                    throw new Error('Cannot find user.');
+                }
+
+                return bcrypt.hash(args.password, 12).then(async hashedPassword => {
+                    user.name = args.name;
+                    user.email = args.email;
+                    user.password = hashedPassword;
+                    return user.save();
+                })
+                .then(result => {
+                    return { ...result._doc, password: null };
+                });
+            })
+            .catch(err => {
                 throw err;
             });
         },
