@@ -95,6 +95,7 @@ app.use('/ac', graphQLHttp({
             editUser(userInput: UserInput!, userID: ID!): User
             editCourse(courseInput: CourseInput!, courseID: ID!): Course
             editCategory(categoryInput: CategoryInput!, categoryID: ID!): Category
+            editCategoryElement(categoryElementInput: CategoryElementInput!, categoryElementID: ID!): CategoryElement
         }
 
         schema {
@@ -370,6 +371,37 @@ app.use('/ac', graphQLHttp({
                 return newCategoryElement;
             }).catch(err => {
                 throw err;
+            });
+        },
+        editCategoryElement: async rawArgs => {
+            let args = rawArgs.categoryElementInput;
+            return CategoryElement.findById(rawArgs.categoryElementID).then(async categoryElement => {
+                if (!categoryElement) {
+                    throw new Error("Category Element not found.");
+                }
+
+                return CategoryElement.findOne({
+                    name: args.name,
+                    categoryID: args.categoryID
+                })
+                .then(foundCategoryElement => {
+                    if (foundCategoryElement) {
+                        throw new Error("Category Element exists already.");
+                    }
+
+                    categoryElement.name = args.name;
+                    categoryElement.score = args.score;
+                    categoryElement.total = args.total;
+                    categoryElement.dueDate = args.dueDate;
+
+                    return categoryElement.save();
+                })
+                .then(result => {
+                    return { ...result._doc };
+                });
+            })
+            .catch(err => {
+                throw new err;
             });
         }
     },
