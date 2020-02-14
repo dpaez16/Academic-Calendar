@@ -162,13 +162,13 @@ app.use('/ac', graphQLHttp({
                                 throw new Error("User with that email exists.");
                             }
                             return user.save();
-                        })
+                        });
                     }
                     return user.save();
                 })
                 .then(result => {
                     return { ...result._doc, password: null };
-                })
+                });
             })
             .catch(err => {
                 throw err;
@@ -245,7 +245,7 @@ app.use('/ac', graphQLHttp({
                 })
                 .then(result => {
                     return { ...result._doc };
-                })
+                });
             })
             .catch(err => {
                 throw err;
