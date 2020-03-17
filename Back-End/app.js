@@ -12,7 +12,7 @@ const CategoryElement = require('./models/categoryElement');
 
 const { getUsers, createUser, editUser } = require('./modules/users');
 const { getCourses, createCourse, editCourse } = require('./modules/courses');
-const { getCategories, createCategory, editCategory } = require('./modules/categories');
+const { getCategories, createCategory, editCategory, deleteCategory } = require('./modules/categories');
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
 
 const app = express();
@@ -102,6 +102,7 @@ app.use('/ac', graphQLHttp({
             editCategory(categoryInput: CategoryInput!, categoryID: ID!): Category
             editCategoryElement(categoryElementInput: CategoryElementInput!, categoryElementID: ID!): CategoryElement
 
+            deleteCategory(categoryID: ID!): Course
             deleteCategoryElement(categoryElementID: ID!): Category
         }
 
@@ -122,6 +123,32 @@ app.use('/ac', graphQLHttp({
         categories: getCategories,
         createCategory: createCategory,
         editCategory: editCategory,
+        deleteCategory: async rawArgs => {
+            let categoryID = rawArgs.categoryID;
+    
+            return Category.findById(categoryID).then(async category => {
+                if (!category) {
+                    throw new Error("Category not found.");
+                }
+    
+                let courseID = category.courseID;
+                let categoryElementIDS = category.elements;
+                categoryElementIDS.map(categoryElemID => deleteCategoryElement({ categoryElementID: categoryElemID }));
+                
+                return Category.deleteOne({ _id: categoryID }).then(async _ => {
+                    return Course.findById(courseID).then(async course => {
+                        course.categories.pull({ _id: categoryID });
+                        return course.save();
+                    })
+                    .then(result => {
+                        return { ...result._doc };
+                    });
+                });
+            })
+            .catch(err => {
+                throw err;
+            });
+        },
         
         categoryElements: getCategoryElements,
         createCategoryElement: createCategoryElement,
