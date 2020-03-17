@@ -76,7 +76,30 @@ module.exports = {
             });
         })
         .catch(err => {
-            throw new err;
+            throw err;
+        });
+    },
+    deleteCategoryElement: async rawArgs => {
+        let categoryElementID = rawArgs.categoryElementID;
+
+        return CategoryElement.findById(categoryElementID).then(async categoryElement => {
+            if (!categoryElement) {
+                throw new Error("Category Element not found.");
+            }
+
+            let categoryID = categoryElement.categoryID;
+            return CategoryElement.deleteOne({ _id: categoryElementID }).then(async _ => {
+                return Category.findById(categoryID).then(async category => {
+                    category.elements.pull({ _id: categoryElementID });
+                    return category.save();
+                })
+                .then(result => {
+                    return { ...result._doc };
+                });
+            });
+        })
+        .catch(err => {
+            throw err;
         });
     }
 }

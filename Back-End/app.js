@@ -13,7 +13,7 @@ const CategoryElement = require('./models/categoryElement');
 const { getUsers, createUser, editUser } = require('./modules/users');
 const { getCourses, createCourse, editCourse } = require('./modules/courses');
 const { getCategories, createCategory, editCategory } = require('./modules/categories');
-const { getCategoryElements, createCategoryElement, editCategoryElement } = require('./modules/categoryElements');
+const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
 
 const app = express();
 
@@ -101,6 +101,8 @@ app.use('/ac', graphQLHttp({
             editCourse(courseInput: CourseInput!, courseID: ID!): Course
             editCategory(categoryInput: CategoryInput!, categoryID: ID!): Category
             editCategoryElement(categoryElementInput: CategoryElementInput!, categoryElementID: ID!): CategoryElement
+
+            deleteCategoryElement(categoryElementID: ID!): Category
         }
 
         schema {
@@ -112,15 +114,19 @@ app.use('/ac', graphQLHttp({
         users: getUsers,
         createUser: createUser,
         editUser: editUser,
+
         courses: getCourses,
         createCourse: createCourse,
         editCourse: editCourse,
+        
         categories: getCategories,
         createCategory: createCategory,
         editCategory: editCategory,
+        
         categoryElements: getCategoryElements,
         createCategoryElement: createCategoryElement,
-        editCategoryElement: editCategoryElement
+        editCategoryElement: editCategoryElement,
+        deleteCategoryElement: deleteCategoryElement
     },
     graphiql: true
 }));
