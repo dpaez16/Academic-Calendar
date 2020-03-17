@@ -102,6 +102,7 @@ app.use('/ac', graphQLHttp({
             editCategory(categoryInput: CategoryInput!, categoryID: ID!): Category
             editCategoryElement(categoryElementInput: CategoryElementInput!, categoryElementID: ID!): CategoryElement
 
+            deleteCourse(courseID: ID!): User
             deleteCategory(categoryID: ID!): Course
             deleteCategoryElement(categoryElementID: ID!): Category
         }
@@ -119,6 +120,32 @@ app.use('/ac', graphQLHttp({
         courses: getCourses,
         createCourse: createCourse,
         editCourse: editCourse,
+        deleteCourse: async rawArgs => {
+            let courseID = rawArgs.courseID;
+    
+            return Course.findById(courseID).then(async course => {
+                if (!course) {
+                    throw new Error("Course not found.");
+                }
+    
+                let creatorID = course.creator;
+                let categoryIDS = course.categories;
+                categoryIDS.map(categoryID => deleteCategory({ categoryID: categoryID }));
+                
+                return Course.deleteOne({ _id: courseID }).then(async _ => {
+                    return User.findById(creatorID).then(async user => {
+                        user.courses.pull({ _id: courseID });
+                        return user.save();
+                    })
+                    .then(result => {
+                        return { ...result._doc };
+                    });
+                });
+            })
+            .catch(err => {
+                throw err;
+            });
+        },
         
         categories: getCategories,
         createCategory: createCategory,
