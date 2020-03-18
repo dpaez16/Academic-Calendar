@@ -2,12 +2,20 @@ const CategoryElement = require('../models/categoryElement');
 const Category = require('../models/category');
 
 module.exports = {
-    getCategoryElements: async () => {
+    getCategoryElements: async rawArgs => {
+        let categoryElementIDS = rawArgs.categoryElementIDS;
         try {
-            const categoryElements = await CategoryElement.find();
-            return categoryElements.map(categoryElement => {
-                return { ...categoryElement._doc };
+            const categoryElements = await categoryElementIDS.map(async categoryElementID => {
+                return CategoryElement.findById(categoryElementID).then(categoryElement => {
+                    if (!categoryElement) {
+                        throw new Error('Category Element not found.');
+                    }
+
+                    return { ...categoryElement._doc };
+                });
             });
+
+            return categoryElements;
         } catch(err) {
             throw err;
         }
