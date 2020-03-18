@@ -1,12 +1,21 @@
 const Course = require('../models/course');
+const User = require('../models/user');
 
 module.exports = {
-    getCourses: async () => {
+    getCourses: async rawArgs => {
+        let courseIDS = rawArgs.courseIDS;
         try {
-            const courses = await Course.find();
-            return courses.map(course => {
-                return { ...course._doc };
+            const courses = await courseIDS.map(async courseID => {
+                return Course.findById(courseID).then(course => {
+                    if (!course) {
+                        throw new Error('Course not found.');
+                    }
+
+                    return { ...course._doc };
+                });
             });
+
+            return courses;
         } catch(err) {
             throw err;
         }
