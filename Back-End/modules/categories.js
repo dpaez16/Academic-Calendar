@@ -3,12 +3,20 @@ const Course = require('../models/course');
 
 
 module.exports = {
-    getCategories: async () => {
+    getCategories: async rawArgs => {
+        let categoryIDS = rawArgs.categoryIDS;
         try {
-            const categories = await Category.find();
-            return categories.map(category => {
-                return { ...category._doc };
+            const categories = await categoryIDS.map(async categoryID => {
+                return Category.findById(categoryID).then(category => {
+                    if (!category) {
+                        throw new Error('Category not found.');
+                    }
+
+                    return { ...category._doc };
+                });
             });
+
+            return categories;
         } catch(err) {
             throw err;
         }
