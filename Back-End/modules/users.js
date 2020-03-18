@@ -1,16 +1,25 @@
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
 
 module.exports = {
-    getUsers: async () => {
-        try {
-            const users = await User.find();
-            return users.map(user => {
-                return { ...user._doc };
+    loginUser: async rawArgs => {
+        let { email, password } = rawArgs;
+        return User.findOne({email: email}).then(async foundUser => {
+            if (!foundUser) {
+                throw new Error('User not found.');
+            }
+
+            return bcrypt.compare(password, foundUser.password).then(isMatch => {
+                if (isMatch) {
+                    return {...foundUser._doc, password: null};
+                } else {
+                    throw new Error('Password is incorrect.');
+                }
             });
-        }
-        catch (err) {
+        })
+        .catch(err => {
             throw err;
-        }
+        });
     },
     createUser: async rawArgs => {
         const args = rawArgs.userInput;

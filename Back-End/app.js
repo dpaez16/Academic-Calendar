@@ -3,14 +3,12 @@ const bodyParser = require('body-parser');
 const graphQLHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 const User = require('./models/user');
 const Course = require('./models/course');
 const Category = require('./models/category');
-const CategoryElement = require('./models/categoryElement');
 
-const { getUsers, createUser, editUser } = require('./modules/users');
+const { loginUser, createUser, editUser } = require('./modules/users');
 const { getCourses, createCourse, editCourse } = require('./modules/courses');
 const { getCategories, createCategory, editCategory, deleteCategory } = require('./modules/categories');
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
@@ -85,10 +83,10 @@ app.use('/ac', graphQLHttp({
         }
 
         type RootQuery {
-            users: [User!]!
-            courses: [Course!]!
-            categories: [Category!]!
-            categoryElements: [CategoryElement!]!
+            loginUser(email: String!, password: String!): User
+            courses(courseIDS: [ID!]!): [Course!]!
+            categories(categoryIDS: [ID!]!): [Category!]!
+            categoryElements(categoryElementIDS: [ID!]!): [CategoryElement!]!
         }
 
         type RootMutation {
@@ -114,7 +112,7 @@ app.use('/ac', graphQLHttp({
         }
     `),
     rootValue: {
-        users: getUsers,
+        loginUser: loginUser,
         createUser: createUser,
         editUser: editUser,
         deleteUser: async rawArgs => {
