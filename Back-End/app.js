@@ -206,7 +206,7 @@ app.use('/ac', graphQLHttp({
 mongoose.connect(`
     mongodb+srv://${process.env.MONGO_USER}:${
         process.env.MONGO_PASSWORD
-    }@academic-calendar-fzvdf.mongodb.net/${
+    }@academic-calendar.fzvdf.mongodb.net/${
         process.env.MONGO_DB
     }?retryWrites=true&w=majority
 `, { 
