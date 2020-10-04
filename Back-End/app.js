@@ -214,6 +214,7 @@ mongoose.connect(`
     useUnifiedTopology: true
 }).then(() => {
     app.listen(3000);
+    console.log("Back-End server is running on localhost:3000/ac");
 }).catch(err => {
     console.log(err);
 });
