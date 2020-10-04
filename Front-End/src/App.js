@@ -19,7 +19,7 @@ export default class App extends Component {
                                 path='/' 
                                 component={HomePage} 
                             />
-            				/*
+            				{/*
                             <Route 
                                 exact
                                 path='/specialOrders' 
@@ -124,7 +124,7 @@ export default class App extends Component {
                                     <PostSendPage { ... props }/>
                                 }
                             />
-                            */
+                            */}
                         </Switch>
                     </div>
                 </React.Fragment>
