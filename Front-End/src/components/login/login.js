@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Form, Input, Button, Message} from 'semantic-ui-react';
 import {PROXY_URL} from '../misc/proxyURL';
+import history from '../../history';
 import './login.css';
 
 export class Login extends Component {
@@ -18,42 +19,57 @@ export class Login extends Component {
         return this.state.email && this.state.password;
     }
 
-    attemptLogin() {
+    async attemptLogin() {
         const {email, password} = this.state;
         const requestBody = {
             query: `
             {
                 loginUser(email: "${email}", password: "${password}") {
                     _id
+                    name
+                    email
                 }
             }
             `
         };
 
-        return fetch(PROXY_URL, {
-            method: "POST",
-            body: JSON.stringify(requestBody),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(res => {
+        try {
+            const res = await fetch(PROXY_URL, {
+                method: "POST",
+                body: JSON.stringify(requestBody),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
             if (res.status !== 200 && res.status !== 201) {
                 throw new Error("Login failed!");
             }
-
-            return res.json();
-        })
-        .then(resData => {
+            const resData = await res.json();
             if (!resData.data.loginUser) {
                 throw new Error("Login credentials failed!");
             }
 
             const userData = resData.data.loginUser;
             return userData;
-        })
-        .catch(error => {
+        } catch (error) {
             console.log(error);
+        }
+    }
+
+    handleLoginResults(userInfo) {
+        this.setState({
+            badLogin: !userInfo,
+            email: '',
+            password: ''
+        });
+
+        if (!userInfo) return;
+        
+        history.push({
+            pathname: '/',
+            state: {
+                userInfo: userInfo
+            }
         });
     }
 
@@ -88,13 +104,8 @@ export class Login extends Component {
                         disabled={!this.validInput()}
                         onClick={async () => {
                             this.attemptLogin()
-                            .then(userData => {
-                                console.log(userData);
-                                this.setState({
-                                    badLogin: !userData,
-                                    email: '',
-                                    password: ''
-                                });
+                            .then(userInfo => {
+                                this.handleLoginResults(userInfo);
                             });
                         }}
                 >

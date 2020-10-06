@@ -11,8 +11,9 @@ export default class App extends Component {
     constructor(props) {
         super(props);
 
+        console.log(props.location);
         this.state = {
-            loggedIn: false
+            userInfo: this.props.location ? this.props.location.state.userInfo : null
         };
     }
 
@@ -21,7 +22,7 @@ export default class App extends Component {
             <Router history={history}>
                 <React.Fragment>
                     <NavBar 
-                        loggedIn={this.state.loggedIn}
+                        loggedIn={this.state.userInfo}
                     />
                     <div className='main-content'>
                         <Switch>
