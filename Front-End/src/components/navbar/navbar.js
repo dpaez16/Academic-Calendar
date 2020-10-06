@@ -3,6 +3,23 @@ import {NavLink} from 'react-router-dom';
 import './navbar.css';
 
 export class NavBar extends Component {
+    getOptions() {
+        if (!this.props.loggedIn) {
+            return (
+                <ul>
+                    <li><NavLink to='/register'>Register</NavLink></li>
+                    <li><NavLink to='/login'>Login</NavLink></li>
+                </ul>
+            );
+        } else {
+            return (
+                <ul>
+                    <li><NavLink to='/profile'>Profile</NavLink></li>
+                </ul>
+            );
+        }
+    }
+
     render() {
         return (
             <header className='navbar'>
@@ -10,11 +27,7 @@ export class NavBar extends Component {
                     <NavLink to='/'>📅</NavLink>
                 </h1>
                 <nav className='navbar__items'>
-                    <ul>
-                        <li><NavLink to='/login'>Login</NavLink></li>
-                        <li><NavLink to='/login'>Login</NavLink></li>
-                        <li><NavLink to='/login'>Login</NavLink></li>
-                    </ul>
+                    {this.getOptions()}
                 </nav>
             </header>
         );
