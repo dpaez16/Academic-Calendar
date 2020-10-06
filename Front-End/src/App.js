@@ -11,9 +11,8 @@ export default class App extends Component {
     constructor(props) {
         super(props);
 
-        console.log(props.location);
         this.state = {
-            userInfo: this.props.location ? this.props.location.state.userInfo : null
+            userInfo: null
         };
     }
 
@@ -32,7 +31,14 @@ export default class App extends Component {
                             />
                             <Route  exact
                                     path='/login'
-                                    component={Login}
+                                    render={(props) => 
+                                        <Login    
+                                            updateUserInfo={newUserInfo => {
+                                                this.setState({userInfo: newUserInfo});
+                                            }}
+                                            { ...props }
+                                        />
+                                    }
                             />
             				{/*
                             <Route 

@@ -65,12 +65,8 @@ export class Login extends Component {
 
         if (!userInfo) return;
         
-        history.push({
-            pathname: '/',
-            state: {
-                userInfo: userInfo
-            }
-        });
+        this.props.updateUserInfo(userInfo);
+        history.push('/');
     }
 
     render() {
