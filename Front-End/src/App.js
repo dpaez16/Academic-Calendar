@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Router, Route, Switch, withRouter } from 'react-router-dom';
 import {NavBar} from './components/navbar/navbar';
 import {HomePage} from './components/home/homePage';
+import {Login} from './components/login/login';
 import history from './history';
 import './App.css';
 
@@ -24,10 +25,13 @@ export default class App extends Component {
                     />
                     <div className='main-content'>
                         <Switch>
-                            <Route 
-                                exact
-                                path='/' 
-                                component={HomePage} 
+                            <Route  exact
+                                    path='/' 
+                                    component={HomePage} 
+                            />
+                            <Route  exact
+                                    path='/login'
+                                    component={Login}
                             />
             				{/*
                             <Route 
