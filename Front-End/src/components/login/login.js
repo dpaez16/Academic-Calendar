@@ -50,10 +50,7 @@ export class Login extends Component {
             }
 
             const userData = resData.data.loginUser;
-            console.log(userData);
-
-            // need a way to return this to button onClick
-            return true;
+            return userData;
         })
         .catch(error => {
             console.log(error);
@@ -90,11 +87,14 @@ export class Login extends Component {
                 <Button type='submit'
                         disabled={!this.validInput()}
                         onClick={async () => {
-                            let loginStatus = this.attemptLogin();
-                            this.setState({
-                                badLogin: !loginStatus,
-                                email: '',
-                                password: ''
+                            this.attemptLogin()
+                            .then(userData => {
+                                console.log(userData);
+                                this.setState({
+                                    badLogin: !userData,
+                                    email: '',
+                                    password: ''
+                                });
                             });
                         }}
                 >
