@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Form, Input, Button, Message} from 'semantic-ui-react';
+import {PROXY_URL} from '../misc/proxyURL';
 import './login.css';
 
 export class Login extends Component {
@@ -18,7 +19,45 @@ export class Login extends Component {
     }
 
     attemptLogin() {
-        return this.state.email == "d";
+        const {email, password} = this.state;
+        const requestBody = {
+            query: `
+            {
+                loginUser(email: "${email}", password: "${password}") {
+                    _id
+                }
+            }
+            `
+        };
+
+        return fetch(PROXY_URL, {
+            method: "POST",
+            body: JSON.stringify(requestBody),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(res => {
+            if (res.status !== 200 && res.status !== 201) {
+                throw new Error("Login failed!");
+            }
+
+            return res.json();
+        })
+        .then(resData => {
+            if (!resData.data.loginUser) {
+                throw new Error("Login credentials failed!");
+            }
+
+            const userData = resData.data.loginUser;
+            console.log(userData);
+
+            // need a way to return this to button onClick
+            return true;
+        })
+        .catch(error => {
+            console.log(error);
+        });
     }
 
     render() {
