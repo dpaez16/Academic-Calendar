@@ -11,7 +11,10 @@
 
 .navbar__icon {
     margin: 0;
-    font-size: 1.5rem;
+}
+
+.navbar__icon a {
+    font-size: 100%;
 }
 
 .navbar__icon a:hover,
