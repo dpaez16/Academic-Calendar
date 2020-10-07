@@ -3,6 +3,7 @@ import { Router, Route, Switch, withRouter } from 'react-router-dom';
 import {NavBar} from './components/navbar/navbar';
 import {HomePage} from './components/home/homePage';
 import {Login} from './components/login/login';
+import {Profile} from './components/profile/profile';
 import history from './history';
 import './App.css';
 
@@ -36,6 +37,15 @@ export default class App extends Component {
                                             updateUserInfo={newUserInfo => {
                                                 this.setState({userInfo: newUserInfo});
                                             }}
+                                            { ...props }
+                                        />
+                                    }
+                            />
+                            <Route  exact
+                                    path='/profile'
+                                    render={(props) => 
+                                        <Profile 
+                                            userInfo={this.state.userInfo}
                                             { ...props }
                                         />
                                     }
