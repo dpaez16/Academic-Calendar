@@ -21,7 +21,7 @@ export class NavBar extends Component {
             return (
                 <ul>
                     <li><NavLink to='/profile'>Profile</NavLink></li>
-                    <li><a onClick={e => this.handleLogout(e)}>Logout</a></li>
+                    <li><a href='/' onClick={e => this.handleLogout(e)}>Logout</a></li>
                 </ul>
             );
         }
