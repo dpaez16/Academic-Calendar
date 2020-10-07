@@ -4,6 +4,7 @@ import {NavBar} from './components/navbar/navbar';
 import {HomePage} from './components/home/homePage';
 import {Login} from './components/login/login';
 import {Profile} from './components/profile/profile';
+import {Courses} from './components/courses/courses';
 import history from './history';
 import './App.css';
 
@@ -39,6 +40,14 @@ export default class App extends Component {
                                                 this.setState({userInfo: newUserInfo});
                                             }}
                                             { ...props }
+                                        />
+                                    }
+                            />
+                            <Route  exact
+                                    path='/courses'
+                                    render={(props) => 
+                                        <Courses 
+                                            courses={this.state.userInfo.courses}
                                         />
                                     }
                             />

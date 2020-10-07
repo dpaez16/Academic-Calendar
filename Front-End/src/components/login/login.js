@@ -28,6 +28,9 @@ export class Login extends Component {
                     _id
                     name
                     email
+                    courses {
+                        _id
+                    }
                 }
             }
             `
