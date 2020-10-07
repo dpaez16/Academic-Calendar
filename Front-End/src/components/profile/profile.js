@@ -9,7 +9,7 @@ export class Profile extends Component {
     render() {
         const {_id, name, email} = this.props.userInfo;
         return (
-            <div>
+            <div className="user-profile">
                 <h2>Name:</h2>
                 <p>{name}</p>
                 <h2>Email:</h2>

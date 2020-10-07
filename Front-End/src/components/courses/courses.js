@@ -62,7 +62,7 @@ export class Courses extends Component {
 
     render() {
         return (
-            <div>
+            <div className="courses">
                 <ul>
                     {this.state.courses.map((course, i) => {
                         return (
