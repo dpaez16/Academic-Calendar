@@ -23,6 +23,7 @@ export default class App extends Component {
                 <React.Fragment>
                     <NavBar 
                         loggedIn={this.state.userInfo}
+                        logoutUser={_ => this.setState({userInfo: null})}
                     />
                     <div className='main-content'>
                         <Switch>

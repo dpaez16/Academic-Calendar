@@ -1,8 +1,15 @@
 import React, {Component} from 'react';
 import {NavLink} from 'react-router-dom';
+import history from './../../history';
 import './navbar.css';
 
 export class NavBar extends Component {
+    handleLogout(event) {
+        event.preventDefault();
+        this.props.logoutUser();
+        history.push('/');
+    }
+
     getOptions() {
         if (!this.props.loggedIn) {
             return (
@@ -14,6 +21,7 @@ export class NavBar extends Component {
             return (
                 <ul>
                     <li><NavLink to='/profile'>Profile</NavLink></li>
+                    <li><a onClick={e => this.handleLogout(e)}>Logout</a></li>
                 </ul>
             );
         }
