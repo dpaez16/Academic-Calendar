@@ -67,34 +67,32 @@ export class Courses extends Component {
     render() {
         let {courses} = this.state;
         return (
-            <div>
-                <Table  celled
+            <Table  celled
                     className="courses"
-                >
-                    <Table.Body>
-                        {courses.map(course => {
-                            return (
-                                <Table.Row>
-                                    <Table.Cell className="courses__row__metadata">{course.subject}{course.courseNum} - {course.courseName}</Table.Cell>
-                                    <Table.Cell className="courses__row__options">
-                                        <Button color="grey">Edit</Button>
-                                        <Button negative>Delete</Button>
-                                    </Table.Cell>
-                                </Table.Row>
-                            );
-                        })}
-                        <Table.Row>
-                            <Table.Cell colSpan='2'>
-                                <Button positive
-                                        fluid
-                                >
-                                    Add Course
-                                </Button>
-                            </Table.Cell>
-                        </Table.Row>
-                    </Table.Body>
-                </Table>
-            </div>
+            >
+                <Table.Body>
+                    {courses.map(course => {
+                        return (
+                            <Table.Row>
+                                <Table.Cell className="courses__row__metadata">{course.subject}{course.courseNum} - {course.courseName}</Table.Cell>
+                                <Table.Cell className="courses__row__options">
+                                    <Button color="grey">Edit</Button>
+                                    <Button negative>Delete</Button>
+                                </Table.Cell>
+                            </Table.Row>
+                        );
+                    })}
+                    <Table.Row>
+                        <Table.Cell colSpan='2'>
+                            <Button positive
+                                    fluid
+                            >
+                                Add Course
+                            </Button>
+                        </Table.Cell>
+                    </Table.Row>
+                </Table.Body>
+            </Table>
         );
     }
 }
