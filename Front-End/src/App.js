@@ -5,6 +5,7 @@ import {HomePage} from './components/home/homePage';
 import {Login} from './components/login/login';
 import {Profile} from './components/profile/profile';
 import {Courses} from './components/courses/courses';
+import {CourseDetails} from './components/courseDetails/courseDetails';
 import history from './history';
 import './App.css';
 
@@ -64,6 +65,11 @@ export default class App extends Component {
                                             { ...props }
                                         />
                                     }
+                            />
+                            <Route  exact
+                                    path='/courseDetails'
+                                    component={CourseDetails}
+                            
                             />
             				{/*
                             <Route 

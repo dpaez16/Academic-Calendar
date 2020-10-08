@@ -73,9 +73,9 @@ export class Courses extends Component {
                     className="courses"
             >
                 <Table.Body>
-                    {courses.map(course => {
+                    {courses.map((course, i) => {
                         return (
-                            <Table.Row>
+                            <Table.Row key={i}>
                                 <Table.Cell className="courses__row__metadata">
                                     <a  href=""
                                         onMouseDown={() => history.push({
