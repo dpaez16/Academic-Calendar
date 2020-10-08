@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {PROXY_URL} from '../misc/proxyURL';
+import {Table, Button, Label, Menu, Icon} from 'semantic-ui-react';
 import history from '../../history';
 import './courses.css';
 
@@ -51,7 +52,10 @@ export class Courses extends Component {
     componentDidMount() {
         const courseIDS = this.props.courses.map(course => `"${course._id}"`);
         this.getCourses(courseIDS)
-        .then(courses => this.setState({courses: courses}));
+        .then(courses => {
+        	courses.push(courses[0]);
+        	this.setState({courses: courses})
+        });
     }
 
     componentDidUpdate(prevProps) {
@@ -61,16 +65,26 @@ export class Courses extends Component {
     }
 
     render() {
+        let {courses} = this.state;
         return (
-            <div className="courses">
-                <ul>
-                    {this.state.courses.map((course, i) => {
+            <Table  celled
+                    className="courses"
+            >
+                <Table.Body>
+                    {courses.map(course => {
                         return (
-                        <li key={i}>{course.subject}{course.courseNum} - {course.courseName}</li>
+                            <Table.Row>
+                                <Table.Cell>{course.subject}{course.courseNum}</Table.Cell>
+                                <Table.Cell>{course.courseName}</Table.Cell>
+                                <Table.Cell>
+                                    <Button color="grey">Edit</Button>
+                                    <Button negative>Delete</Button>
+                                </Table.Cell>
+                            </Table.Row>
                         );
                     })}
-                </ul>
-            </div>
+                </Table.Body>
+            </Table>
         );
     }
 }
