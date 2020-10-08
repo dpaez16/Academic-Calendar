@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {PROXY_URL} from '../misc/proxyURL';
-import {Table, Button, Label, Menu, Icon} from 'semantic-ui-react';
+import {Table, Button} from 'semantic-ui-react';
 import history from '../../history';
 import './courses.css';
 
@@ -18,9 +18,12 @@ export class Courses extends Component {
             query: `
             {
                 courses(courseIDS: [${courseIDS}]) {
+                    _id
                     subject
                     courseNum
                     courseName
+                    weighted
+                    categories
                 }
             }
             `
@@ -77,9 +80,7 @@ export class Courses extends Component {
                                     <a  href=""
                                         onMouseDown={() => history.push({
                                             pathname: "/courseDetails",
-                                            state: {
-                                                courseID: course._id
-                                            }
+                                            state: course
                                         })}
                                     >
                                         {course.subject}{course.courseNum} - {course.courseName}
