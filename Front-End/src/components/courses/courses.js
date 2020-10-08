@@ -53,7 +53,6 @@ export class Courses extends Component {
         const courseIDS = this.props.courses.map(course => `"${course._id}"`);
         this.getCourses(courseIDS)
         .then(courses => {
-        	courses.push(courses[0]);
         	this.setState({courses: courses})
         });
     }
@@ -74,7 +73,18 @@ export class Courses extends Component {
                     {courses.map(course => {
                         return (
                             <Table.Row>
-                                <Table.Cell className="courses__row__metadata">{course.subject}{course.courseNum} - {course.courseName}</Table.Cell>
+                                <Table.Cell className="courses__row__metadata">
+                                    <a  href=""
+                                        onMouseDown={() => history.push({
+                                            pathname: "/courseDetails",
+                                            state: {
+                                                courseID: course._id
+                                            }
+                                        })}
+                                    >
+                                        {course.subject}{course.courseNum} - {course.courseName}
+                                    </a>
+                                </Table.Cell>
                                 <Table.Cell className="courses__row__options">
                                     <Button color="grey">Edit</Button>
                                     <Button negative>Delete</Button>
