@@ -16,12 +16,7 @@ export default class App extends Component {
         super(props);
 
         this.state = {
-            userInfo: {
-                _id: "5e729a79c4e0560ef8230c14",
-                name: "Danny Paez",
-                email: "dpaez16@yahoo.com",
-                courses: [{_id: "5e72a4bb72395519842a7137"}]
-            }
+            userInfo: null
         };
     }
 
