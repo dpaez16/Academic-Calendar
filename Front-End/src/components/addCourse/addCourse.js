@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, Input, Button, Message} from 'semantic-ui-react';
+import {Form, Input, Button, Message, Checkbox} from 'semantic-ui-react';
 import {PROXY_URL} from '../misc/proxyURL';
 import history from '../../history';
 import {validSubject, validCourseNum} from './../misc/helpers';
@@ -25,6 +25,10 @@ export class AddCourse extends Component {
             validCourseNum(courseNum) &&
             courseName
         );
+    }
+
+    attemptAddCourse() {
+        console.log(this.state);
     }
 
     render() {
@@ -57,6 +61,11 @@ export class AddCourse extends Component {
                             }}
                     />
                 </Form.Field>
+                <Form.Field>
+                    <Checkbox   label='Weighted'
+                                onChange={_ => this.setState({weighted: !this.state.weighted})}
+                    />
+                </Form.Field>
                 <Message 
                     error
                     header='Error'
@@ -64,6 +73,10 @@ export class AddCourse extends Component {
                 />
                 <Button type='submit'
                         disabled={!this.validInput()}
+                        onClick={e => {
+                            e.preventDefault();
+                            this.attemptAddCourse()
+                        }}
                 >
                     Add Course
                 </Button>
