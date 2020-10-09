@@ -52,6 +52,12 @@ export class Courses extends Component {
         }
     }
 
+    addCourse(newCourse) {
+        this.setState({
+            courses: [...this.state.courses, newCourse]
+        })
+    }
+
     componentDidMount() {
         const courseIDS = this.props.courses.map(course => `"${course._id}"`);
         this.getCourses(courseIDS)
@@ -97,6 +103,7 @@ export class Courses extends Component {
                         <Table.Cell colSpan='2'>
                             <Button positive
                                     fluid
+                                    onClick={() => history.push('/addCourse')}
                             >
                                 Add Course
                             </Button>

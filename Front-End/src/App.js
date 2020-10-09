@@ -6,6 +6,7 @@ import {Login} from './components/login/login';
 import {Profile} from './components/profile/profile';
 import {Courses} from './components/courses/courses';
 import {CourseDetails} from './components/courseDetails/courseDetails';
+import {AddCourse} from './components/addCourse/addCourse';
 import history from './history';
 import './App.css';
 
@@ -52,8 +53,20 @@ export default class App extends Component {
                             <Route  exact
                                     path='/courses'
                                     render={(props) => 
-                                        <Courses 
+                                        <Courses
                                             courses={this.state.userInfo.courses}
+                                        />
+                                    }
+                            />
+                            <Route  exact
+                                    path='/addCourse'
+                                    render={(props) =>
+                                        <AddCourse
+                                            userID={this.state.userInfo._id}
+                                            addCourse={newCourse => this.setState({
+                                                courses: [...this.state.courses, newCourse]
+                                            })}
+                                            { ...props }
                                         />
                                     }
                             />
