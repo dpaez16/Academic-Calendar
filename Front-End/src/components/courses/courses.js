@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {PROXY_URL} from '../misc/proxyURL';
 import {Table, Button} from 'semantic-ui-react';
+import {Dimmer, Loader, Segment} from 'semantic-ui-react';
 import history from '../../history';
 import './courses.css';
 
@@ -9,7 +10,8 @@ export class Courses extends Component {
         super(props);
 
         this.state = {
-            courses: []
+            courses: [],
+            loading: true
         };
     }
 
@@ -62,7 +64,10 @@ export class Courses extends Component {
         const courseIDS = this.props.courses.map(course => `"${course._id}"`);
         this.getCourses(courseIDS)
         .then(courses => {
-        	this.setState({courses: courses})
+        	this.setState({
+                courses: courses,
+                loading: false
+            })
         });
     }
 
@@ -73,6 +78,20 @@ export class Courses extends Component {
     }
 
     render() {
+        if (this.state.loading) {
+            return (
+                <Segment className='courses-loading'>
+                    <Dimmer active 
+                            inverted
+                    >
+                        <Loader inverted 
+                                content='Loading' 
+                        />
+                    </Dimmer>
+                </Segment>
+            );
+        }
+
         let {courses} = this.state;
         return (
             <Table  celled

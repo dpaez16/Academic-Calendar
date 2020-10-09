@@ -14,3 +14,8 @@
 .courses__row__options > button {
     font-size: 12px !important;
 }
+
+.courses-loading {
+    width: 50% !important;
+    height: 10em !important;
+}
