@@ -108,7 +108,9 @@ export class Courses extends Component {
                                             state: course
                                         })}
                                     >
-                                        {course.subject}{course.courseNum} - {course.courseName}
+                                        {course.subject}{course.courseNum} - {course.courseName} {
+                                            course.weighted ? "(Weighted)" : ""
+                                        }
                                     </a>
                                 </Table.Cell>
                                 <Table.Cell className="courses__row__options">
