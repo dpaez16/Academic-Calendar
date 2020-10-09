@@ -10,6 +10,7 @@ export class AddCourse extends Component {
         super(props);
         
         this.state = {
+            error: "",
             subject: "",
             courseNum: "",
             courseName: "",
@@ -27,14 +28,76 @@ export class AddCourse extends Component {
         );
     }
 
-    attemptAddCourse() {
-        console.log(this.state);
+    getQuery() {
+        const {subject, courseNum, courseName, weighted} = this.state;
+        const {userID} = this.props;
+        const requestBody = {
+            query: `
+            mutation {
+                createCourse(courseInput: {
+                    subject: "${subject}",
+                    courseNum: ${courseNum},
+                    courseName: "${courseName}",
+                    weighted: ${weighted},
+                    creator: "${userID}"
+                }) {
+                    _id
+                    subject
+                    courseNum
+                    courseName
+                    weighted
+                    categories
+                }
+            }
+            `
+        };
+
+        return requestBody;
+    }
+
+    async attemptAddCourse() {
+        const requestBody = this.getQuery();
+
+        try {
+            const res = await fetch(PROXY_URL, {
+                method: "POST",
+                body: JSON.stringify(requestBody),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if (res.status !== 200 && res.status !== 201) {
+                throw new Error("Add course failed! (bad status code)");
+            }
+            const resData = await res.json();
+            return resData;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    handleAddCourseResult(resData) {
+        this.setState({
+            subject: "",
+            courseNum: "",
+            courseName: "",
+            weighted: false
+        });
+
+        if (resData.errors) {
+            this.setState({error: resData.errors[0].message});
+            return;
+        }
+        
+        const newCourse = resData.data.addCourse;
+        this.props.addCourse(newCourse);
+        history.push('/courses');
     }
 
     render() {
         return (
             <Form   className='add-course-form'
-                    error={this.state.badInput}
+                    error={true && this.state.error}
             >
                 <Form.Field>
                     <label>Subject</label>
@@ -69,13 +132,14 @@ export class AddCourse extends Component {
                 <Message 
                     error
                     header='Error'
-                    content='Some error!'
+                    content={this.state.error}
                 />
                 <Button type='submit'
                         disabled={!this.validInput()}
                         onClick={e => {
                             e.preventDefault();
                             this.attemptAddCourse()
+                            .then(resData => this.handleAddCourseResult(resData));
                         }}
                 >
                     Add Course

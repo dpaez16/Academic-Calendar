@@ -64,7 +64,7 @@ export default class App extends Component {
                                         <AddCourse
                                             userID={this.state.userInfo._id}
                                             addCourse={newCourse => this.setState({
-                                                courses: [...this.state.courses, newCourse]
+                                                courses: [...this.state.userInfo.courses, newCourse]
                                             })}
                                             { ...props }
                                         />

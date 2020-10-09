@@ -19,7 +19,7 @@ export class Login extends Component {
         return this.state.email && this.state.password;
     }
 
-    async attemptLogin() {
+    getQuery() {
         const {email, password} = this.state;
         const requestBody = {
             query: `
@@ -35,6 +35,12 @@ export class Login extends Component {
             }
             `
         };
+
+        return requestBody;
+    }
+
+    async attemptLogin() {
+        const requestBody = this.getQuery();
 
         try {
             const res = await fetch(PROXY_URL, {
