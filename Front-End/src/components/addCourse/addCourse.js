@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, Input, Button, Message, Checkbox} from 'semantic-ui-react';
+import {Form, Input, Button, Message, Checkbox, Header} from 'semantic-ui-react';
 import {PROXY_URL} from '../misc/proxyURL';
 import history from '../../history';
 import {validSubject, validCourseNum} from './../misc/helpers';
@@ -96,6 +96,10 @@ export class AddCourse extends Component {
 
     render() {
         return (
+            <div>
+            <Header size='huge'>
+                Add Form
+            </Header>
             <Form   className='add-course-form'
                     error={this.state.error !== null && this.state.error.length > 0}
             >
@@ -146,6 +150,7 @@ export class AddCourse extends Component {
                     Add Course
                 </Button>
             </Form>
+            </div>
         );
     }
 }

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {Form, Input, Button, Message, Checkbox} from 'semantic-ui-react';
+import {Form, Input, Button, Message, Checkbox, Header} from 'semantic-ui-react';
 import {PROXY_URL} from '../misc/proxyURL';
 import history from '../../history';
-import {validSubject, validCourseNum} from './../misc/helpers';
+import {validSubject, validCourseNum, courseToStr} from './../misc/helpers';
 import './editCourse.css';
 
 export class EditCourse extends Component {
@@ -98,6 +98,11 @@ export class EditCourse extends Component {
 
     render() {
         return (
+            <div>
+            <Header size='huge'>
+                Edit Course
+            </Header>
+            <b>{courseToStr(this.state.selectedCourse)}</b>
             <Form   className='edit-course-form'
                     error={this.state.error !== null && this.state.error.length > 0}
             >
@@ -148,6 +153,7 @@ export class EditCourse extends Component {
                     Save Changes
                 </Button>
             </Form>
+            </div>
         );
     }
 }
