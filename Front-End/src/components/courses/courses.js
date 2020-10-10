@@ -87,6 +87,7 @@ export class Courses extends Component {
             }
             const resData = await res.json();
             if (!resData.data.deleteCourse) {
+                console.log(resData);
                 throw new Error("Delete course failed!");
             }
 
@@ -168,7 +169,17 @@ export class Courses extends Component {
                                     </a>
                                 </Table.Cell>
                                 <Table.Cell className="courses__row__options">
-                                    <Button color="grey">Edit</Button>
+                                    <Button color="grey"
+                                            onClick={() => history.push({
+                                                pathname: '/editCourse',
+                                                state: {
+                                                    selectedCourse: course,
+                                                    error: ""
+                                                }
+                                            })}
+                                    >
+                                        Edit
+                                    </Button>
                                     <Button negative
                                             onClick={e => {
                                                 e.preventDefault();

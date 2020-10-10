@@ -97,7 +97,7 @@ export class AddCourse extends Component {
     render() {
         return (
             <Form   className='add-course-form'
-                    error={true && this.state.error}
+                    error={this.state.error !== null && this.state.error.length > 0}
             >
                 <Form.Field>
                     <label>Subject</label>
@@ -126,6 +126,7 @@ export class AddCourse extends Component {
                 </Form.Field>
                 <Form.Field>
                     <Checkbox   label='Weighted'
+                                checked={this.state.weighted}
                                 onChange={_ => this.setState({weighted: !this.state.weighted})}
                     />
                 </Form.Field>

@@ -7,6 +7,8 @@ import {Profile} from './components/profile/profile';
 import {Courses} from './components/courses/courses';
 import {CourseDetails} from './components/courseDetails/courseDetails';
 import {AddCourse} from './components/addCourse/addCourse';
+import { EditCourse } from './components/editCourse/editCourse';
+import { replaceItemFromArray } from './components/misc/helpers';
 import history from './history';
 import './App.css';
 
@@ -16,7 +18,7 @@ export default class App extends Component {
         super(props);
 
         this.state = {
-            userInfo: {}
+            userInfo: null
         };
     }
 
@@ -51,8 +53,8 @@ export default class App extends Component {
                                         <Courses
                                             courses={this.state.userInfo.courses}
                                             deleteCourse={newCourses => {
-                                                const newUserInfo = {...this.state.userInfo, ...{courses: newCourses}}
-                                                this.setState({userInfo: newUserInfo})
+                                                const newUserInfo = {...this.state.userInfo, ...{courses: newCourses}};
+                                                this.setState({userInfo: newUserInfo});
                                             }}
                                             { ...props }
                                         />
@@ -84,112 +86,21 @@ export default class App extends Component {
                                     component={CourseDetails}
                             
                             />
-            				{/*
-                            <Route 
-                                exact
-                                path='/specialOrders' 
-                                component={SpecialOrders} 
+                            <Route  exact
+                                    path='/editCourse'
+                                    render={(props) =>
+                                        <EditCourse
+                                            userID={this.state.userInfo._id}
+                                            replaceCourse={(oldCourse, newCourse) => {
+                                                const {courses} = this.state.userInfo;
+                                                const newCourses = replaceItemFromArray(courses, oldCourse, newCourse);
+                                                const newUserInfo = {...this.state.userInfo, ...{courses: newCourses}};
+                                                this.setState({userInfo: newUserInfo});
+                                            }}
+                                            { ...props }
+                                        />
+                                    }
                             />
-                            <Route 
-                                exact
-                                path='/tshirts/adult' 
-                                render={(props) => 
-                                    <Catalog    
-                                        catalogName='T-Shirts (Adult)'
-                                        catalogList={products.tshirts}
-                                        catalogURL='tshirts/adult'
-                                        { ...props }
-                                    />
-                                }
-                            />
-                            <Route 
-                                exact
-                                path='/tshirts/adult/:itemNum'
-                                render={(props) => 
-                                    <CatalogItemPage
-                                        catalog={products.tshirts}
-                                        itemType="T-Shirts (Adult)"
-                                        { ...props }
-                                    />
-                                }
-                            />
-                            <Route 
-                                exact
-                                path='/tshirts/child' 
-                                render={(props) => 
-                                    <Catalog    
-                                        catalogName='T-Shirts (Child)'
-                                        catalogList={products.tshirts}
-                                        catalogURL='tshirts/child'
-                                        { ...props }
-                                    />
-                                }
-                            />
-                            <Route 
-                                exact
-                                path='/tshirts/child/:itemNum'
-                                render={(props) => 
-                                    <CatalogItemPage
-                                        catalog={products.tshirts}
-                                        itemType="T-Shirts (Child)"
-                                        { ...props }
-                                    />
-                                }
-                            />
-                            <Route 
-                                exact
-                                path='/hoodies/adult' 
-                                render={(props) => 
-                                    <Catalog    
-                                        catalogName='Hoodies (Adult)'
-                                        catalogList={products.hoodies}
-                                        catalogURL='hoodies/adult'
-                                        { ...props }
-                                    />
-                                }
-                            />
-                            <Route 
-                                exact
-                                path='/hoodies/adult/:itemNum'
-                                render={(props) => 
-                                    <CatalogItemPage
-                                        catalog={products.hoodies}
-                                        itemType="Hoodies (Adult)"
-                                        { ...props }
-                                    />
-                                }
-                            />
-                            <Route 
-                                exact
-                                path='/hoodies/child' 
-                                render={(props) => 
-                                    <Catalog    
-                                        catalogName='Hoodies (Child)'
-                                        catalogList={products.hoodies}
-                                        catalogURL='hoodies/child'
-                                        { ...props }
-                                    />
-                                }
-                            />
-                            <Route 
-                                exact
-                                path='/hoodies/child/:itemNum'
-                                render={(props) => 
-                                    <CatalogItemPage
-                                        catalog={products.hoodies}
-                                        itemType="Hoodies (Child)"
-                                        { ...props }
-                                    />
-                                }
-                            />
-                            <Route 
-                                exact
-                                path='/sentRequest'
-                                render={(props) =>
-                                    <PostSendPage { ... props }/>
-                                }
-                            />
-                            */}
                         </Switch>
                     </div>
                 </React.Fragment>

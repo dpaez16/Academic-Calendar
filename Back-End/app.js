@@ -180,32 +180,7 @@ app.use('/ac', graphQLHttp({
         categories: getCategories,
         createCategory: createCategory,
         editCategory: editCategory,
-        deleteCategory: async rawArgs => {
-            let categoryID = rawArgs.categoryID;
-    
-            return Category.findById(categoryID).then(async category => {
-                if (!category) {
-                    throw new Error("Category not found.");
-                }
-    
-                let courseID = category.courseID;
-                let categoryElementIDS = category.elements;
-                categoryElementIDS.map(categoryElemID => deleteCategoryElement({ categoryElementID: categoryElemID }));
-                
-                return Category.deleteOne({ _id: categoryID }).then(async _ => {
-                    return Course.findById(courseID).then(async course => {
-                        course.categories.pull({ _id: categoryID });
-                        return course.save();
-                    })
-                    .then(result => {
-                        return { ...result._doc };
-                    });
-                });
-            })
-            .catch(err => {
-                throw err;
-            });
-        },
+        deleteCategory: deleteCategory,
         
         categoryElements: getCategoryElements,
         createCategoryElement: createCategoryElement,

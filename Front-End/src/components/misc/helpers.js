@@ -18,3 +18,10 @@ export const deleteItemFromArray = function(arr, valObj) {
     arr.splice(idx, 1);
     return arr;
 }
+
+export const replaceItemFromArray = function(arr, valObj, newObj) {
+    const val = valObj._id;
+    const idx = arr.findIndex(obj => obj._id == val);
+    arr.splice(idx, 1, newObj);
+    return arr;
+}
