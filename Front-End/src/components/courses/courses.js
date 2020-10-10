@@ -87,7 +87,6 @@ export class Courses extends Component {
             }
             const resData = await res.json();
             if (!resData.data.deleteCourse) {
-                console.log(resData);
                 throw new Error("Delete course failed!");
             }
 

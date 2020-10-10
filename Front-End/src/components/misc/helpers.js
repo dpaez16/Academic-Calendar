@@ -30,3 +30,8 @@ export const courseToStr = function(course) {
     const weighted = course.weighted ? "(Weighted)" : "";
     return `${course.subject}${course.courseNum} - ${course.courseName} ${weighted}`;
 }
+
+export const categoryToStr = function(category, weighted) {
+    const weight = weighted ? `${category.weight}%` : ""
+    return `${category.name}: ${weight}`
+}
