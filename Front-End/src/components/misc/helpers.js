@@ -35,3 +35,8 @@ export const categoryToStr = function(category, weighted) {
     const weight = weighted ? `${category.weight}%` : ""
     return `${category.name}: ${weight}`
 }
+
+export const dateToStr = function(date) {
+    const dateNum = Number(date);
+    return new Date(dateNum).toLocaleString();
+}
