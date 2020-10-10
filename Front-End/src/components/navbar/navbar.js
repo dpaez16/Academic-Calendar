@@ -32,7 +32,7 @@ export class NavBar extends Component {
         return (
             <header className='navbar'>
                 <h1 className='navbar__icon'>
-                    <NavLink to='/'>📅</NavLink>
+                    <NavLink to='/'><span role='img' aria-label="Calendar">📅</span></NavLink>
                 </h1>
                 <nav className='navbar__items'>
                     {this.getOptions()}

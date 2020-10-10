@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { courseToStr } from '../misc/helpers';
 import {PROXY_URL} from '../misc/proxyURL';
 import history from '../../history';
 import './courseDetails.css';
@@ -11,17 +12,12 @@ export class CourseDetails extends Component {
     }
 
     render() {
-        const {
-            subject,
-            courseNum,
-            courseName,
-            weighted
-        } = this.state;
+        const course = this.state;
 
         return (
             <div>
                 <h1>
-                    {subject}{courseNum}: {courseName}
+                    {courseToStr(course)}
                 </h1>
             </div>
         );

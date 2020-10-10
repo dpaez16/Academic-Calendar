@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {PROXY_URL} from '../misc/proxyURL';
 import {Table, Button, Confirm} from 'semantic-ui-react';
 import {Dimmer, Loader, Segment} from 'semantic-ui-react';
-import {deleteItemFromArray} from './../misc/helpers';
+import {deleteItemFromArray, courseToStr} from './../misc/helpers';
 import history from '../../history';
 import './courses.css';
 
@@ -103,11 +103,6 @@ export class Courses extends Component {
         this.props.deleteCourse(newCourses);
     }
 
-    courseToStr(course) {
-        const weighted = course.weighted ? "(Weighted)" : "";
-        return `${course.subject}${course.courseNum} - ${course.courseName} ${weighted}`;
-    }
-
     componentDidMount() {
         if (!this.props.courses) {
             this.setState({
@@ -159,13 +154,13 @@ export class Courses extends Component {
                         return (
                             <Table.Row key={i}>
                                 <Table.Cell className="courses__row__metadata">
-                                    <a  href=""
+                                    <a  href="/courseDetails"
                                         onMouseDown={() => history.push({
                                             pathname: "/courseDetails",
                                             state: course
                                         })}
                                     >
-                                        {this.courseToStr(course)}
+                                        {courseToStr(course)}
                                     </a>
                                 </Table.Cell>
                                 <Table.Cell className="courses__row__options">
@@ -209,7 +204,7 @@ export class Courses extends Component {
             </Table>
             <Confirm    open={this.state.clickDelete}
                         header={'Delete Course'}
-                        content={`Are you sure you wish to delete ${this.courseToStr(this.state.selectedCourse)}?`}
+                        content={`Are you sure you wish to delete ${courseToStr(this.state.selectedCourse)}?`}
                         onCancel={e => {
                             e.preventDefault();
                             this.setState({

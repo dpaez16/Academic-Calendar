@@ -14,14 +14,19 @@ export const validCourseNum = function(courseNum) {
 
 export const deleteItemFromArray = function(arr, valObj) {
     const val = valObj._id;
-    const idx = arr.findIndex(obj => obj._id == val);
+    const idx = arr.findIndex(obj => obj._id === val);
     arr.splice(idx, 1);
     return arr;
 }
 
 export const replaceItemFromArray = function(arr, valObj, newObj) {
     const val = valObj._id;
-    const idx = arr.findIndex(obj => obj._id == val);
+    const idx = arr.findIndex(obj => obj._id === val);
     arr.splice(idx, 1, newObj);
     return arr;
+}
+
+export const courseToStr = function(course) {
+    const weighted = course.weighted ? "(Weighted)" : "";
+    return `${course.subject}${course.courseNum} - ${course.courseName} ${weighted}`;
 }
