@@ -11,3 +11,10 @@ export const validCourseNum = function(courseNum) {
     );
     return validCourseNumRegex.test(courseNum);
 }
+
+export const deleteItemFromArray = function(arr, valObj) {
+    const val = valObj._id;
+    const idx = arr.findIndex(obj => obj._id == val);
+    arr.splice(idx, 1);
+    return arr;
+}

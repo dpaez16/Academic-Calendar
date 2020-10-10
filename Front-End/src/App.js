@@ -16,7 +16,7 @@ export default class App extends Component {
         super(props);
 
         this.state = {
-            userInfo: null
+            userInfo: {}
         };
     }
 
@@ -50,6 +50,11 @@ export default class App extends Component {
                                     render={(props) => 
                                         <Courses
                                             courses={this.state.userInfo.courses}
+                                            deleteCourse={newCourses => {
+                                                const newUserInfo = {...this.state.userInfo, ...{courses: newCourses}}
+                                                this.setState({userInfo: newUserInfo})
+                                            }}
+                                            { ...props }
                                         />
                                     }
                             />

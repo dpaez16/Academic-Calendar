@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {PROXY_URL} from '../misc/proxyURL';
-import {Table, Button} from 'semantic-ui-react';
+import {Table, Button, Confirm} from 'semantic-ui-react';
 import {Dimmer, Loader, Segment} from 'semantic-ui-react';
+import {deleteItemFromArray} from './../misc/helpers';
 import history from '../../history';
 import './courses.css';
 
@@ -11,7 +12,9 @@ export class Courses extends Component {
 
         this.state = {
             courses: [],
-            loading: true
+            loading: true,
+            clickDelete: false,
+            selectedCourse: {}
         };
     }
 
@@ -60,7 +63,59 @@ export class Courses extends Component {
         })
     }
 
+    async deleteCourse(course) {
+        const requestBody = {
+            query: `
+            mutation {
+                deleteCourse(courseID: "${course._id}") {
+                    _id
+                }
+            }
+            `
+        };
+
+        try {
+            const res = await fetch(PROXY_URL, {
+                method: "POST",
+                body: JSON.stringify(requestBody),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if (res.status !== 200 && res.status !== 201) {
+                throw new Error("Delete course failed! (bad response status)");
+            }
+            const resData = await res.json();
+            if (!resData.data.deleteCourse) {
+                throw new Error("Delete course failed!");
+            }
+
+            return resData;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    deleteCourseLocally(course) {
+        const newCourses = deleteItemFromArray(this.state.courses, course);
+        this.setState({courses: newCourses});
+        this.props.deleteCourse(newCourses);
+    }
+
+    courseToStr(course) {
+        const weighted = course.weighted ? "(Weighted)" : "";
+        return `${course.subject}${course.courseNum} - ${course.courseName} ${weighted}`;
+    }
+
     componentDidMount() {
+        if (!this.props.courses) {
+            this.setState({
+                courses: [],
+                loading: false
+            });
+            return;
+        }
+
         const courseIDS = this.props.courses.map(course => `"${course._id}"`);
         this.getCourses(courseIDS)
         .then(courses => {
@@ -94,6 +149,7 @@ export class Courses extends Component {
 
         let {courses} = this.state;
         return (
+            <React.Fragment>
             <Table  celled
                     className="courses"
             >
@@ -108,14 +164,22 @@ export class Courses extends Component {
                                             state: course
                                         })}
                                     >
-                                        {course.subject}{course.courseNum} - {course.courseName} {
-                                            course.weighted ? "(Weighted)" : ""
-                                        }
+                                        {this.courseToStr(course)}
                                     </a>
                                 </Table.Cell>
                                 <Table.Cell className="courses__row__options">
                                     <Button color="grey">Edit</Button>
-                                    <Button negative>Delete</Button>
+                                    <Button negative
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                this.setState({
+                                                    clickDelete: true,
+                                                    selectedCourse: course
+                                                });
+                                            }}
+                                    >
+                                        Delete
+                                    </Button>
                                 </Table.Cell>
                             </Table.Row>
                         );
@@ -132,6 +196,37 @@ export class Courses extends Component {
                     </Table.Row>
                 </Table.Body>
             </Table>
+            <Confirm    open={this.state.clickDelete}
+                        header={'Delete Course'}
+                        content={`Are you sure you wish to delete ${this.courseToStr(this.state.selectedCourse)}?`}
+                        onCancel={e => {
+                            e.preventDefault();
+                            this.setState({
+                                clickDelete: false,
+                                selectedCourse: {}
+                            });
+                        }}
+                        onConfirm={e => {
+                            e.preventDefault();
+                            const selectedCourse = this.state.selectedCourse;
+                            this.deleteCourse(selectedCourse)
+                            .then(resData => {
+                                if (resData && resData.errors) {
+                                    const error = resData.errors[0].messsage;
+                                    console.log(error);
+                                    return;
+                                }
+
+                                this.deleteCourseLocally(selectedCourse);
+                            });
+
+                            this.setState({
+                                clickDelete: false,
+                                selectedCourse: {}
+                            });
+                        }}
+            />
+            </React.Fragment>
         );
     }
 }

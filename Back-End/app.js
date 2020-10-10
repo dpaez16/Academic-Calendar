@@ -226,7 +226,7 @@ mongoose.connect(`
     useUnifiedTopology: true
 }).then(() => {
     app.listen(5000);
-    console.log("Back-End server is running on localhost:3000/ac");
+    console.log("Back-End server is running on localhost:5000/ac");
 }).catch(err => {
     console.log(err);
 });
