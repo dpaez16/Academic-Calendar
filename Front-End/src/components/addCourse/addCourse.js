@@ -89,7 +89,7 @@ export class AddCourse extends Component {
             return;
         }
         
-        const newCourse = resData.data.addCourse;
+        const newCourse = resData.data.createCourse;
         this.props.addCourse(newCourse);
         history.push('/courses');
     }

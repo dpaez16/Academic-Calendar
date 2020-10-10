@@ -65,9 +65,27 @@ export default class App extends Component {
                                     render={(props) =>
                                         <AddCourse
                                             userID={this.state.userInfo._id}
-                                            addCourse={newCourse => this.setState({
-                                                courses: [...this.state.userInfo.courses, newCourse]
-                                            })}
+                                            addCourse={newCourse => {
+                                                const {courses} = this.state.userInfo;
+                                                const newCourses = [...courses, newCourse];
+                                                const newUserInfo = {...this.state.userInfo, ...{courses: newCourses}};
+                                                this.setState({userInfo: newUserInfo});
+                                            }}
+                                            { ...props }
+                                        />
+                                    }
+                            />
+                            <Route  exact
+                                    path='/editCourse'
+                                    render={(props) =>
+                                        <EditCourse
+                                            userID={this.state.userInfo._id}
+                                            replaceCourse={(oldCourse, newCourse) => {
+                                                const {courses} = this.state.userInfo;
+                                                const newCourses = replaceItemFromArray(courses, oldCourse, newCourse);
+                                                const newUserInfo = {...this.state.userInfo, ...{courses: newCourses}};
+                                                this.setState({userInfo: newUserInfo});
+                                            }}
                                             { ...props }
                                         />
                                     }
@@ -85,21 +103,6 @@ export default class App extends Component {
                                     path='/courseDetails'
                                     component={CourseDetails}
                             
-                            />
-                            <Route  exact
-                                    path='/editCourse'
-                                    render={(props) =>
-                                        <EditCourse
-                                            userID={this.state.userInfo._id}
-                                            replaceCourse={(oldCourse, newCourse) => {
-                                                const {courses} = this.state.userInfo;
-                                                const newCourses = replaceItemFromArray(courses, oldCourse, newCourse);
-                                                const newUserInfo = {...this.state.userInfo, ...{courses: newCourses}};
-                                                this.setState({userInfo: newUserInfo});
-                                            }}
-                                            { ...props }
-                                        />
-                                    }
                             />
                         </Switch>
                     </div>
