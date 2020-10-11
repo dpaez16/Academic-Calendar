@@ -2,3 +2,16 @@
     width: 50% !important;
     height: 10em !important;
 }
+
+.category {
+    width: 120% !important;
+}
+
+.button-column-cell {
+    background-color: white !important;
+}
+
+.buttons-cell {
+    display: flex;
+    justify-content: center;
+}

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Header, Table} from 'semantic-ui-react';
-import {Dimmer, Loader, Segment} from 'semantic-ui-react';
+import {Dimmer, Loader, Segment, Button} from 'semantic-ui-react';
 import {courseToStr, categoryToStr, dateToStr} from '../misc/helpers';
 import {PROXY_URL} from '../misc/proxyURL';
 import history from '../../history';
@@ -181,13 +181,49 @@ export class CourseDetails extends Component {
                     return (
                         <div key={categoryIdx}>
                             <b>{categoryToStr(category, weighted)} - {category._id}</b>
-                            {category.elements.map((categoryElement, categoryElementIdx) => {
-                                return (
-                                    <div key={categoryElementIdx}>
-                                        {categoryElement.name} - {categoryElement.score} / {categoryElement.total} - Due: {dateToStr(categoryElement.dueDate)}
-                                    </div>
-                                );
-                            })}
+                            <Table  celled
+                                    className="category"
+                            >
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell>Attribute</Table.HeaderCell>
+                                        <Table.HeaderCell>Score</Table.HeaderCell>
+                                        <Table.HeaderCell>Total</Table.HeaderCell>
+                                        <Table.HeaderCell>Due Date</Table.HeaderCell>
+                                        <Table.HeaderCell className='button-column-cell'></Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+                            
+                                <Table.Body>
+                                {category.elements.map((categoryElement, categoryElementIdx) => {
+                                    return (
+                                        <Table.Row key={categoryElementIdx}>
+                                            <Table.Cell>{categoryElement.name}</Table.Cell>
+                                            <Table.Cell>{categoryElement.score}</Table.Cell>
+                                            <Table.Cell>{categoryElement.total}</Table.Cell>
+                                            <Table.Cell>{dateToStr(categoryElement.dueDate)}</Table.Cell>
+                                            <Table.Cell className='buttons-cell'>
+                                                <Button color='grey'>
+                                                    Edit
+                                                </Button>
+                                                <Button negative>
+                                                    Delete
+                                                </Button>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    );
+                                })}
+                                    <Table.Row>
+                                        <Table.Cell colSpan='6'>
+                                            <Button positive
+                                                    fluid
+                                            >
+                                                Add Attribute
+                                            </Button>
+                                        </Table.Cell>
+                                    </Table.Row>
+                                </Table.Body>
+                            </Table>
                         </div>
                     );
                 })}
