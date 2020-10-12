@@ -3,7 +3,8 @@
     height: 10em !important;
 }
 
-.category {
+.category,
+.category-title-row {
     width: 120% !important;
 }
 
@@ -18,4 +19,9 @@
 
 .course-details-header {
     padding-bottom: 1em !important;
+}
+
+.category-title-row {
+    display: flex;
+    justify-content: space-between;
 }

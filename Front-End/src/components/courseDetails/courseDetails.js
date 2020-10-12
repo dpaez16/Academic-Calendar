@@ -191,7 +191,17 @@ export class CourseDetails extends Component {
                 {categories.map((category, categoryIdx) => {
                     return (
                         <div key={categoryIdx}>
-                            <b>{categoryToStr(category, weighted)} - {category._id}</b>
+                            <div className='category-title-row'>
+                                <b>{categoryToStr(category, weighted)}</b>
+                                <div>
+                                    <Button color='grey'>
+                                        Edit
+                                    </Button>
+                                    <Button negative>
+                                        Delete
+                                    </Button>
+                                </div>
+                            </div>
                             <Table  celled
                                     className="category"
                             >
