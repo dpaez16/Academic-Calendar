@@ -32,8 +32,8 @@ export const courseToStr = function(course) {
 }
 
 export const categoryToStr = function(category, weighted) {
-    const weight = weighted ? `${category.weight}%` : ""
-    return `${category.name}: ${weight}`
+    const weight = weighted ? `: ${category.weight}%` : ""
+    return `${category.name}${weight}`
 }
 
 export const dateToStr = function(date) {
