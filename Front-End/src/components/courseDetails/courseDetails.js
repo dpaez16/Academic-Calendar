@@ -395,7 +395,7 @@ export class CourseDetails extends Component {
             />
             <Confirm    open={this.state.clickDeleteCategory}
                         header={'Delete Category'}
-                        content={`Are you sure you wish to delete ${this.state.selectedCategory.name}?`}
+                        content={`Are you sure you wish to delete ${categoryToStr(this.state.selectedCategory, weighted)}?`}
                         onCancel={e => {
                             e.preventDefault();
                             this.setState({
