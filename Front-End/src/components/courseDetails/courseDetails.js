@@ -188,6 +188,9 @@ export class CourseDetails extends Component {
                 >
                     {courseToStr(course)}
                 </Header>
+                <Button positive>
+                    Add Category
+                </Button>
                 {categories.map((category, categoryIdx) => {
                     return (
                         <div key={categoryIdx}>
