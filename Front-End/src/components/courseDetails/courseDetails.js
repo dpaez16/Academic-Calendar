@@ -197,12 +197,12 @@ export class CourseDetails extends Component {
                                 </div>
                                 <div className='category-title-row__options'>
                                     <div>
-                                    <Button color='grey'>
-                                        Edit
-                                    </Button>
-                                    <Button negative>
-                                        Delete
-                                    </Button>
+                                        <Button color='grey'>
+                                            Edit
+                                        </Button>
+                                        <Button negative>
+                                            Delete
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
