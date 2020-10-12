@@ -256,7 +256,15 @@ export class CourseDetails extends Component {
                                         <Button color='grey'>
                                             Edit
                                         </Button>
-                                        <Button negative>
+                                        <Button negative
+                                                onClick={e => {
+                                                    e.preventDefault();
+                                                    this.setState({
+                                                        clickDeleteCategory: true,
+                                                        selectedCategory: category
+                                                    });
+                                                }}
+                                        >
                                             Delete
                                         </Button>
                                     </div>
@@ -374,7 +382,7 @@ export class CourseDetails extends Component {
             />
             <Confirm    open={this.state.clickDeleteCategory}
                         header={'Delete Category'}
-                        content={`Are you sure you wish to delete ${this.state.selectedCategory}?`}
+                        content={`Are you sure you wish to delete ${this.state.selectedCategory.name}?`}
                         onCancel={e => {
                             e.preventDefault();
                             this.setState({
