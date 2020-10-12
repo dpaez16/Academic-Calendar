@@ -81,7 +81,15 @@ export class AddCategory extends Component {
             return;
         }
         
-        history.goBack();
+        const newCategory = resData.data.createCategory;
+        const oldCategories = this.state.oldState.categories;
+        let newCategories = [...oldCategories, newCategory];
+        newCategories = newCategories.map(newCategory => newCategory._id);
+
+        history.push({
+            pathname: '/courseDetails',
+            state: {...this.state.oldState, ...{categories: newCategories}}
+        });
     }
 
     getWeightField() {
@@ -105,7 +113,7 @@ export class AddCategory extends Component {
         return (
             <div>
             <Header size='huge'>
-                Add Attribute
+                Add Category
             </Header>
 
             {courseName}

@@ -236,7 +236,8 @@ export class CourseDetails extends Component {
                                 state: {
                                     weighted: weighted,
                                     courseName: courseName,
-                                    courseID: course._id
+                                    courseID: course._id,
+                                    oldState: this.state
                                 }
                             });
                         }}
@@ -248,7 +249,7 @@ export class CourseDetails extends Component {
                         <div key={categoryIdx}>
                             <div className='category-title-row'>
                                 <div className='category-title-row__name'>
-                                    <b>{categoryToStr(category, weighted)}</b>
+                                    <b>{categoryToStr(category, weighted)} - {category._id}</b>
                                 </div>
                                 <div className='category-title-row__options'>
                                     <div>
