@@ -183,7 +183,9 @@ export class CourseDetails extends Component {
 
         return (
             <div>
-                <Header size='huge'>
+                <Header size='huge'
+                        className='course-details-header'
+                >
                     {courseToStr(course)}
                 </Header>
                 {categories.map((category, categoryIdx) => {
