@@ -192,14 +192,18 @@ export class CourseDetails extends Component {
                     return (
                         <div key={categoryIdx}>
                             <div className='category-title-row'>
-                                <b>{categoryToStr(category, weighted)}</b>
-                                <div>
+                                <div className='category-title-row__name'>
+                                    <b>{categoryToStr(category, weighted)}</b>
+                                </div>
+                                <div className='category-title-row__options'>
+                                    <div>
                                     <Button color='grey'>
                                         Edit
                                     </Button>
                                     <Button negative>
                                         Delete
                                     </Button>
+                                    </div>
                                 </div>
                             </div>
                             <Table  celled

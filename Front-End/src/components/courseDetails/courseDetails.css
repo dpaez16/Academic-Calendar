@@ -25,3 +25,14 @@
     display: flex;
     justify-content: space-between;
 }
+
+.category-title-row__name {
+    font-size: 18px;
+}
+
+.category-title-row__name,
+.category-title-row__options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
