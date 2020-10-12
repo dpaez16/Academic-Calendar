@@ -212,7 +212,19 @@ export class CourseDetails extends Component {
                                             <Table.Cell>{categoryElement.total}</Table.Cell>
                                             <Table.Cell>{dateToStr(categoryElement.dueDate)}</Table.Cell>
                                             <Table.Cell className='buttons-cell'>
-                                                <Button color='grey'>
+                                                <Button color='grey'
+                                                        onClick={e => {
+                                                            e.preventDefault();
+                                                            history.push({
+                                                                pathname: '/editCategoryElement',
+                                                                state: {
+                                                                    categoryID: category._id,
+                                                                    categoryElementID: categoryElement._id,
+                                                                    categoryElementName: categoryElement.name
+                                                                }
+                                                            });
+                                                        }}
+                                                >
                                                     Edit
                                                 </Button>
                                                 <Button negative
