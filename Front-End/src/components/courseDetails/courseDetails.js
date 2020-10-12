@@ -13,7 +13,7 @@ export class CourseDetails extends Component {
         this.state = {...this.props.location.state, ...{loading: true}};
     }
 
-    async getCategories(categoryIDS) {
+    async getShallowCategories(categoryIDS) {
         const requestBody = {
             query: `
             {
@@ -90,52 +90,13 @@ export class CourseDetails extends Component {
         }
     }
 
-    async getCategoryElements(categoryElementIDS) {
-        const requestBody = {
-            query: `
-            {
-                categoryElements(categoryElementIDS: [${categoryElementIDS}]) {
-                    _id
-                    name
-                    score
-                    total
-                    dueDate
-                    categoryID
-                }
-            }
-            `
-        };
-
-        try {
-            const res = await fetch(PROXY_URL, {
-                method: "POST",
-                body: JSON.stringify(requestBody),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error("Category elements fetch failed! (bad status code)");
-            }
-            const resData = await res.json();
-            if (resData.errors) {
-                throw new Error(resData.errors[0].message);
-            }
-
-            const categoryElements = resData.data.categoryElements;
-            return categoryElements;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    async getActualCategories(categories) {
+    async getActualCategories(shallowCategories) {
         let actualCategories = [];
         
-        for (const category of categories) {
-            const categoryElementIDS = category.elements.map(categoryElementID => `"${categoryElementID}"`);
+        for (const shallowCategory of shallowCategories) {
+            const categoryElementIDS = shallowCategory.elements.map(categoryElementID => `"${categoryElementID}"`);
             const categoryElements = await this.getCategoryElements(categoryElementIDS);
-            const actualCategory = {...category, ...{elements: categoryElements}};
+            const actualCategory = {...shallowCategory, ...{elements: categoryElements}};
             actualCategories.push(actualCategory);
         };
 
@@ -144,9 +105,9 @@ export class CourseDetails extends Component {
 
     componentDidMount() {
         const categoryIDS = this.state.categories.map(categoryID => `"${categoryID}"`);
-        this.getCategories(categoryIDS)
-        .then(async categories => {
-            const actualCategories = await this.getActualCategories(categories);
+        this.getShallowCategories(categoryIDS)
+        .then(async shallowCategories => {
+            const actualCategories = await this.getActualCategories(shallowCategories);
             this.setState({
                 categories: actualCategories,
                 loading: false
