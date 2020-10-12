@@ -249,7 +249,7 @@ export class CourseDetails extends Component {
                         <div key={categoryIdx}>
                             <div className='category-title-row'>
                                 <div className='category-title-row__name'>
-                                    <b>{categoryToStr(category, weighted)} - {category._id}</b>
+                                    <b>{categoryToStr(category, weighted)}</b>
                                 </div>
                                 <div className='category-title-row__options'>
                                     <div>
