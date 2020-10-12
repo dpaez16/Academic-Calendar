@@ -178,6 +178,17 @@ export class CourseDetails extends Component {
                                         <Table.Cell colSpan='6'>
                                             <Button positive
                                                     fluid
+                                                    onClick={e => {
+                                                        e.preventDefault();
+                                                        history.push({
+                                                            pathname: '/addCategoryElement',
+                                                            state: {
+                                                                categoryID: category._id,
+                                                                courseName: courseToStr(course),
+                                                                categoryName: categoryToStr(category, weighted)
+                                                            }
+                                                        });
+                                                    }}
                                             >
                                                 Add Attribute
                                             </Button>

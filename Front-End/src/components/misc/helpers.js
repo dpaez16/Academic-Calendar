@@ -40,3 +40,8 @@ export const dateToStr = function(date) {
     const dateNum = Number(date);
     return new Date(dateNum).toLocaleString();
 }
+
+export const constructDate = function(date, time) {
+    const actualTime = time ? time : "23:59";
+    return new Date(`${date} ${actualTime}`);
+}
