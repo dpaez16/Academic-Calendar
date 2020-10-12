@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Header, Table} from 'semantic-ui-react';
-import {Dimmer, Loader, Segment, Button} from 'semantic-ui-react';
-import {courseToStr, categoryToStr, dateToStr} from '../misc/helpers';
+import {Dimmer, Loader, Segment, Button, Confirm} from 'semantic-ui-react';
+import {courseToStr, categoryToStr, dateToStr, replaceItemFromArray, deleteItemFromArray} from '../misc/helpers';
 import {PROXY_URL} from '../misc/proxyURL';
 import history from '../../history';
 import './courseDetails.css';
@@ -10,7 +10,15 @@ export class CourseDetails extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {...this.props.location.state, ...{loading: true}};
+        this.state = {
+            ...this.props.location.state, 
+            ...{
+                loading: true,
+                clickDelete: false,
+                selectedCategory: {},
+                selectedCategoryElement: {}
+            }
+        };
     }
 
     async getShallowCategories(categoryIDS) {
@@ -103,6 +111,46 @@ export class CourseDetails extends Component {
         return actualCategories;
     }
 
+    async deleteCategoryElement(categoryElement) {
+        const requestBody = {
+            query: `
+            mutation {
+                deleteCategoryElement(categoryElementID: "${categoryElement._id}") {
+                    _id
+                }
+            }
+            `
+        };
+
+        try {
+            const res = await fetch(PROXY_URL, {
+                method: "POST",
+                body: JSON.stringify(requestBody),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if (res.status !== 200 && res.status !== 201) {
+                throw new Error("Delete category element failed! (bad response status)");
+            }
+            const resData = await res.json();
+            if (!resData.data.deleteCategoryElement) {
+                throw new Error("Delete category element failed! failed!");
+            }
+
+            return resData;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    deleteCategoryElementLocally(oldCategoryElement, oldCategory) {
+        const newCategoryElements = deleteItemFromArray(oldCategory.elements, oldCategoryElement);
+        const newCategory = {...oldCategory, ...{elements: newCategoryElements}};
+        const newCategories = replaceItemFromArray(this.state.categories, oldCategory, newCategory);
+        this.setState({categories: newCategories});
+    }
+
     componentDidMount() {
         const categoryIDS = this.state.categories.map(categoryID => `"${categoryID}"`);
         this.getShallowCategories(categoryIDS)
@@ -167,7 +215,16 @@ export class CourseDetails extends Component {
                                                 <Button color='grey'>
                                                     Edit
                                                 </Button>
-                                                <Button negative>
+                                                <Button negative
+                                                        onClick={e => {
+                                                            e.preventDefault();
+                                                            this.setState({
+                                                                clickDelete: true,
+                                                                selectedCategory: category,
+                                                                selectedCategoryElement: categoryElement
+                                                            });
+                                                        }}
+                                                >
                                                     Delete
                                                 </Button>
                                             </Table.Cell>
@@ -199,6 +256,38 @@ export class CourseDetails extends Component {
                         </div>
                     );
                 })}
+            <Confirm    open={this.state.clickDelete}
+                        header={'Delete Course'}
+                        content={`Are you sure you wish to delete ${this.state.selectedCategoryElement.name}?`}
+                        onCancel={e => {
+                            e.preventDefault();
+                            this.setState({
+                                clickDelete: false,
+                                selectedCategory: {},
+                                selectedCategoryElement: {}
+                            });
+                        }}
+                        onConfirm={e => {
+                            e.preventDefault();
+                            const {selectedCategoryElement, selectedCategory} = this.state;
+                            this.deleteCategoryElement(selectedCategoryElement)
+                            .then(resData => {
+                                if (resData && resData.errors) {
+                                    const error = resData.errors[0].messsage;
+                                    console.log(error);
+                                    return;
+                                }
+
+                                this.deleteCategoryElementLocally(selectedCategoryElement, selectedCategory);
+                            });
+
+                            this.setState({
+                                clickDelete: false,
+                                selectedCategory: {},
+                                selectedCategoryElement: {}
+                            });
+                        }}
+            />
             </div>
         );
     }
