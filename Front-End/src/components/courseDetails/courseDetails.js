@@ -14,7 +14,8 @@ export class CourseDetails extends Component {
             ...this.props.location.state, 
             ...{
                 loading: true,
-                clickDelete: false,
+                clickDeleteCategory: false,
+                clickDeleteAttribute: false,
                 selectedCategory: {},
                 selectedCategoryElement: {}
             }
@@ -151,6 +152,44 @@ export class CourseDetails extends Component {
         this.setState({categories: newCategories});
     }
 
+    async deleteCategory(category) {
+        const requestBody = {
+            query: `
+            mutation {
+                deleteCategory(categoryID: "${category._id}") {
+                    _id
+                }
+            }
+            `
+        };
+
+        try {
+            const res = await fetch(PROXY_URL, {
+                method: "POST",
+                body: JSON.stringify(requestBody),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if (res.status !== 200 && res.status !== 201) {
+                throw new Error("Delete category failed! (bad response status)");
+            }
+            const resData = await res.json();
+            if (!resData.data.deleteCategory) {
+                throw new Error("Delete category failed!");
+            }
+
+            return resData;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    deleteCategoryLocally(oldCategory) {
+        const newCategories = deleteItemFromArray(this.state.categories, oldCategory);
+        this.setState({categories: newCategories});
+    }
+
     componentDidMount() {
         const categoryIDS = this.state.categories.map(categoryID => `"${categoryID}"`);
         this.getShallowCategories(categoryIDS)
@@ -180,15 +219,28 @@ export class CourseDetails extends Component {
 
         const course = this.state;
         const {weighted, categories} = this.state;
+        const courseName = courseToStr(course);
 
         return (
             <div>
                 <Header size='huge'
                         className='course-details-header'
                 >
-                    {courseToStr(course)}
+                    {courseName}
                 </Header>
-                <Button positive>
+                <Button positive
+                        onClick={e => {
+                            e.preventDefault();
+                            history.push({
+                                pathname: '/addCategory',
+                                state: {
+                                    weighted: weighted,
+                                    courseName: courseName,
+                                    courseID: course._id
+                                }
+                            });
+                        }}
+                >
                     Add Category
                 </Button>
                 {categories.map((category, categoryIdx) => {
@@ -250,7 +302,7 @@ export class CourseDetails extends Component {
                                                         onClick={e => {
                                                             e.preventDefault();
                                                             this.setState({
-                                                                clickDelete: true,
+                                                                clickDeleteAttribute: true,
                                                                 selectedCategory: category,
                                                                 selectedCategoryElement: categoryElement
                                                             });
@@ -272,7 +324,7 @@ export class CourseDetails extends Component {
                                                             pathname: '/addCategoryElement',
                                                             state: {
                                                                 categoryID: category._id,
-                                                                courseName: courseToStr(course),
+                                                                courseName: courseName,
                                                                 categoryName: categoryToStr(category, weighted)
                                                             }
                                                         });
@@ -287,13 +339,13 @@ export class CourseDetails extends Component {
                         </div>
                     );
                 })}
-            <Confirm    open={this.state.clickDelete}
+            <Confirm    open={this.state.clickDeleteAttribute}
                         header={'Delete Course'}
                         content={`Are you sure you wish to delete ${this.state.selectedCategoryElement.name}?`}
                         onCancel={e => {
                             e.preventDefault();
                             this.setState({
-                                clickDelete: false,
+                                clickDeleteAttribute: false,
                                 selectedCategory: {},
                                 selectedCategoryElement: {}
                             });
@@ -313,9 +365,39 @@ export class CourseDetails extends Component {
                             });
 
                             this.setState({
-                                clickDelete: false,
+                                clickDeleteAttribute: false,
                                 selectedCategory: {},
                                 selectedCategoryElement: {}
+                            });
+                        }}
+            />
+            <Confirm    open={this.state.clickDeleteCategory}
+                        header={'Delete Category'}
+                        content={`Are you sure you wish to delete ${this.state.selectedCategory}?`}
+                        onCancel={e => {
+                            e.preventDefault();
+                            this.setState({
+                                clickDeleteCategory: false,
+                                selectedCategory: {}
+                            });
+                        }}
+                        onConfirm={e => {
+                            e.preventDefault();
+                            const {selectedCategory} = this.state;
+                            this.deleteCategory(selectedCategory)
+                            .then(resData => {
+                                if (resData && resData.errors) {
+                                    const error = resData.errors[0].messsage;
+                                    console.log(error);
+                                    return;
+                                }
+
+                                this.deleteCategoryLocally(selectedCategory);
+                            });
+
+                            this.setState({
+                                clickDeleteCategory: false,
+                                selectedCategory: {}
                             });
                         }}
             />

@@ -24,6 +24,7 @@
 .category-title-row {
     display: flex;
     justify-content: space-between;
+    padding-top: 15%;
 }
 
 .category-title-row__name {
