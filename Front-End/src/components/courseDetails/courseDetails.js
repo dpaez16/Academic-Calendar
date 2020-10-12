@@ -253,7 +253,20 @@ export class CourseDetails extends Component {
                                 </div>
                                 <div className='category-title-row__options'>
                                     <div>
-                                        <Button color='grey'>
+                                        <Button color='grey'
+                                                onClick={e => {
+                                                    e.preventDefault();
+                                                    history.push({
+                                                        pathname: '/editCategory',
+                                                        state: {
+                                                            weighted: weighted,
+                                                            oldCategory: category,
+                                                            courseID: course._id,
+                                                            oldState: this.state
+                                                        }
+                                                    });
+                                                }}
+                                        >
                                             Edit
                                         </Button>
                                         <Button negative

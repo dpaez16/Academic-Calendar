@@ -9,6 +9,7 @@ import {CourseDetails} from './components/courseDetails/courseDetails';
 import {AddCourse} from './components/addCourse/addCourse';
 import {EditCourse} from './components/editCourse/editCourse';
 import {AddCategory} from './components/addCategory/addCategory';
+import {EditCategory} from './components/editCategory/editCategory';
 import {AddCategoryElement} from './components/addCategoryElement/addCategoryElement';
 import {EditCategoryElement} from './components/editCategoryElement/editCategoryElement';
 import { replaceItemFromArray } from './components/misc/helpers';
@@ -118,6 +119,10 @@ export default class App extends Component {
                             <Route  exact
                                     path='/addCategory'
                                     component={AddCategory}
+                            />
+                            <Route  exact
+                                    path='/editCategory'
+                                    component={EditCategory}
                             />
                         </Switch>
                     </div>
