@@ -4,11 +4,11 @@ getSums = function(categories) {
     let weights = [];
 
     for (const category of categories) {
-        const {categoryElements, weight} = category;
+        const {elements, weight} = category;
         let totalCategoryScore = 0;
         let totalCategoryTotal = 0;
 
-        for (const categoryElement of categoryElements) {
+        for (const categoryElement of elements) {
             const {score, total} = categoryElement;
             totalCategoryScore += score;
             totalCategoryTotal += total;
@@ -55,19 +55,18 @@ module.exports = {
         const {categories, weighted} = data;
 
         if (!categories || categories.length === 0) {
-            res.send({error: "No populated categories."});
-            return;
+            return res.send({error: "No populated categories."});
         }
 
         const {scores, totals, weights} = getSums(categories);
         if (weighted && weights.sum() !== 100) {
-            res.send({error: "Category weights do not add to 100%."})
-            return;
+            return res.send({error: "Category weights do not add to 100%."});
         }
 
         const actualWeights = weighted ? weights : null;
         const grade = getGrade(scores, totals, actualWeights);
+        console.log(grade);
 
-        res.send({grade: grade});
+        return res.send({grade: grade});
     }
 };

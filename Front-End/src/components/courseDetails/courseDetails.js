@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Header, Table} from 'semantic-ui-react';
 import {Dimmer, Loader, Segment, Button, Confirm} from 'semantic-ui-react';
+import {GradeEstimator} from '../gradeEstimator/gradeEstimator';
 import {courseToStr, categoryToStr, dateToStr, replaceItemFromArray, deleteItemFromArray} from '../misc/helpers';
 import {PROXY_URL} from '../misc/proxyURL';
 import history from '../../history';
@@ -422,6 +423,9 @@ export class CourseDetails extends Component {
                                 selectedCategory: {}
                             });
                         }}
+            />
+            <GradeEstimator categories={categories}
+                            weighted={weighted}
             />
             </div>
         );
