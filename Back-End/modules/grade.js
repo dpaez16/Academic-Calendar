@@ -55,10 +55,16 @@ module.exports = {
         const {categories, weighted} = data;
 
         if (!categories || categories.length === 0) {
-            res.send({error: "No populated categories!"});
+            res.send({error: "No populated categories."});
+            return;
         }
 
         const {scores, totals, weights} = getSums(categories);
+        if (weighted && weights.sum() !== 100) {
+            res.send({error: "Category weights do not add to 100%."})
+            return;
+        }
+
         const actualWeights = weighted ? weights : null;
         const grade = getGrade(scores, totals, actualWeights);
 
