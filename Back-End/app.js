@@ -12,6 +12,7 @@ const { loginUser, createUser, editUser } = require('./modules/users');
 const { getCourses, createCourse, editCourse } = require('./modules/courses');
 const { getCategories, createCategory, editCategory, deleteCategory } = require('./modules/categories');
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
+const { calculateGrade } = require('./modules/grade');
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use((req, res, next) => {
 
     next();
 });
+
+app.post('/ac/grade', calculateGrade);
 
 app.use('/ac', graphQLHttp({
     schema: buildSchema(`
