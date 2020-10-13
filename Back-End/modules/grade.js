@@ -48,8 +48,6 @@ getGrade = function(scores, totals, weights) {
 }
 
 module.exports = {
-    // test with:
-    // curl -XPOST -d '<data json>' -H 'content-type: application/json' <url>
     calculateGrade: function(req, res) {
         const data = req.body;
         const {categories, weighted} = data;
@@ -65,7 +63,6 @@ module.exports = {
 
         const actualWeights = weighted ? weights : null;
         const grade = getGrade(scores, totals, actualWeights);
-        console.log(grade);
 
         return res.send({grade: grade});
     }
