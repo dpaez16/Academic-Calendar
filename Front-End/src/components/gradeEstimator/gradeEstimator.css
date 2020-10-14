@@ -1,3 +1,7 @@
 .grade-visualization {
     padding-top: 10%;
 }
+
+.chart {
+    border: solid;
+}

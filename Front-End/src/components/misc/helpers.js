@@ -59,13 +59,15 @@ export const getGradeEstimatorDisplayProps = function() {
     };
 
     return {
+		fullWidth: fullWidth,
+		fullHeight: fullHeight,
         width: fullWidth - margin.left - margin.right,
         height: fullHeight - margin.top - margin.bottom,
         margin: margin
     };
 }
 
-const normalPDF = function(x, mu = 0, sd = 1) {
+export const normalPDF = function(x, mu = 0, sd = 1) {
 	const z = 1.0 * (x - mu) / sd;
 	
 	return 	(1.0 / (Math.sqrt(2 * Math.PI) * sd)) * 
@@ -83,12 +85,12 @@ export const makeData = function(a, b, n, mu = 0, sd = 1) {
 	});
 
 	let yMax = data.reduce((prev, curr) => {
-		return prev.y < curr.y ? curr.y : prev.y;
+		return prev.y < curr.y ? curr : prev;
 	});
-	yMax = Math.round(yMax * 100) / 100
+	yMax = Math.round(yMax.y * 100) / 100
 
 	return { 
-		data: data, 
+		points: data, 
 		yMax: yMax
 	};
 }
