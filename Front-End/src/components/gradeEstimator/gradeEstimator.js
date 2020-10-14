@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
 import {Message} from 'semantic-ui-react';
 import {PROXY_URL} from '../misc/proxyURL';
+import {getGradeEstimatorDisplayProps, makeData} from '../misc/helpers';
+import * as d3 from 'd3';
 import './gradeEstimator.css';
 
 export class GradeEstimator extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
+        const displayProps = getGradeEstimatorDisplayProps();
+        this.state = {...{
             error: "",
             grade: 0
-        };
+        }, ...displayProps};
     }
 
     async getGrade() {
@@ -43,21 +46,25 @@ export class GradeEstimator extends Component {
         });
     }
 
-    getGradeVisualization(grade) {
-        if (grade === null) {
-            return null;
-        }
-
-        return <p>{grade}</p>
-    }
-
     render() {
-        const {error} = this.state;
-        const grade = error ? null : this.state.grade;
+        const {error, grade} = this.state;
 
         return (
             <div className="grade-visualization">
-                {this.getGradeVisualization(grade)}
+                <svg    className="chart" 
+                        width={this.state.width} 
+                        height={this.state.height}
+                        hidden={error}
+                >
+                    <g ref={(node) => { this.chartArea = node; }}
+                        transform={`translate(${this.state.margin.left}, ${this.state.margin.top})`} />
+
+                    {/* Axes */}
+                    <g ref={(node) => { this.xAxis = node; }}
+                        transform={`translate(${this.state.margin.left}, ${this.state.height - this.state.margin.bottom})`}></g>
+                    <g ref={(node) => { this.yAxis = node; }}
+                        transform={`translate(${this.state.margin.left}, ${this.state.margin.top})`}></g>
+                </svg>
                 <Message 
                     error
                     hidden={!error}
