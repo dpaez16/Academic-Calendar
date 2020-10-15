@@ -9,3 +9,13 @@
 .grade-params-form {
     padding-bottom: 10%;
 }
+
+.grade-visualization__container {
+    display: flex;
+    flex-direction: column;
+}
+
+.grade-visualization__container > table {
+    width: fit-content;
+    padding-bottom: 15px;
+}

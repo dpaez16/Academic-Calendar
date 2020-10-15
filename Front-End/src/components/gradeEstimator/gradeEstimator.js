@@ -250,6 +250,15 @@ export class GradeEstimator extends Component {
                         Estimate Post-Curve Grade
                     </Button>
                 </Form>
+                <div className='grade-visualization__container'>
+                <table>
+                    <tr>
+                        <td><strong>Pre-Curve Grade:</strong></td><td>{grade}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Post-Curve Grade:</strong></td><td>{grade}</td>
+                    </tr>
+                </table>
                 <svg    className="chart" 
                         width={fullWidth} 
                         height={fullHeight}
@@ -263,6 +272,7 @@ export class GradeEstimator extends Component {
                         transform={`translate(${margin.left}, ${fullHeight - margin.bottom})`}
                     />
                 </svg>
+                </div>
                 <Message 
                     error
                     hidden={!error}
