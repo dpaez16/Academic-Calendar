@@ -74,7 +74,6 @@ export class GradeEstimator extends Component {
     }
 
     update() {
-        this.clearChart();
         this.getScales();
         this.getAxes();
         this.addLine();
@@ -82,10 +81,6 @@ export class GradeEstimator extends Component {
         this.addGradeLine();
         this.addTitle();
         this.addLegend();
-    }
-
-    clearChart() {
-        
     }
 
     getScales() {
@@ -109,16 +104,14 @@ export class GradeEstimator extends Component {
     }
 
     addLine() {
-        const blackLine = d3.select(this.chartArea).selectAll('.black-line');
-        if (blackLine.size() === 1) return;
-
         const {points} = this.state;
         const line = d3.line()
 			.x((d) => this.xScale(d.x))
             .y((d) => this.yScale(d.y));
 
-        d3.select(this.chartArea)
-            .append("path")
+        const blackLine = d3.select(this.chartArea).selectAll('.black-line').data([0]);
+        blackLine.enter().append("path")
+            .merge(blackLine)
             .datum(points)
             .attr('class', 'black-line')
 			.attr("fill", "none")
@@ -182,11 +175,11 @@ export class GradeEstimator extends Component {
     }
 
     addTitle() {
-        const chartTitle = d3.select(this.chartArea).selectAll('.chart-title');
-        if (chartTitle.size() === 1) return;
-
         const {width, margin} = this.state;
-        d3.select(this.chartArea).append("text")
+        const chartTitle = d3.select(this.chartArea).selectAll('.chart-title').data([0]);
+
+        chartTitle.enter().append("text")
+            .merge(chartTitle)
             .attr("class", "chart-title")
             .attr("x", (width / 2))
             .attr("y", 0 - 0.35 * margin.top)
