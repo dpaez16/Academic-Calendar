@@ -1,5 +1,7 @@
 import { curveCardinal } from "d3";
 
+const N_POINTS = 100;
+
 export const validSubject = function(subject) {
     const validSubjectRegex = RegExp(
         /^[A-Z]{2,4}$/
@@ -74,9 +76,9 @@ export const normalPDF = function(x, mu = 0, sd = 1) {
 			Math.exp(-0.5 * Math.pow(z, 2));
 }
 
-export const makeData = function(a, b, n) {
-	const dx = 1.0 * (b - a) / n;
-	const data = [...Array(n + 1).keys()].map(i => {
+export const makeData = function(a, b) {
+	const dx = 1.0 * (b - a) / N_POINTS;
+	const data = [...Array(N_POINTS + 1).keys()].map(i => {
 		const x = a + i * dx;
 		return {
 			x: x, 
@@ -87,7 +89,7 @@ export const makeData = function(a, b, n) {
 	let yMax = data.reduce((prev, curr) => {
 		return prev.y < curr.y ? curr : prev;
 	});
-	yMax = Math.round(yMax.y * 100) / 100
+	yMax = Math.round(yMax.y * 100) / 100;
 
 	return { 
 		points: data, 

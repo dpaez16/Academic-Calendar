@@ -8,12 +8,11 @@ import './gradeEstimator.css';
 
 const TICK_VALUES = [-3, -1, -0.5, 0, 0.5, 1, 3];
 const COLORS = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"];
-const N_POINTS = 100;
 
 function getPoints() {
     const a = TICK_VALUES[0];
     const b = TICK_VALUES[6];
-    return makeData(a, b, N_POINTS);
+    return makeData(a, b);
 }
 
 export class GradeEstimator extends Component {
@@ -124,7 +123,7 @@ export class GradeEstimator extends Component {
             
             const a = TICK_VALUES[i];
             const b = TICK_VALUES[j];
-            const {points} = makeData(a, b, N_POINTS);
+            const {points} = makeData(a, b);
 
             const gradeColor = COLORS[colorIdx];
             d3.select(this.chartArea).append("path")
