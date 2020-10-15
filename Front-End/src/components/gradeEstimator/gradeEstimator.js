@@ -109,14 +109,18 @@ export class GradeEstimator extends Component {
     }
 
     addLine() {
+        const blackLine = d3.select(this.chartArea).selectAll('.black-line');
+        if (blackLine.size() === 1) return;
+
         const {points} = this.state;
         const line = d3.line()
 			.x((d) => this.xScale(d.x))
             .y((d) => this.yScale(d.y));
-        
+
         d3.select(this.chartArea)
             .append("path")
-			.datum(points)
+            .datum(points)
+            .attr('class', 'black-line')
 			.attr("fill", "none")
 			.attr("stroke", "black")
 			.attr("stroke-linejoin", "round")
