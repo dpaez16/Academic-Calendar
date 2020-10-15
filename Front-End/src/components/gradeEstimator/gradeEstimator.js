@@ -197,10 +197,14 @@ export class GradeEstimator extends Component {
     }
 
     addLegend() {
-        const legend = d3.select(this.chartArea).append("g");
-        const labels = ["F", "D", "C", "B", "A", "You"];
         const {margin} = this.state;
+        const labels = ["F", "D", "C", "B", "A", "You"];
 
+        let legend = d3.select(this.chartArea).selectAll('.legend').data([0]);
+        legend = legend.enter().append("g")
+            .merge(legend)
+            .attr("class", "legend");
+        
         legend.selectAll('rect')
             .data(labels)
             .enter().append("rect")
@@ -209,13 +213,14 @@ export class GradeEstimator extends Component {
                 .attr("width", 10)
                 .attr("height", 10)
                 .style("fill", (_, i) => COLORS[i]);
-
-		legend.selectAll('text')
-			.data(labels)
-			.enter().append('text')
-				.attr("x", margin.left + 15)
-				.attr("y", (_, i) => i * 20 + 10)
-				.text((d, _) => `: ${d}`);
+        
+        legend.selectAll('text')
+            .data(labels)
+            .enter().append('text')
+                .attr("class", "legend-text")
+                .attr("x", margin.left + 15)
+                .attr("y", (_, i) => i * 20 + 10)
+                .text((d, _) => `: ${d}`);
     }
 
     render() {
