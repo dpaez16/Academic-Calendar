@@ -181,6 +181,7 @@ export class GradeEstimator extends Component {
         const {width, margin} = this.state;
 
         d3.select(this.chartArea).append("text")
+            .attr("class", "chart-title")
 			.attr("x", (width / 2))
 			.attr("y", 0 - 0.35 * margin.top)
 			.attr("text-anchor", "middle")
