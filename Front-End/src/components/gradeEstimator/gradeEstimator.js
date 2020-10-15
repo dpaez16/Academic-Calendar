@@ -8,11 +8,60 @@ import './gradeEstimator.css';
 
 const TICK_VALUES = [-3, -1, -0.5, 0, 0.5, 1, 3];
 const COLORS = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"];
+const LABELS = ["F", "D", "C", "B", "A", "You"];
 
 function getPoints() {
     const a = TICK_VALUES[0];
     const b = TICK_VALUES[6];
     return makeData(a, b);
+}
+
+function getPostCurveGrade(grade, mu, sd) {
+    mu = parseFloat(mu);
+    sd = parseFloat(sd);
+    const z = (grade - mu) / sd;
+    let letterGrade;
+    let gradeMap = {};
+
+    LABELS.map((grade, i) => {
+        if (i === LABELS.length - 1) return;
+        gradeMap[grade] = COLORS[i];
+    });
+
+    if (z < -1) letterGrade = "F";
+    else if (z === -1) letterGrade = "F/D-";
+    else if (z < -0.5) letterGrade = "D";
+    else if (z === -0.5) letterGrade = "D+/C-";
+    else if (z < 0.5) letterGrade = "C";
+    else if (z === 0.5) letterGrade = "C+/B-";
+    else if (z < 1) letterGrade = "B";
+    else if (z === 1) letterGrade = "B+/A-";
+    else letterGrade = "A";
+
+    const letters = letterGrade.split('/');
+    let letterObjs = letters.map(letter => {
+        return {
+            letter: letter,
+            color: gradeMap[letter[0]]
+        };
+    });
+
+    if (letterObjs.length === 1) {
+        const emptyLetter = {
+            letter: '',
+            color: "black"
+        };
+
+        letterObjs.concat([emptyLetter, emptyLetter]);
+    } else {
+        const letterObj = {
+            letter: '/',
+            color: "black"
+        };
+        letterObjs.splice(1, 0, letterObj);
+    }
+
+    return letterObjs;
 }
 
 export class GradeEstimator extends Component {
@@ -27,7 +76,8 @@ export class GradeEstimator extends Component {
             mu: "80",
             sd: "2.0",
             points: points,
-            yMax: yMax
+            yMax: yMax,
+            letterObjs: []
         }, ...displayProps};
     }
 
@@ -81,6 +131,10 @@ export class GradeEstimator extends Component {
         this.addGradeLine();
         this.addTitle();
         this.addLegend();
+
+        const {mu, sd, grade} = this.state;
+        const letterObjs = getPostCurveGrade(grade, mu, sd);
+        this.setState({letterObjs: letterObjs});
     }
 
     getScales() {
@@ -191,7 +245,6 @@ export class GradeEstimator extends Component {
 
     addLegend() {
         const {margin} = this.state;
-        const labels = ["F", "D", "C", "B", "A", "You"];
 
         let legend = d3.select(this.chartArea).selectAll('.legend').data([0]);
         legend = legend.enter().append("g")
@@ -199,7 +252,7 @@ export class GradeEstimator extends Component {
             .attr("class", "legend");
         
         legend.selectAll('rect')
-            .data(labels)
+            .data(LABELS)
             .enter().append("rect")
                 .attr("x", margin.left)
                 .attr("y", (_, i) => i * 20)
@@ -208,7 +261,7 @@ export class GradeEstimator extends Component {
                 .style("fill", (_, i) => COLORS[i]);
         
         legend.selectAll('text')
-            .data(labels)
+            .data(LABELS)
             .enter().append('text')
                 .attr("class", "legend-text")
                 .attr("x", margin.left + 15)
@@ -222,7 +275,8 @@ export class GradeEstimator extends Component {
             grade,
             fullWidth,
             fullHeight,
-            margin
+            margin,
+            letterObjs
         } = this.state;
 
         return (
@@ -253,10 +307,27 @@ export class GradeEstimator extends Component {
                 <div className='grade-visualization__container'>
                 <table>
                     <tr>
-                        <td><strong>Pre-Curve Grade:</strong></td><td>{grade}</td>
+                        <td><strong>Pre-Curve Grade:</strong></td>
+                        <td>
+                            <strong>
+                                {grade}
+                            </strong>
+                        </td>
                     </tr>
                     <tr>
-                        <td><strong>Post-Curve Grade:</strong></td><td>{grade}</td>
+                        <td><strong>Post-Curve Grade:</strong></td>
+                        <td>
+                            {letterObjs.map((letterObj, i) => {
+                                const {letter, color} = letterObj;
+                                return (
+                                    <span   key={i}
+                                            style={{color: color}}
+                                    >
+                                        {letter}
+                                    </span>
+                                );
+                            })}
+                        </td>
                     </tr>
                 </table>
                 <svg    className="chart" 
