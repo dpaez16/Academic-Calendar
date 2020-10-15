@@ -140,9 +140,10 @@ export class GradeEstimator extends Component {
             const {points} = makeData(a, b);
 
             const gradeColor = COLORS[colorIdx];
-            d3.select(this.chartArea).append("path")
-				.data([points])
-				.attr("class", "area")
+            const gradeLetterArea = d3.select(this.chartArea).selectAll(`.grade-letter-area-${colorIdx}`).data([points]);
+            gradeLetterArea.enter().append('path')
+				.merge(gradeLetterArea)
+				.attr("class", `area grade-letter-area-${colorIdx}`)
 				.attr("d", area)
 				.attr('fill', gradeColor);
 		});
@@ -171,7 +172,7 @@ export class GradeEstimator extends Component {
         gradeLine.enter().append('path')
             .merge(gradeLine)
             .attr("class", "area grade-line")
-            .transition().duration(2000)
+            .transition().duration(500)
 			.attr("d", area)
             .attr('fill', color);
     }
