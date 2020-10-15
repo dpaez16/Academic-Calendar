@@ -6,9 +6,7 @@ import * as d3 from 'd3';
 import './gradeEstimator.css';
 
 
-const mu = 0;
-const sd = 1.0;
-const TICK_VALUES = [mu-3*sd, mu-1*sd, mu-0.5*sd, mu, mu+0.5*sd, mu+1*sd, mu+3*sd];
+const TICK_VALUES = [-3, -1, -0.5, 0, 0.5, 1, 3];
 const COLORS = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"];
 const N_POINTS = 100;
 
