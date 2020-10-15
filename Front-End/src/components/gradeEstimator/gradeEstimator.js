@@ -178,16 +178,18 @@ export class GradeEstimator extends Component {
     }
 
     addTitle() {
-        const {width, margin} = this.state;
+        const chartTitle = d3.select(this.chartArea).selectAll('.chart-title');
+        if (chartTitle.size() === 1) return;
 
+        const {width, margin} = this.state;
         d3.select(this.chartArea).append("text")
             .attr("class", "chart-title")
-			.attr("x", (width / 2))
-			.attr("y", 0 - 0.35 * margin.top)
-			.attr("text-anchor", "middle")
-			.style("font-size", "16px")
-			.style("text-decoration", "underline")
-			.text("Standard Normal Curve");
+            .attr("x", (width / 2))
+            .attr("y", 0 - 0.35 * margin.top)
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("text-decoration", "underline")
+            .text("Standard Normal Curve");
     }
 
     addLegend() {
