@@ -16,11 +16,22 @@ function getPoints() {
     return makeData(a, b);
 }
 
+function getLetterGrade(z) {
+    if (z < -1) return "F";
+    else if (z === -1) return "F/D-";
+    else if (z < -0.5) return "D";
+    else if (z === -0.5) return "D+/C-";
+    else if (z < 0.5) return "C";
+    else if (z === 0.5) return "C+/B-";
+    else if (z < 1) return "B";
+    else if (z === 1) return "B+/A-";
+    else return "A";
+}
+
 function getPostCurveGrade(grade, mu, sd) {
     mu = parseFloat(mu);
     sd = parseFloat(sd);
     const z = (grade - mu) / sd;
-    let letterGrade;
     let gradeMap = {};
 
     LABELS.map((grade, i) => {
@@ -28,16 +39,7 @@ function getPostCurveGrade(grade, mu, sd) {
         gradeMap[grade] = COLORS[i];
     });
 
-    if (z < -1) letterGrade = "F";
-    else if (z === -1) letterGrade = "F/D-";
-    else if (z < -0.5) letterGrade = "D";
-    else if (z === -0.5) letterGrade = "D+/C-";
-    else if (z < 0.5) letterGrade = "C";
-    else if (z === 0.5) letterGrade = "C+/B-";
-    else if (z < 1) letterGrade = "B";
-    else if (z === 1) letterGrade = "B+/A-";
-    else letterGrade = "A";
-
+    const letterGrade = getLetterGrade(z);
     const letters = letterGrade.split('/');
     let letterObjs = letters.map(letter => {
         return {
@@ -281,7 +283,9 @@ export class GradeEstimator extends Component {
 
         return (
             <div className="grade-visualization">
-                <Form className='grade-params-form'>
+                <Form   className='grade-params-form'
+                        hidden={error}
+                >
                 <Form.Field>
                         <label>Mean</label>
                         <Input  value={this.state.mu}
@@ -304,7 +308,9 @@ export class GradeEstimator extends Component {
                         Estimate Post-Curve Grade
                     </Button>
                 </Form>
-                <div className='grade-visualization__container'>
+                <div    className='grade-visualization__container'
+                        hidden={error}
+                >
                 <table>
                     <tr>
                         <td><strong>Pre-Curve Grade:</strong></td>
