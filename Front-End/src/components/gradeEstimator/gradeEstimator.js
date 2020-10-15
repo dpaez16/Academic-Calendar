@@ -116,21 +116,23 @@ export class GradeEstimator extends Component {
         const {height} = this.state;
         const idxs = [[0, 1], [1, 2], [2, 4], [4, 5], [5, 6]];
         
-        for (let k = 0; k < 5; k++) {
+        idxs.map(([i, j], colorIdx) => {
 			const area = d3.area()
 				.x((d) => this.xScale(d.x))
 				.y0(height)
                 .y1((d) => this.yScale(d.y));
             
-            const a = TICK_VALUES[idxs[k][0]];
-            const b = TICK_VALUES[idxs[k][1]];
+            const a = TICK_VALUES[i];
+            const b = TICK_VALUES[j];
             const {points} = makeData(a, b, N_POINTS);
+
+            const gradeColor = COLORS[colorIdx];
             d3.select(this.chartArea).append("path")
 				.data([points])
 				.attr("class", "area")
 				.attr("d", area)
-				.attr('fill', COLORS[k]);
-		}
+				.attr('fill', gradeColor);
+		});
     }
 
     addGradeLine() {
