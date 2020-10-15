@@ -50,7 +50,7 @@ export const constructDate = function(date, time) {
 
 export const getGradeEstimatorDisplayProps = function() {
     const fullWidth = 600;
-    const fullHeight = 800;
+    const fullHeight = 300;
     const margin = {
         top: 25,
         left: 20,

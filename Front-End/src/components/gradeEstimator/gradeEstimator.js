@@ -4,7 +4,6 @@ import {PROXY_URL} from '../misc/proxyURL';
 import {getGradeEstimatorDisplayProps, makeData, normalPDF} from '../misc/helpers';
 import * as d3 from 'd3';
 import './gradeEstimator.css';
-import { tickStep } from 'd3';
 
 
 const mu = 0;
@@ -70,11 +69,11 @@ export class GradeEstimator extends Component {
     }
 
     getScales() {
-        const {yMax, fullWidth, height} = this.state;
+        const {yMax, width, height} = this.state;
         const a = v[0];
         const b = v[6];
         
-        this.xScale = d3.scaleLinear().domain([a, b]).range([0, fullWidth]);
+        this.xScale = d3.scaleLinear().domain([a, b]).range([0, width]);
         this.yScale = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
     }
 
@@ -85,16 +84,8 @@ export class GradeEstimator extends Component {
             .tickValues(v)
             .tickFormat(d3.format(".3f"));
 
-        let yAxisFunction = d3.axisLeft()
-            .scale(this.yScale)
-            .tickSizeInner(5)
-            .tickSizeOuter(10);
-
         d3.select(this.xAxis)
             .call(xAxisFunction);
-
-        d3.select(this.yAxis)
-            .call(yAxisFunction);
     }
 
     addLine() {
@@ -197,7 +188,6 @@ export class GradeEstimator extends Component {
             grade,
             fullWidth,
             fullHeight,
-            height,
             margin
         } = this.state;
 
@@ -208,12 +198,13 @@ export class GradeEstimator extends Component {
                         height={fullHeight}
                         hidden={error}
                 >
-                    <g ref={(node) => { this.chartArea = node; }}
-                        transform={`translate(${margin.left}, ${margin.top})`} />
+                    <g  ref={(node) => { this.chartArea = node; }}
+                        transform={`translate(${margin.left}, ${margin.top})`} 
+                    />
 
-                    {/* Axes */}
-                    <g ref={(node) => { this.xAxis = node; }}
-                        transform={`translate(0, ${height})`}></g>
+                    <g  ref={(node) => { this.xAxis = node; }}
+                        transform={`translate(${margin.left}, ${fullHeight - margin.bottom})`}
+                    />
                 </svg>
                 <Message 
                     error
