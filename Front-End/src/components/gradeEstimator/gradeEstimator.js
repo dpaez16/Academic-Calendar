@@ -24,8 +24,8 @@ export class GradeEstimator extends Component {
         this.state = {...{
             error: "",
             grade: 0,
-            mu: "",
-            sd: "",
+            mu: "80",
+            sd: "2.0",
             points: points,
             yMax: yMax
         }, ...displayProps};
@@ -63,13 +63,18 @@ export class GradeEstimator extends Component {
     }
 
     validInput() {
-        const {mu, sd} = this.state;
-        console.log(mu);
-        console.log(sd);
-        return true;
+        let {mu, sd} = this.state;
+        mu = parseFloat(mu);
+        sd = parseFloat(sd);
+
+        return (
+            !isNaN(mu) && 0 <= mu && mu <= 100 &&
+            !isNaN(sd) && sd > 0
+        );
     }
 
     update() {
+        this.clearChart();
         this.getScales();
         this.getAxes();
         this.addLine();
@@ -77,6 +82,10 @@ export class GradeEstimator extends Component {
         this.addGradeLine();
         this.addTitle();
         this.addLegend();
+    }
+
+    clearChart() {
+        
     }
 
     getScales() {
@@ -141,7 +150,11 @@ export class GradeEstimator extends Component {
 
     addGradeLine() {
         const {height, grade} = this.state;
-        const z = (grade - 0) / 1.0;
+        let {mu, sd} = this.state;
+        mu = parseFloat(mu);
+        sd = parseFloat(sd);
+        
+        const z = (grade - mu) / sd;
         const color = COLORS[COLORS.length - 1];
 
         const area = d3.area()
@@ -154,11 +167,13 @@ export class GradeEstimator extends Component {
             {x: z + 0.02, y: normalPDF(z + 0.02)}
         ];
         
-		d3.select(this.chartArea).append("path")
-			.data([points])
-			.attr("class", "area")
+        const gradeLine = d3.select(this.chartArea).selectAll('.grade-line').data([points]);
+        gradeLine.enter().append('path')
+            .merge(gradeLine)
+            .attr("class", "area grade-line")
+            .transition().duration(2000)
 			.attr("d", area)
-			.attr('fill', color);
+            .attr('fill', color);
     }
 
     addTitle() {
@@ -175,7 +190,6 @@ export class GradeEstimator extends Component {
 
     addLegend() {
         const legend = d3.select(this.chartArea).append("g");
-        const colors = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"];
         const labels = ["F", "D", "C", "B", "A", "You"];
         const {margin} = this.state;
 
@@ -222,7 +236,10 @@ export class GradeEstimator extends Component {
                     </Form.Field>
                     <Button type='submit'
                         disabled={!this.validInput()}
-                        onClick={e => this.update()}
+                        onClick={e => {
+                            e.preventDefault();
+                            this.update();
+                        }}
                     >
                         Estimate Post-Curve Grade
                     </Button>
