@@ -24,6 +24,8 @@ export class GradeEstimator extends Component {
         this.state = {...{
             error: "",
             grade: 0,
+            mu: "",
+            sd: "",
             points: points,
             yMax: yMax
         }, ...displayProps};
@@ -61,6 +63,9 @@ export class GradeEstimator extends Component {
     }
 
     validInput() {
+        const {mu, sd} = this.state;
+        console.log(mu);
+        console.log(sd);
         return true;
     }
 
