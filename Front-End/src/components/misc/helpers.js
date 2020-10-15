@@ -74,13 +74,13 @@ export const normalPDF = function(x, mu = 0, sd = 1) {
 			Math.exp(-0.5 * Math.pow(z, 2));
 }
 
-export const makeData = function(a, b, n, mu = 0, sd = 1) {
+export const makeData = function(a, b, n) {
 	const dx = 1.0 * (b - a) / n;
 	const data = [...Array(n + 1).keys()].map(i => {
 		const x = a + i * dx;
 		return {
 			x: x, 
-			y: normalPDF(x, mu, sd)
+			y: normalPDF(x)
 		}
 	});
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Message} from 'semantic-ui-react';
+import {Message, Form, Input, Button} from 'semantic-ui-react';
 import {PROXY_URL} from '../misc/proxyURL';
 import {getGradeEstimatorDisplayProps, makeData, normalPDF} from '../misc/helpers';
 import * as d3 from 'd3';
@@ -8,14 +8,14 @@ import './gradeEstimator.css';
 
 const mu = 0;
 const sd = 1.0;
-const v = [mu-3*sd, mu-1*sd, mu-0.5*sd, mu, mu+0.5*sd, mu+1*sd, mu+3*sd];
-const colors = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"];
-const n = 100;
+const TICK_VALUES = [mu-3*sd, mu-1*sd, mu-0.5*sd, mu, mu+0.5*sd, mu+1*sd, mu+3*sd];
+const COLORS = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"];
+const N_POINTS = 100;
 
 function getPoints() {
-    const a = v[0];
-    const b = v[6];
-    return makeData(a, b, n, mu, sd);
+    const a = TICK_VALUES[0];
+    const b = TICK_VALUES[6];
+    return makeData(a, b, N_POINTS);
 }
 
 export class GradeEstimator extends Component {
@@ -59,22 +59,30 @@ export class GradeEstimator extends Component {
         this.getGrade().then(resData => {
             const error = resData.error ? resData.error : "";
             this.setState({...resData, ...{error: error}});
-            this.getScales();
-            this.getAxes();
-            this.addLine();
-            this.addAreas();
-            this.addGradeLine();
-            this.addTitle();
-            this.addLegend();
+            this.update();
         });
+    }
+
+    validInput() {
+        return true;
+    }
+
+    update() {
+        this.getScales();
+        this.getAxes();
+        this.addLine();
+        this.addAreas();
+        this.addGradeLine();
+        this.addTitle();
+        this.addLegend();
     }
 
     getScales() {
         const {yMax, width, height} = this.state;
-        const a = v[0];
-        const b = v[6];
+        const xMin = TICK_VALUES[0];
+        const xMax = TICK_VALUES[6];
         
-        this.xScale = d3.scaleLinear().domain([a, b]).range([0, width]);
+        this.xScale = d3.scaleLinear().domain([xMin, xMax]).range([0, width]);
         this.yScale = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
     }
 
@@ -82,7 +90,7 @@ export class GradeEstimator extends Component {
         let xAxisFunction = d3.axisBottom()
             .scale(this.xScale)
             .tickSize(5)
-            .tickValues(v)
+            .tickValues(TICK_VALUES)
             .tickFormat(d3.format(".3f"));
 
         d3.select(this.xAxis)
@@ -116,21 +124,21 @@ export class GradeEstimator extends Component {
 				.y0(height)
                 .y1((d) => this.yScale(d.y));
             
-            const a = v[idxs[k][0]];
-            const b = v[idxs[k][1]];
-            const {points} = makeData(a, b, n, mu, sd);
+            const a = TICK_VALUES[idxs[k][0]];
+            const b = TICK_VALUES[idxs[k][1]];
+            const {points} = makeData(a, b, N_POINTS);
             d3.select(this.chartArea).append("path")
 				.data([points])
 				.attr("class", "area")
 				.attr("d", area)
-				.attr('fill', colors[k]);
+				.attr('fill', COLORS[k]);
 		}
     }
 
     addGradeLine() {
         const {height, grade} = this.state;
-        const z = (grade - mu) / sd;
-        const color = "red";
+        const z = (grade - 0) / 1.0;
+        const color = COLORS[COLORS.length - 1];
 
         const area = d3.area()
 			.x((d) => this.xScale(d.x))
@@ -138,8 +146,8 @@ export class GradeEstimator extends Component {
             .y1((d) => this.yScale(d.y));
         
         const points = [
-            {x: z - 0.01, y: normalPDF(z - 0.01, mu, sd)}, 
-            {x: z + 0.02, y: normalPDF(z + 0.02, mu, sd)}
+            {x: z - 0.01, y: normalPDF(z - 0.01)}, 
+            {x: z + 0.02, y: normalPDF(z + 0.02)}
         ];
         
 		d3.select(this.chartArea).append("path")
@@ -174,7 +182,7 @@ export class GradeEstimator extends Component {
                 .attr("y", (_, i) => i * 20)
                 .attr("width", 10)
                 .attr("height", 10)
-                .style("fill", (_, i) => colors[i]);
+                .style("fill", (_, i) => COLORS[i]);
 
 		legend.selectAll('text')
 			.data(labels)
@@ -195,6 +203,26 @@ export class GradeEstimator extends Component {
 
         return (
             <div className="grade-visualization">
+                <Form className='grade-params-form'>
+                <Form.Field>
+                        <label>Mean</label>
+                        <Input  value={this.state.mu}
+                                onChange={e => this.setState({mu: e.target.value})}
+                        />
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Standard Deviation</label>
+                        <Input  value={this.state.sd}
+                                onChange={e => this.setState({sd: e.target.value})}
+                        />
+                    </Form.Field>
+                    <Button type='submit'
+                        disabled={!this.validInput()}
+                        onClick={e => this.update()}
+                    >
+                        Estimate Post-Curve Grade
+                    </Button>
+                </Form>
                 <svg    className="chart" 
                         width={fullWidth} 
                         height={fullHeight}
