@@ -9,11 +9,12 @@ import './gradeEstimator.css';
 const mu = 0;
 const sd = 1.0;
 const v = [mu-3*sd, mu-1*sd, mu-0.5*sd, mu, mu+0.5*sd, mu+1*sd, mu+3*sd];
+const colors = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"];
+const n = 100;
 
 function getPoints() {
     const a = v[0];
     const b = v[6];
-    const n = 100;
     return makeData(a, b, n, mu, sd);
 }
 
@@ -108,17 +109,18 @@ export class GradeEstimator extends Component {
     addAreas() {
         const {height} = this.state;
         const idxs = [[0, 1], [1, 2], [2, 4], [4, 5], [5, 6]];
-        const colors = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"]
-        const n = 100;
-
+        
         for (let k = 0; k < 5; k++) {
 			const area = d3.area()
 				.x((d) => this.xScale(d.x))
 				.y0(height)
                 .y1((d) => this.yScale(d.y));
             
+            const a = v[idxs[k][0]];
+            const b = v[idxs[k][1]];
+            const {points} = makeData(a, b, n, mu, sd);
             d3.select(this.chartArea).append("path")
-				.data([makeData(v[idxs[k][0]], v[idxs[k][1]], n, mu, sd).points])
+				.data([points])
 				.attr("class", "area")
 				.attr("d", area)
 				.attr('fill', colors[k]);
