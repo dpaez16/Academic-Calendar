@@ -6,7 +6,7 @@ import './homePage.css';
 export const HomePage = _ => {
     return (
         <div className='home-page'>
-            <div>
+            <div className='home-page__container'>
             <Header size='huge'>
                 Welcome to the Academic Calendar!
             </Header>
