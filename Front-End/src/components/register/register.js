@@ -66,7 +66,7 @@ export class Register extends Component {
     }
 
     handleRegisterResults(resData) {
-        const error = resData.error ? resData.errors[0].message : "";
+        const error = resData.errors ? resData.errors[0].message : "";
 
         this.setState({
             error: error,
@@ -85,7 +85,7 @@ export class Register extends Component {
         const {error} = this.state;
         return (
             <Form   className='register-form'
-                    error={error}
+                    error={error.length > 0}
             >
                 <Form.Field>
                     <label>Name</label>
