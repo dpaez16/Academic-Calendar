@@ -10,67 +10,14 @@ const TICK_VALUES = [-3, -1, -0.5, 0, 0.5, 1, 3];
 const COLORS = ["#990000", "#ff00ff", "#f28000", "#0080ff", "#0dc000", "red"];
 const LABELS = ["F", "D", "C", "B", "A", "You"];
 
-function getPoints() {
-    const a = TICK_VALUES[0];
-    const b = TICK_VALUES[6];
-    return makeData(a, b);
-}
-
-function getLetterGrade(z) {
-    if (z < -1) return "F";
-    else if (z === -1) return "F/D-";
-    else if (z < -0.5) return "D";
-    else if (z === -0.5) return "D+/C-";
-    else if (z < 0.5) return "C";
-    else if (z === 0.5) return "C+/B-";
-    else if (z < 1) return "B";
-    else if (z === 1) return "B+/A-";
-    else return "A";
-}
-
-function getPostCurveGrade(grade, mu, sd) {
-    mu = parseFloat(mu);
-    sd = parseFloat(sd);
-    const z = (grade - mu) / sd;
-    let gradeMap = {};
-
-    LABELS.map((grade, i) => {
-        if (i === LABELS.length - 1) return;
-        gradeMap[grade] = COLORS[i];
-    });
-
-    const letterGrade = getLetterGrade(z);
-    const letters = letterGrade.split('/');
-    let letterObjs = letters.map(letter => {
-        return {
-            letter: letter,
-            color: gradeMap[letter[0]]
-        };
-    });
-
-    if (letterObjs.length === 1) {
-        const emptyLetter = {
-            letter: '',
-            color: "black"
-        };
-
-        letterObjs.concat([emptyLetter, emptyLetter]);
-    } else {
-        const letterObj = {
-            letter: '/',
-            color: "black"
-        };
-        letterObjs.splice(1, 0, letterObj);
-    }
-
-    return letterObjs;
-}
 
 export class GradeEstimator extends Component {
     constructor(props) {
         super(props);
 
-        const {points, yMax} = getPoints();
+        const a = TICK_VALUES[0];
+        const b = TICK_VALUES[6];
+        const {points, yMax} = makeData(a, b);
         const displayProps = getGradeEstimatorDisplayProps();
         this.state = {...{
             error: "",
@@ -146,6 +93,9 @@ export class GradeEstimator extends Component {
         
         this.xScale = d3.scaleLinear().domain([xMin, xMax]).range([0, width]);
         this.yScale = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
+
+        this.xMap = (d) => this.xScale(d.x);
+        this.yMap = (d) => this.yScale(d.y);
     }
 
     getAxes() {
@@ -162,8 +112,8 @@ export class GradeEstimator extends Component {
     addLine() {
         const {points} = this.state;
         const line = d3.line()
-			.x((d) => this.xScale(d.x))
-            .y((d) => this.yScale(d.y));
+			.x(this.xMap)
+            .y(this.yMap);
 
         const blackLine = d3.select(this.chartArea).selectAll('.black-line').data([0]);
         blackLine.enter().append("path")
@@ -184,9 +134,9 @@ export class GradeEstimator extends Component {
         
         idxs.map(([i, j], colorIdx) => {
 			const area = d3.area()
-				.x((d) => this.xScale(d.x))
+				.x(this.xMap)
 				.y0(height)
-                .y1((d) => this.yScale(d.y));
+                .y1(this.yMap);
             
             const a = TICK_VALUES[i];
             const b = TICK_VALUES[j];
@@ -212,9 +162,9 @@ export class GradeEstimator extends Component {
         const color = COLORS[COLORS.length - 1];
 
         const area = d3.area()
-			.x((d) => this.xScale(d.x))
+			.x(this.xMap)
 			.y0(height)
-            .y1((d) => this.yScale(d.y));
+            .y1(this.yMap);
         
         const points = [
             {x: z - 0.01, y: normalPDF(z - 0.01)}, 
@@ -360,3 +310,59 @@ export class GradeEstimator extends Component {
         )
     }
 };
+
+
+function getLetterGrade(z) {
+    if (z < -1) return "F";
+    else if (z === -1) return "F/D-";
+    else if (z < -0.5) return "D";
+    else if (z === -0.5) return "D+/C-";
+    else if (z < 0.5) return "C";
+    else if (z === 0.5) return "C+/B-";
+    else if (z < 1) return "B";
+    else if (z === 1) return "B+/A-";
+    else return "A";
+}
+
+function getPostCurveGrade(grade, mu, sd) {
+    mu = parseFloat(mu);
+    sd = parseFloat(sd);
+    const z = (grade - mu) / sd;
+    let gradeMap = {};
+
+    LABELS.map((grade, i) => {
+        if (i === LABELS.length - 1) return;
+        gradeMap[grade] = COLORS[i];
+    });
+
+    const letterGrade = getLetterGrade(z);
+    const letters = letterGrade.split('/');
+    let letterObjs = getLetterObjs(letters, gradeMap);
+
+    return letterObjs;
+}
+
+function getLetterObjs(letters, gradeMap) {
+    let letterObjs = letters.map(letter => {
+        return {
+            letter: letter,
+            color: gradeMap[letter[0]]
+        };
+    });
+
+    if (letterObjs.length === 1) {
+        const emptyLetter = {
+            letter: '',
+            color: "black"
+        };
+
+        letterObjs.concat([emptyLetter, emptyLetter]);
+    } else {
+        const letterObj = {
+            letter: '/',
+            color: "black"
+        };
+        letterObjs.splice(1, 0, letterObj);
+    }
+    return letterObjs;
+}
