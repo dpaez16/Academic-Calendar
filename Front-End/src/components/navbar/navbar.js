@@ -14,6 +14,7 @@ export class NavBar extends Component {
         if (!this.props.loggedIn) {
             return (
                 <ul>
+                    <li><NavLink to='/register'>Register</NavLink></li>
                     <li><NavLink to='/login'>Login</NavLink></li>
                 </ul>
             );

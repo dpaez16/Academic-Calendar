@@ -3,6 +3,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import {NavBar} from './components/navbar/navbar';
 import {HomePage} from './components/home/homePage';
 import {Login} from './components/login/login';
+import {Register} from './components/register/register';
 import {Profile} from './components/profile/profile';
 import {Courses} from './components/courses/courses';
 import {CourseDetails} from './components/courseDetails/courseDetails';
@@ -44,9 +45,16 @@ export default class App extends Component {
                                     path='/login'
                                     render={(props) => 
                                         <Login    
-                                            updateUserInfo={newUserInfo => {
-                                                this.setState({userInfo: newUserInfo});
-                                            }}
+                                            updateUserInfo={newUserInfo => this.setState({userInfo: newUserInfo})}
+                                            { ...props }
+                                        />
+                                    }
+                            />
+                            <Route  exact
+                                    path='/register'
+                                    render={(props) => 
+                                        <Register
+                                            updateUserInfo={newUserInfo => this.setState({userInfo: newUserInfo})}
                                             { ...props }
                                         />
                                     }
