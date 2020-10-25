@@ -12,10 +12,25 @@ const { loginUser, createUser, editUser } = require('./modules/users');
 const { getCourses, createCourse, editCourse } = require('./modules/courses');
 const { getCategories, createCategory, editCategory, deleteCategory } = require('./modules/categories');
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
+const { calculateGrade } = require('./modules/grade');
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+
+    next();
+});
+
+app.post('/ac/grade', calculateGrade);
 
 app.use('/ac', graphQLHttp({
     schema: buildSchema(`
@@ -168,32 +183,7 @@ app.use('/ac', graphQLHttp({
         categories: getCategories,
         createCategory: createCategory,
         editCategory: editCategory,
-        deleteCategory: async rawArgs => {
-            let categoryID = rawArgs.categoryID;
-    
-            return Category.findById(categoryID).then(async category => {
-                if (!category) {
-                    throw new Error("Category not found.");
-                }
-    
-                let courseID = category.courseID;
-                let categoryElementIDS = category.elements;
-                categoryElementIDS.map(categoryElemID => deleteCategoryElement({ categoryElementID: categoryElemID }));
-                
-                return Category.deleteOne({ _id: categoryID }).then(async _ => {
-                    return Course.findById(courseID).then(async course => {
-                        course.categories.pull({ _id: categoryID });
-                        return course.save();
-                    })
-                    .then(result => {
-                        return { ...result._doc };
-                    });
-                });
-            })
-            .catch(err => {
-                throw err;
-            });
-        },
+        deleteCategory: deleteCategory,
         
         categoryElements: getCategoryElements,
         createCategoryElement: createCategoryElement,
@@ -206,14 +196,15 @@ app.use('/ac', graphQLHttp({
 mongoose.connect(`
     mongodb+srv://${process.env.MONGO_USER}:${
         process.env.MONGO_PASSWORD
-    }@academic-calendar-fzvdf.mongodb.net/${
+    }@academic-calendar.fzvdf.mongodb.net/${
         process.env.MONGO_DB
     }?retryWrites=true&w=majority
 `, { 
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
-    app.listen(3000);
+    app.listen(5000);
+    console.log("Back-End server is running on localhost:5000/ac");
 }).catch(err => {
     console.log(err);
 });

@@ -1,0 +1,39 @@
+.categories-loading {
+    width: 50% !important;
+    height: 10em !important;
+}
+
+.category,
+.category-title-row {
+    width: 120% !important;
+}
+
+.button-column-cell {
+    background-color: white !important;
+}
+
+.buttons-cell {
+    display: flex;
+    justify-content: center;
+}
+
+.course-details-header {
+    padding-bottom: 1em !important;
+}
+
+.category-title-row {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15%;
+}
+
+.category-title-row__name {
+    font-size: 18px;
+}
+
+.category-title-row__name,
+.category-title-row__options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

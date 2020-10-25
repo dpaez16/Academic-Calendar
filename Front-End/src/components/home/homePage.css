@@ -1,0 +1,14 @@
+.home-page__container > p {
+    padding-top: 20px;
+    font-size: 18px !important;
+}
+
+.home-page > div {
+    justify-content: center;
+    width: 40%;
+}
+
+.home-page {
+    display: flex;
+    justify-content: center;
+}

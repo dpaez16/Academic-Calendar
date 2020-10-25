@@ -1,0 +1,27 @@
+.grade-visualization {
+    padding-top: 10%;
+}
+
+.chart {
+    border: solid;
+}
+
+.grade-visualization {
+    display: flex;
+}
+
+.grade-params-form {
+    padding-bottom: 10%;
+    width: 30%;
+}
+
+.grade-visualization__container {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10%;
+}
+
+.grade-visualization__container > table {
+    width: fit-content;
+    padding-bottom: 15px;
+}
