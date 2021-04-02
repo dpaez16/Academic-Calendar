@@ -11,7 +11,8 @@ export class Login extends Component {
         this.state = {
             badLogin: false,
             email: '',
-            password: ''
+            password: '',
+            errorMessage: ''
         };
     }
 
@@ -61,6 +62,7 @@ export class Login extends Component {
             const userData = resData.data.loginUser;
             return userData;
         } catch (error) {
+        	this.setState({errorMessage: error.toString()});
             console.log(error);
         }
     }
@@ -103,7 +105,7 @@ export class Login extends Component {
                 <Message 
                     error
                     header='Login Failed'
-                    content='E-Mail or password is incorrect.'
+                    content={this.state.errorMessage}
                 />
                 <Button type='submit'
                         disabled={!this.validInput()}
