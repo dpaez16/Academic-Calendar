@@ -14,7 +14,7 @@ const { getCategories, createCategory, editCategory, deleteCategory } = require(
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
 const { calculateGrade } = require('./modules/grade');
 
-const { dbConnect, dbClose } = require('./db');
+const { dbConnect } = require('./db');
 const PORT = process.env.PORT || 5000;
 
 const app = express();
