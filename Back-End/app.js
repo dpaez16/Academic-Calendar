@@ -14,6 +14,9 @@ const { getCategories, createCategory, editCategory, deleteCategory } = require(
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
 const { calculateGrade } = require('./modules/grade');
 
+const { dbConnect, dbClose } = require('./db');
+const PORT = process.env.PORT || 5000;
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -193,19 +196,12 @@ app.use('/ac', graphQLHttp({
     graphiql: true
 }));
 
-mongoose.connect(`
-    mongodb+srv://${process.env.MONGO_USER}:${
-        process.env.MONGO_PASSWORD
-    }@academic-calendar.fzvdf.mongodb.net/${
-        process.env.MONGO_DB
-    }?retryWrites=true&w=majority
-`, { 
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    app.listen(5000);
-    console.log("Back-End server is running on localhost:5000/ac");
-}).catch(err => {
+
+dbConnect().then(_ => {
+    app.listen(PORT, _ => {
+        console.log(`Listening on port: ${PORT}`);
+    });
+}).catch((err) => {
     console.log(err);
 });
 
