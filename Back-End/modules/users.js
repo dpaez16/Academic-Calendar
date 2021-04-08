@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const { deleteCourse } = require('./courses');
 const bcrypt = require('bcryptjs');
 
 module.exports = {
@@ -75,6 +76,25 @@ module.exports = {
             })
             .then(result => {
                 return { ...result._doc, password: null };
+            });
+        })
+        .catch(err => {
+            throw err;
+        });
+    },
+    deleteUser: async rawArgs => {
+        let userID = rawArgs.userID;
+
+        return User.findById(userID).then(async user => {
+            if (!user) {
+                throw new Error("User not found.");
+            }
+
+            let courseIDS = user.courses;
+            courseIDS.map(courseID => deleteCourse({ courseID: courseID }));
+            
+            return User.deleteOne({ _id: userID }).then(async _ => {
+                return true;
             });
         })
         .catch(err => {

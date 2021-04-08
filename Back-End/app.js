@@ -7,7 +7,7 @@ const User = require('./models/user');
 const Course = require('./models/course');
 const Category = require('./models/category');
 
-const { loginUser, createUser, editUser } = require('./modules/users');
+const { loginUser, createUser, editUser, deleteUser } = require('./modules/users');
 const { getCourses, createCourse, editCourse } = require('./modules/courses');
 const { getCategories, createCategory, editCategory, deleteCategory } = require('./modules/categories');
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
@@ -132,25 +132,7 @@ app.use('/ac', graphQLHttp({
         loginUser: loginUser,
         createUser: createUser,
         editUser: editUser,
-        deleteUser: async rawArgs => {
-            let userID = rawArgs.userID;
-    
-            return User.findById(userID).then(async user => {
-                if (!user) {
-                    throw new Error("User not found.");
-                }
-    
-                let courseIDS = user.courses;
-                courseIDS.map(courseID => deleteCourse({ courseID: courseID }));
-                
-                return User.deleteOne({ _id: userID }).then(async _ => {
-                    return true;
-                });
-            })
-            .catch(err => {
-                throw err;
-            });
-        },
+        deleteUser: deleteUser,
 
         courses: getCourses,
         createCourse: createCourse,
