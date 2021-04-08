@@ -9,9 +9,6 @@ const { getCategories, createCategory, editCategory, deleteCategory } = require(
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
 const { calculateGrade } = require('./modules/grade');
 
-const { dbConnect } = require('./db');
-const PORT = process.env.PORT || 5000;
-
 const app = express();
 
 app.use(bodyParser.json());
@@ -148,12 +145,4 @@ app.use('/ac', graphQLHttp({
     graphiql: true
 }));
 
-
-dbConnect().then(_ => {
-    app.listen(PORT, _ => {
-        console.log(`Listening on port: ${PORT}`);
-    });
-}).catch((err) => {
-    console.log(err);
-});
-
+module.exports = app;
