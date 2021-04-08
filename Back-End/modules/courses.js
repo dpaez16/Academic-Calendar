@@ -1,5 +1,6 @@
 const Course = require('../models/course');
 const User = require('../models/user');
+const { deleteCategory } = require('./categories');
 
 module.exports = {
     getCourses: async rawArgs => {
@@ -81,6 +82,32 @@ module.exports = {
             })
             .then(result => {
                 return { ...result._doc };
+            });
+        })
+        .catch(err => {
+            throw err;
+        });
+    },
+    deleteCourse: async rawArgs => {
+        let courseID = rawArgs.courseID;
+
+        return Course.findById(courseID).then(async course => {
+            if (!course) {
+                throw new Error("Course not found.");
+            }
+
+            let creatorID = course.creator;
+            let categoryIDS = course.categories;
+            categoryIDS.map(categoryID => deleteCategory({ categoryID: categoryID }));
+            
+            return Course.deleteOne({ _id: courseID }).then(async _ => {
+                return User.findById(creatorID).then(async user => {
+                    user.courses.pull({ _id: courseID });
+                    return user.save();
+                })
+                .then(result => {
+                    return { ...result._doc };
+                });
             });
         })
         .catch(err => {

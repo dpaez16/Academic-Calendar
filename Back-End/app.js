@@ -3,12 +3,8 @@ const bodyParser = require('body-parser');
 const graphQLHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
 
-const User = require('./models/user');
-const Course = require('./models/course');
-const Category = require('./models/category');
-
 const { loginUser, createUser, editUser, deleteUser } = require('./modules/users');
-const { getCourses, createCourse, editCourse } = require('./modules/courses');
+const { getCourses, createCourse, editCourse, deleteCourse } = require('./modules/courses');
 const { getCategories, createCategory, editCategory, deleteCategory } = require('./modules/categories');
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
 const { calculateGrade } = require('./modules/grade');
@@ -137,32 +133,7 @@ app.use('/ac', graphQLHttp({
         courses: getCourses,
         createCourse: createCourse,
         editCourse: editCourse,
-        deleteCourse: async rawArgs => {
-            let courseID = rawArgs.courseID;
-    
-            return Course.findById(courseID).then(async course => {
-                if (!course) {
-                    throw new Error("Course not found.");
-                }
-    
-                let creatorID = course.creator;
-                let categoryIDS = course.categories;
-                categoryIDS.map(categoryID => deleteCategory({ categoryID: categoryID }));
-                
-                return Course.deleteOne({ _id: courseID }).then(async _ => {
-                    return User.findById(creatorID).then(async user => {
-                        user.courses.pull({ _id: courseID });
-                        return user.save();
-                    })
-                    .then(result => {
-                        return { ...result._doc };
-                    });
-                });
-            })
-            .catch(err => {
-                throw err;
-            });
-        },
+        deleteCourse: deleteCourse,
         
         categories: getCategories,
         createCategory: createCategory,
