@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphQLHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
-const mongoose = require('mongoose');
 
 const User = require('./models/user');
 const Course = require('./models/course');
