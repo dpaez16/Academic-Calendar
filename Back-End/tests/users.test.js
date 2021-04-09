@@ -25,9 +25,8 @@ describe('Users Schema', () => {
         userExp.toHaveProperty('password');
         userExp.toHaveProperty('courses');
 
-        // cannot create a duplicate user
-        expect(async _ => await UserService.createUser(rawArgs))
-        .rejects;
+        // cannot create duplicate user
+        await expect(UserService.createUser(rawArgs)).rejects.toThrow(Error);
     });
     
     test('loginUser', async () => {
@@ -37,8 +36,7 @@ describe('Users Schema', () => {
         };
 
         // cannot find non-existent user
-        expect(async _ => await UserService.loginUser(rawArgs))
-        .rejects;
+        await expect(UserService.loginUser(rawArgs)).rejects.toThrow(Error);
 
         let actualPassword = 'foobar';
         rawArgs = {
@@ -53,8 +51,7 @@ describe('Users Schema', () => {
 
         // incorrect password login error
         rawArgs.userInput.password = 'incorrectPassword';
-        expect(async _ => await UserService.loginUser(rawArgs))
-        .rejects;
+        await expect(UserService.loginUser(rawArgs.userInput)).rejects.toThrow(Error);
 
         // successful login
         rawArgs.userInput.password = actualPassword;
@@ -83,18 +80,31 @@ describe('Users Schema', () => {
             }
         };
 
+        // grabbing random userID
         let userA = await UserService.createUser(rawArgsA);
+        let randomUserID = userA._id;
+        rawArgsA.userID = userA._id;
+        await UserService.deleteUser(rawArgsA);
+
+        // creating userA
+        userA = await UserService.createUser(rawArgsA);
         rawArgsA.userID = userA._id;
         rawArgsA.password = userA.password;
 
+        // creating userB
         let userB = await UserService.createUser(rawArgsB);
         rawArgsB.userID = userB._id;
         rawArgsB.password = userB.password;
         
+        // userID is incorrect
+        let correctUserID = rawArgsA.userID;
+        rawArgsA.userID = randomUserID;
+        await expect(UserService.editUser(rawArgsA)).rejects.toThrow(Error);
+
         // trying to change email to email that's in use
+        rawArgsA.userID = correctUserID;
         rawArgsA.userInput.email = userB.email;
-        expect(async _ => await UserService.editUser(rawArgsA))
-        .rejects;
+        await expect(UserService.editUser(rawArgsA)).rejects.toThrow(Error);
 
         // successfully updating email
         rawArgsA.userInput.email = 'foobar@foobar.com';
@@ -104,18 +114,18 @@ describe('Users Schema', () => {
         updatedUserExp.toHaveProperty('email', rawArgsA.userInput.email);
         updatedUserExp.toHaveProperty('password');
         updatedUserExp.toHaveProperty('courses');
+
+        // successfully updating user with same credentials
+        rawArgsA.userInput.email = 'foobar@foobar.com';
+        updatedUserExp = expect(await UserService.editUser(rawArgsA));
+        updatedUserExp.toHaveProperty('_id');
+        updatedUserExp.toHaveProperty('name', userA.name);
+        updatedUserExp.toHaveProperty('email', rawArgsA.userInput.email);
+        updatedUserExp.toHaveProperty('password');
+        updatedUserExp.toHaveProperty('courses');
     });
 
     test('deleteUser', async () => {
-        let rawArgs = {
-            userID: 'missingID'
-        };
-
-        // can't delete non-existent user
-        expect(async _ => await UserService.deleteUser(rawArgs))
-        .rejects;
-
-        // deleting real user
         rawArgs = {
             userInput: {
                 name: 'Foo',
@@ -124,8 +134,12 @@ describe('Users Schema', () => {
             }
         };
 
+        // deleting real user
         let user = await UserService.createUser(rawArgs);
-        expect(async _ => await UserService.deleteUser(rawArgs))
-        .resolves;
+        rawArgs.userID = user._id;
+        expect(await UserService.deleteUser(rawArgs)).resolves;
+
+        // can't delete non-existent user
+        await expect(UserService.deleteUser(rawArgs)).rejects.toThrow(Error);
     });
 });
