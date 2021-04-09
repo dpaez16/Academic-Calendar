@@ -24,7 +24,7 @@ module.exports = {
     },
     createUser: async rawArgs => {
         const args = rawArgs.userInput;
-        return User.findOne({email: args.email}).then(user => {
+        return User.findOne({email: args.email}).then(async user => {
             if (user) {
                 throw new Error('User exists already.');
             }
