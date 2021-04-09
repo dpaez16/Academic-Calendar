@@ -5,21 +5,22 @@ const { deleteCategory } = require('./categories');
 module.exports = {
     getCourses: async rawArgs => {
         let courseIDS = rawArgs.courseIDS;
-        try {
-            const courses = await courseIDS.map(async courseID => {
-                return Course.findById(courseID).then(course => {
-                    if (!course) {
-                        throw new Error('Course not found.');
-                    }
+        const courses = courseIDS.map(async courseID => {
+            return Course.findById(courseID).then(course => {
+                if (!course) {
+                    throw new Error('Course not found.');
+                }
 
-                    return { ...course._doc };
-                });
+                return { ...course._doc };
             });
+        });
 
+        return Promise.all(courses)
+        .then((courses) => {
             return courses;
-        } catch(err) {
+        }).catch((err) => {
             throw err;
-        }
+        });
     },
     createCourse: async rawArgs => {
         let args = rawArgs.courseInput;
@@ -44,12 +45,12 @@ module.exports = {
             }
 
             return newCourse.save();
-        }).then(async result => {
+        }).then(async _ => {
             return User.findById(args.creator);
         }).then(user => {
             user.courses.push(newCourse);
             return user.save();
-        }).then(result => {
+        }).then(_ => {
             return newCourse;
         }).catch(err => {
             throw err;
