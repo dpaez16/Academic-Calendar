@@ -2,9 +2,10 @@
   "name": "back-end",
   "version": "1.0.0",
   "description": "Back-end server for front-end react app (Academic Calendar).",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "test": "jest --runInBand",
+    "test:coverage": "npm run test -- --coverage",
     "start": "nodemon index.js"
   },
   "author": "",
@@ -23,6 +24,17 @@
     "mongodb-memory-server": "^6.9.6"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "modules/**/*.js",
+      "models/**/*.js",
+      "!**/tests/**/*"
+    ],
+    "coverageReporters": [
+      "cobertura",
+      "html",
+      "lcov",
+      "text"
+    ]
   }
 }
