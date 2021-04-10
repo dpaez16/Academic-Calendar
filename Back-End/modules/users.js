@@ -89,11 +89,15 @@ module.exports = {
             }
 
             let courseIDS = user.courses;
-            courseIDS.map(courseID => deleteCourse({ courseID: courseID }));
-            
-            return User.deleteOne({ _id: userID }).then(async _ => {
-                return true;
-            });
+            let deletedResults = courseIDS.map(async courseID => deleteCourse({ courseID: courseID }));
+
+            return Promise.all(deletedResults);
+        })
+        .then((res) => {
+            return User.deleteOne({ _id: userID });
+        })
+        .then((res) => {
+            return true;
         })
         .catch(err => {
             throw err;

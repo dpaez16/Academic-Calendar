@@ -99,19 +99,29 @@ module.exports = {
 
             let creatorID = course.creator;
             let categoryIDS = course.categories;
-            categoryIDS.map(categoryID => deleteCategory({ categoryID: categoryID }));
-            
-            return Course.deleteOne({ _id: courseID }).then(async _ => {
-                return User.findById(creatorID).then(async user => {
-                    user.courses.pull({ _id: courseID });
-                    return user.save();
-                })
-                .then(result => {
-                    return { ...result._doc };
+            let results = categoryIDS.map(async categoryID => {
+                return deleteCategory({ categoryID: categoryID })
+                .catch((err) => {
+                    throw err;
                 });
             });
+
+            return Promise.all(results)
+            .then(async _ => {
+                return Course.deleteOne({ _id: courseID });
+            })
+            .then(async _ => {
+                return User.findById(creatorID);
+            })
+            .then(async user => {
+                user.courses.pull({ _id: courseID });
+                return user.save();
+            })
+            .then(result => {
+                return { ...result._doc };
+            });
         })
-        .catch(err => {
+        .catch((err) => {
             throw err;
         });
     }
