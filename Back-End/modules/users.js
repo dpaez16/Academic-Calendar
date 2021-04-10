@@ -38,14 +38,12 @@ module.exports = {
                 courses: []
             });
             
-            try {
-                const result = await newUser.save();
-                return { ...result._doc, password: null };
-            }
-            catch (err) {
-                throw err;
-            }
-        }).catch(err => {
+            return newUser.save();
+        })
+        .then((result) => {
+            return { ...result._doc, password: null };
+        })
+        .catch(err => {
             throw err;
         });
     },
