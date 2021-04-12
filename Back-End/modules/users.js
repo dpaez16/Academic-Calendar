@@ -89,7 +89,7 @@ module.exports = {
             }
 
             let courseIDS = user.courses;
-            let deletedResults = courseIDS.map(async courseID => deleteCourse({ courseID: courseID }));
+            let deletedResults = courseIDS.map(async courseID => await deleteCourse({ courseID: courseID }));
 
             return Promise.all(deletedResults);
         })

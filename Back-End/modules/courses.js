@@ -99,12 +99,7 @@ module.exports = {
 
             let creatorID = course.creator;
             let categoryIDS = course.categories;
-            let results = categoryIDS.map(async categoryID => {
-                return deleteCategory({ categoryID: categoryID })
-                .catch((err) => {
-                    throw err;
-                });
-            });
+            let results = categoryIDS.map(async categoryID => await deleteCategory({ categoryID: categoryID }));
 
             return Promise.all(results)
             .then(async _ => {
