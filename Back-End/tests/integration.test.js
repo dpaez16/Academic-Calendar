@@ -55,13 +55,12 @@ describe('All User Actions', () => {
             }
         };
 
-        // fix this!
-        rawArgs = { 
-            userID: user._id,
-            debug: true
-        };
-        expect(await UserService.deleteUser(rawArgs)).resolves;
+        await CategoryElementsService.createCategoryElement(rawArgs);
 
-        //await CategoryElementsService.createCategoryElement(rawArgs);
+        rawArgs = { 
+            userID: user._id
+        };
+
+        expect(await UserService.deleteUser(rawArgs)).resolves;
     });
 });

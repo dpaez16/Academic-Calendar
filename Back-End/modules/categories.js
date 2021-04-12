@@ -98,16 +98,17 @@ module.exports = {
 
             let courseID = category.courseID;
             let categoryElementIDS = category.elements;
-            categoryElementIDS.map(categoryElemID => deleteCategoryElement({ categoryElementID: categoryElemID }));
-            
-            return Category.deleteOne({ _id: categoryID }).then(async _ => {
-                return Course.findById(courseID).then(async course => {
-                    course.categories.pull({ _id: categoryID });
-                    return course.save();
-                })
-                .then(result => {
-                    return { ...result._doc };
-                });
+            let results = categoryElementIDS.map(async categoryElemID => await deleteCategoryElement({ categoryElementID: categoryElemID }));
+            return Promise.all(results).then(async _ => {
+                return Category.deleteOne({ _id: categoryID });
+            }).then(async _ => {
+                return Course.findById(courseID);
+            }).then(async course => {
+                course.categories.pull({ _id: categoryID });
+                return course.save();
+            })
+            .then(result => {
+                return { ...result._doc };
             });
         })
         .catch(err => {
