@@ -46,7 +46,7 @@ describe('Category Elements Schema', () => {
         let category = await CategoriesService.createCategory(rawArgs);
         let categoryID = category._id;
 
-        let dueDate = Date.now().toString();
+        let dueDate = new Date(`2021-01-01 23:59`);
         rawArgs = {
             categoryElementInput: {
                 name: 'HW1',
@@ -111,7 +111,7 @@ describe('Category Elements Schema', () => {
         let category = await CategoriesService.createCategory(rawArgs);
         let categoryID = category._id;
 
-        let dueDate = Date.now().toString();
+        let dueDate = new Date(`2021-01-01 23:59`);
         rawArgs = {
             categoryElementInput: {
                 name: 'HW1',
@@ -168,7 +168,7 @@ describe('Category Elements Schema', () => {
         let category = await CategoriesService.createCategory(rawArgs);
         let categoryID = category._id;
 
-        let dueDate = Date.now().toString();
+        let dueDate = new Date(`2021-01-01 23:59`);
         rawArgs = {
             categoryElementInput: {
                 name: 'HW1',
@@ -234,7 +234,7 @@ describe('Category Elements Schema', () => {
         let category = await CategoriesService.createCategory(rawArgs);
         let categoryID = category._id;
 
-        let dueDate = Date.now().toString();
+        let dueDate = new Date(`2021-01-01 23:59`);
         rawArgs = {
             categoryElementInput: {
                 name: 'HW1',

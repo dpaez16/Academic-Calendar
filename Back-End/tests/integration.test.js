@@ -44,7 +44,7 @@ describe('All User Actions', () => {
 
         let category = await CategoriesService.createCategory(rawArgs);
 
-        let dueDate = Date.now().toString();
+        let dueDate = new Date(`2021-01-01 23:59`);
         rawArgs = {
             categoryElementInput: {
                 name: 'HW1',

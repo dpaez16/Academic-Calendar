@@ -41,7 +41,7 @@ getGrade = function(scores, totals, weights) {
             continue;
         }
 
-        grade += weight[idx] * score[idx] / total[idx];
+        grade += weights[idx] * scores[idx] / totals[idx];
     }
 
     return grade;
