@@ -1,24 +1,24 @@
-const { test } = require('@jest/globals');
+const { expect, test } = require('@jest/globals');
 const request = require('supertest');
+const express = require('express');
 const app = require('../app');
 
 describe('App integration test', () => {
-    test('Grade service', () => {
+    test('Grade service', async () => {
         let data = {
             categories: [],
             weighted: true
         };
         
-        request(app)
+        await request(app)
             .post('/ac/grade')
-            .send(JSON.stringify(data))
-            .set('Content-Type', 'application/json')
-            //.set('Accept', 'application/json')
-            .type('/json/')
+            .send(data)
             .expect(400)
-            .end((err, res) => {
-                if (err) throw err;
-                console.log(res.body);
+            .then((res) => {
+                expect(res.body).toHaveProperty('error');
+            })
+            .catch((err) => {
+                throw err;
             });
     });
 });
