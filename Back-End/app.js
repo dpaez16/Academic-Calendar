@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const graphQLHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
 
@@ -11,7 +10,7 @@ const { calculateGrade } = require('./modules/grade');
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
