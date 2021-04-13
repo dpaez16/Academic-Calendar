@@ -1,22 +1,16 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const graphQLHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
-const mongoose = require('mongoose');
 
-const User = require('./models/user');
-const Course = require('./models/course');
-const Category = require('./models/category');
-
-const { loginUser, createUser, editUser } = require('./modules/users');
-const { getCourses, createCourse, editCourse } = require('./modules/courses');
+const { loginUser, createUser, editUser, deleteUser } = require('./modules/users');
+const { getCourses, createCourse, editCourse, deleteCourse } = require('./modules/courses');
 const { getCategories, createCategory, editCategory, deleteCategory } = require('./modules/categories');
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
 const { calculateGrade } = require('./modules/grade');
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -130,55 +124,12 @@ app.use('/ac', graphQLHttp({
         loginUser: loginUser,
         createUser: createUser,
         editUser: editUser,
-        deleteUser: async rawArgs => {
-            let userID = rawArgs.userID;
-    
-            return User.findById(userID).then(async user => {
-                if (!user) {
-                    throw new Error("User not found.");
-                }
-    
-                let courseIDS = user.courses;
-                courseIDS.map(courseID => deleteCourse({ courseID: courseID }));
-                
-                return User.deleteOne({ _id: userID }).then(async _ => {
-                    return true;
-                });
-            })
-            .catch(err => {
-                throw err;
-            });
-        },
+        deleteUser: deleteUser,
 
         courses: getCourses,
         createCourse: createCourse,
         editCourse: editCourse,
-        deleteCourse: async rawArgs => {
-            let courseID = rawArgs.courseID;
-    
-            return Course.findById(courseID).then(async course => {
-                if (!course) {
-                    throw new Error("Course not found.");
-                }
-    
-                let creatorID = course.creator;
-                let categoryIDS = course.categories;
-                categoryIDS.map(categoryID => deleteCategory({ categoryID: categoryID }));
-                
-                return Course.deleteOne({ _id: courseID }).then(async _ => {
-                    return User.findById(creatorID).then(async user => {
-                        user.courses.pull({ _id: courseID });
-                        return user.save();
-                    })
-                    .then(result => {
-                        return { ...result._doc };
-                    });
-                });
-            })
-            .catch(err => {
-                throw err;
-            });
-        },
+        deleteCourse: deleteCourse,
         
         categories: getCategories,
         createCategory: createCategory,
@@ -193,19 +144,4 @@ app.use('/ac', graphQLHttp({
     graphiql: true
 }));
 
-mongoose.connect(`
-    mongodb+srv://${process.env.MONGO_USER}:${
-        process.env.MONGO_PASSWORD
-    }@academic-calendar.fzvdf.mongodb.net/${
-        process.env.MONGO_DB
-    }?retryWrites=true&w=majority
-`, { 
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    app.listen(5000);
-    console.log("Back-End server is running on localhost:5000/ac");
-}).catch(err => {
-    console.log(err);
-});
-
+module.exports = app;

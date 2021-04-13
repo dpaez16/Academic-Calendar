@@ -41,7 +41,7 @@ getGrade = function(scores, totals, weights) {
             continue;
         }
 
-        grade += weight[idx] * score[idx] / total[idx];
+        grade += weights[idx] * scores[idx] / totals[idx];
     }
 
     return grade;
@@ -51,6 +51,7 @@ module.exports = {
     calculateGrade: function(req, res) {
         const data = req.body;
         const {categories, weighted} = data;
+        res.status(400);
 
         if (!categories || categories.length === 0) {
             return res.send({error: "No populated categories."});
@@ -64,6 +65,6 @@ module.exports = {
         const actualWeights = weighted ? weights : null;
         const grade = getGrade(scores, totals, actualWeights);
 
-        return res.send({grade: grade});
+        return res.status(200).send({grade: grade});
     }
 };

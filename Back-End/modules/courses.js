@@ -1,24 +1,26 @@
 const Course = require('../models/course');
 const User = require('../models/user');
+const { deleteCategory } = require('./categories');
 
 module.exports = {
     getCourses: async rawArgs => {
         let courseIDS = rawArgs.courseIDS;
-        try {
-            const courses = await courseIDS.map(async courseID => {
-                return Course.findById(courseID).then(course => {
-                    if (!course) {
-                        throw new Error('Course not found.');
-                    }
+        const courses = courseIDS.map(async courseID => {
+            return Course.findById(courseID).then(course => {
+                if (!course) {
+                    throw new Error('Course not found.');
+                }
 
-                    return { ...course._doc };
-                });
+                return { ...course._doc };
             });
+        });
 
+        return Promise.all(courses)
+        .then((courses) => {
             return courses;
-        } catch(err) {
+        }).catch((err) => {
             throw err;
-        }
+        });
     },
     createCourse: async rawArgs => {
         let args = rawArgs.courseInput;
@@ -43,12 +45,12 @@ module.exports = {
             }
 
             return newCourse.save();
-        }).then(async result => {
+        }).then(async _ => {
             return User.findById(args.creator);
         }).then(user => {
             user.courses.push(newCourse);
             return user.save();
-        }).then(result => {
+        }).then(_ => {
             return newCourse;
         }).catch(err => {
             throw err;
@@ -84,6 +86,37 @@ module.exports = {
             });
         })
         .catch(err => {
+            throw err;
+        });
+    },
+    deleteCourse: async rawArgs => {
+        let courseID = rawArgs.courseID;
+
+        return Course.findById(courseID).then(async course => {
+            if (!course) {
+                throw new Error("Course not found.");
+            }
+
+            let creatorID = course.creator;
+            let categoryIDS = course.categories;
+            let results = categoryIDS.map(async categoryID => await deleteCategory({ categoryID: categoryID }));
+
+            return Promise.all(results)
+            .then(async _ => {
+                return Course.deleteOne({ _id: courseID });
+            })
+            .then(async _ => {
+                return User.findById(creatorID);
+            })
+            .then(async user => {
+                user.courses.pull({ _id: courseID });
+                return user.save();
+            })
+            .then(result => {
+                return { ...result._doc };
+            });
+        })
+        .catch((err) => {
             throw err;
         });
     }

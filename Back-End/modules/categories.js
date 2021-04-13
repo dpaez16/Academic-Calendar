@@ -1,25 +1,27 @@
 const Category = require('../models/category');
 const Course = require('../models/course');
+const { deleteCategoryElement } = require('./categoryElements');
 
 
 module.exports = {
     getCategories: async rawArgs => {
         let categoryIDS = rawArgs.categoryIDS;
-        try {
-            const categories = await categoryIDS.map(async categoryID => {
-                return Category.findById(categoryID).then(category => {
-                    if (!category) {
-                        throw new Error('Category not found.');
-                    }
+        const categories = categoryIDS.map(async categoryID => {
+            return Category.findById(categoryID).then(category => {
+                if (!category) {
+                    throw new Error('Category not found.');
+                }
 
-                    return { ...category._doc };
-                });
+                return { ...category._doc };
             });
+        });
 
+        return Promise.all(categories)
+        .then((categories) => {
             return categories;
-        } catch(err) {
+        }).catch((err) => {
             throw err;
-        }
+        });
     },
     createCategory: async rawArgs => {
         let args = rawArgs.categoryInput;
@@ -96,16 +98,17 @@ module.exports = {
 
             let courseID = category.courseID;
             let categoryElementIDS = category.elements;
-            categoryElementIDS.map(categoryElemID => deleteCategoryElement({ categoryElementID: categoryElemID }));
-            
-            return Category.deleteOne({ _id: categoryID }).then(async _ => {
-                return Course.findById(courseID).then(async course => {
-                    course.categories.pull({ _id: categoryID });
-                    return course.save();
-                })
-                .then(result => {
-                    return { ...result._doc };
-                });
+            let results = categoryElementIDS.map(async categoryElemID => await deleteCategoryElement({ categoryElementID: categoryElemID }));
+            return Promise.all(results).then(async _ => {
+                return Category.deleteOne({ _id: categoryID });
+            }).then(async _ => {
+                return Course.findById(courseID);
+            }).then(async course => {
+                course.categories.pull({ _id: categoryID });
+                return course.save();
+            })
+            .then(result => {
+                return { ...result._doc };
             });
         })
         .catch(err => {

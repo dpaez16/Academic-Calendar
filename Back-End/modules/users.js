@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const { deleteCourse } = require('./courses');
 const bcrypt = require('bcryptjs');
 
 module.exports = {
@@ -23,7 +24,7 @@ module.exports = {
     },
     createUser: async rawArgs => {
         const args = rawArgs.userInput;
-        return User.findOne({email: args.email}).then(user => {
+        return User.findOne({email: args.email}).then(async user => {
             if (user) {
                 throw new Error('User exists already.');
             }
@@ -37,14 +38,12 @@ module.exports = {
                 courses: []
             });
             
-            try {
-                const result = await newUser.save();
-                return { ...result._doc, password: null };
-            }
-            catch (err) {
-                throw err;
-            }
-        }).catch(err => {
+            return newUser.save();
+        })
+        .then((result) => {
+            return { ...result._doc, password: null };
+        })
+        .catch(err => {
             throw err;
         });
     },
@@ -76,6 +75,29 @@ module.exports = {
             .then(result => {
                 return { ...result._doc, password: null };
             });
+        })
+        .catch(err => {
+            throw err;
+        });
+    },
+    deleteUser: async rawArgs => {
+        let userID = rawArgs.userID;
+
+        return User.findById(userID).then(async user => {
+            if (!user) {
+                throw new Error("User not found.");
+            }
+
+            let courseIDS = user.courses;
+            let deletedResults = courseIDS.map(async courseID => await deleteCourse({ courseID: courseID }));
+
+            return Promise.all(deletedResults);
+        })
+        .then((res) => {
+            return User.deleteOne({ _id: userID });
+        })
+        .then((res) => {
+            return true;
         })
         .catch(err => {
             throw err;
