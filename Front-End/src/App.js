@@ -3,6 +3,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import {NavBar} from './components/navbar/navbar';
 import {HomePage} from './components/home/homePage';
 import {Login} from './components/login/login';
+import {ForgotPassword} from './components/forgotPassword/forgotPassword';
 import {Register} from './components/register/register';
 import {Profile} from './components/profile/profile';
 import {Courses} from './components/courses/courses';
@@ -49,6 +50,10 @@ export default class App extends Component {
                                             { ...props }
                                         />
                                     }
+                            />
+                            <Route  exact
+                                    path='/forgotPassword'
+                                    component={ForgotPassword}
                             />
                             <Route  exact
                                     path='/register'

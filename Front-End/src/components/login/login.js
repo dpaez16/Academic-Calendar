@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Form, Input, Button, Message} from 'semantic-ui-react';
+import {NavLink} from 'react-router-dom';
 import {PROXY_URL} from '../misc/proxyURL';
 import history from '../../history';
 import './login.css';
@@ -107,7 +108,8 @@ export class Login extends Component {
                     header='Login Failed'
                     content={this.state.errorMessage}
                 />
-                <Button type='submit'
+                <div className='login-form__bottom'>
+                    <Button type='submit'
                         disabled={!this.validInput()}
                         onClick={async () => {
                             this.attemptLogin()
@@ -115,9 +117,11 @@ export class Login extends Component {
                                 this.handleLoginResults(userInfo);
                             });
                         }}
-                >
-                    Login
-                </Button>
+                    >
+                        Login
+                    </Button>
+                    <NavLink to='/forgotPassword'>Forgot Password</NavLink>
+                </div>
             </Form>
         );
     }

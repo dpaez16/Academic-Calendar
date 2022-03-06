@@ -7,6 +7,7 @@ const { getCourses, createCourse, editCourse, deleteCourse } = require('./module
 const { getCategories, createCategory, editCategory, deleteCategory } = require('./modules/categories');
 const { getCategoryElements, createCategoryElement, editCategoryElement, deleteCategoryElement } = require('./modules/categoryElements');
 const { calculateGrade } = require('./modules/grade');
+const { forgotPassword } = require('./modules/forgotPassword');
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use((req, res, next) => {
 });
 
 app.post('/ac/grade', calculateGrade);
+
+app.post('/ac/forgotPassword', forgotPassword);
 
 app.use('/ac', graphQLHttp({
     schema: buildSchema(`
